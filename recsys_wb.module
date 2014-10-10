@@ -16,6 +16,9 @@ define('BOOK_DB','Book_Rating_r0_train');
 // Variables
 define('user_id',$GLOBALS['user']->uid + MAX_USER_ID);
 
+// Load the movie util php functions
+require_once('movie/util.php');
+
 /**
  * Implements hook_menu()
  */
@@ -98,7 +101,7 @@ function recsys_wb_myratings() {
     .":user", array(':user' => user_id) );
     
   // Prepeare the tables headers and rows
-  $header = array( t('User ID'), t('Movie ID'), t('Rating') );
+  $header = array( t('User ID'), t('Movie'), t('Rating') );
   $rows = array();
   
   // Check if there are already some ratings
@@ -112,7 +115,7 @@ function recsys_wb_myratings() {
     {
       $rows[] = array(
         $result->UserID,
-        $result->MovieID,
+        getMovieNameById($result->MovieID),
         $result->Rating,
       );
     }
@@ -134,7 +137,34 @@ function recsys_wb_myratings() {
  * in user
  */
 function recsys_wb_myrecommendations() {
-  return "No recommendations yet"; 
+  // Fetch all recommendations from the prediction table
+  $query = db_select('recommender_prediction','p');
+  $query->join('field_data_field_movie_id','id',
+    'p.target_eid = id.field_movie_id_value');
+  $query->fields('p',array('target_eid','score'));
+  $query->fields('id',array('entity_id'));
+  $query->condition('p.score',4,'>');
+  $query->condition('p.source_eid',user_id);
+  $results = $query->execute();
+  
+  if ( $results->rowCount() == 0 )
+    return "You have no recommendations yet. Make sure you rate some movies "
+           . " and/or books and come back later!";
+           
+  // Prepare the table headers and rows
+  $header = array( t('Movie'), t('Score') );
+  $rows = array();
+  
+  // Loop through the db query results and add each of them to the rows array
+  foreach ($results as $result ) {
+    $rows[] = array(
+      l( getMovieNameById( $result->target_eid ), 'node/' . $result->entity_id),
+      $result->score,
+    );
+  }
+  
+  // Return a renderable array
+  return theme('table', array( 'header' => $header, 'rows' => $rows ) );
 }
 
 /**
@@ -217,10 +247,9 @@ function recsys_wb_books() {
  */
 function recsys_wb_movies() {
   // Get all movies form the database
-  $query = db_select('field_data_field_movie_id', 'ids');
-  $query->join('field_data_field_year','year','ids.entity_id = year.entity_id');
-  $query->join('node', 'node', 'ids.entity_id = node.nid');
-  $query->fields('ids',array('entity_id'));
+  $query = db_select('field_data_field_year', 'year');
+  $query->join('node', 'node', 'year.entity_id = node.nid');
+  $query->fields('year',array('entity_id'));
   $query->fields('node',array('title'));
   $query->groupBy('node.title');
   $query->condition('year.field_year_value',2008);
