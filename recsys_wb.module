@@ -1,0 +1,249 @@
+<?php
+
+/**
+ * Core module for the recommender system workbench
+ */
+ 
+/** 
+ * Define max user ID as the maximum user ID from the book and movie database. 
+ * The logged in user will add it's user id to the max user id constant to get a
+ * unique user id in the rating tables
+ */ 
+define('MAX_USER_ID',278858);
+define('MOVIE_DB','Movie_Rating_r0_train');
+define('BOOK_DB','Book_Rating_r0_train');
+
+// Variables
+define('user_id',$GLOBALS['user']->uid + MAX_USER_ID);
+
+/**
+ * Implements hook_menu()
+ */
+function recsys_wb_menu() {
+  $items['myratings'] = array(
+    'title' => 'My Ratings', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_myratings',
+    'access arguments' => array('access content'),
+  );
+  $items['myrecommendations'] = array(
+    'title' => 'My Recommendations', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_myrecommendations',
+    'access arguments' => array('access content'),
+  );
+  return $items;
+}
+
+/**
+ * Custom page which displays all the ratings of the currently logged in user
+ */
+function recsys_wb_myratings() {
+  // Prepare the return string
+  $return_string = "<h2>Books</h2>";
+  
+  // Get all the users rating from the database
+  $results = db_query("Select * from {" . BOOK_DB . "} where UserID = "
+    .":user", array(':user' => user_id) );
+    
+  // Prepeare the tables headers and rows
+  $header = array( t('User ID'), t('Book ID'), t('Rating') );
+  $rows = array();
+  
+  // Check if there are already some ratings
+  if( $results->rowCount() == 0 ) {
+    $return_string .= "<strong>You haven't rated any books yet</strong></br>";
+  }
+  else {
+    
+    // Loop through the results of the DB query and fill in the tables rows
+    foreach ($results AS $result)
+    {
+      $rows[] = array(
+        $result->UserID,
+        $result->BookID,
+        $result->Rating,
+      );
+    }
+    
+    // Add the table to the result string
+    $return_string .= theme('table', 
+                            array('header' => $header, 'rows' => $rows) );
+  }
+
+  // Add the Movie section
+  $return_string .= "<h2>Movies</h2>";
+  
+ // Get all the users rating from the database
+  $results = db_query("Select * from {" . MOVIE_DB . "} where UserID = "
+    .":user", array(':user' => user_id) );
+    
+  // Prepeare the tables headers and rows
+  $header = array( t('User ID'), t('Movie ID'), t('Rating') );
+  $rows = array();
+  
+  // Check if there are already some ratings
+  if( $results->rowCount() == 0 ) {
+    $return_string .= "<strong>You haven't rated any movies yet</strong></br>";
+  }
+  else {
+    
+    // Loop through the results of the DB query and fill in the tables rows
+    foreach ($results AS $result)
+    {
+      $rows[] = array(
+        $result->UserID,
+        $result->MovieID,
+        $result->Rating,
+      );
+    }
+    
+    // Add the table to the result string
+    $return_string .= theme('table', 
+                            array('header' => $header, 'rows' => $rows) );
+  }
+  
+  // Return the HTML string
+  return $return_string;
+}
+
+/**
+ * Custom page which displays all the recommendations of the currently logged
+ * in user
+ */
+function recsys_wb_myrecommendations() {
+  return "No recommendations yet"; 
+}
+
+/**
+ * Implements hook_block_info
+ */
+function recsys_wb_block_info() {
+  $blocks['book_rating'] = array(
+    'info' => t('Recsys workbench book rating'),
+  );
+  $blocks['movie_rating'] = array(
+    'info' => t('Recsys workbench movie rating'),
+  );
+  
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view
+ */
+function recsys_wb_block_view($delta = '')
+{
+  $block = array();
+
+  // Get the node
+  $node = menu_get_object();
+
+  switch ($delta) {
+    case 'book_rating':
+      $block['subject'] = t('Rate this book');
+      
+      // Check if the user has already rated this book, so query the rating for
+      // this book from this user
+      $book_id = field_get_items("node", $node, "field_book_id");
+      $book_id = $book_id[0]["value"];
+      $results = db_query("Select * from {" . BOOK_DB . "} where UserID = "
+        .":user AND BookID = :book", array(':user' => user_id, ':book' => $book_id) );
+      
+      if ( $results->rowCount() == 0 ) {
+        $block['content'] = drupal_get_form('recsys_wb_book_rating_form');
+      }
+      else {
+        $block['content'] = "You have already rated this book!";
+      }
+
+      break;
+
+    case 'movie_rating':
+      $block['subject'] = t('Rate this movie');
+      
+      // Check if the user has already rated this book, so query the rating for
+      // this book from this user
+      $movie_id = field_get_items("node", $node, "field_movie_id");
+      $movie_id = $movie_id[0]["value"];
+      $results = db_query("Select * from {" . MOVIE_DB . "} where UserID = "
+        .":user AND MovieID = :movie", array(':user' => user_id, ':movie' => $movie_id) );
+      
+      if ( $results->rowCount() == 0 ) {
+        $block['content'] = drupal_get_form('recsys_wb_movie_rating_form');
+      }
+      else {
+        $block['content'] = "You have already rated this movie!";
+      }
+      
+      default:
+        break;
+  }
+    
+  return $block;
+}
+
+/**
+ * The rate book form
+ */
+function recsys_wb_book_rating_form()
+{
+  $form['user_id'] = array(
+    '#type' => 'select',
+    '#title' => t('Rating:'),
+    '#options' => array(
+      0 => '0',
+      1 => '1',
+      2 => '2',
+      3 => '3',
+      4 => '4',
+      5 => '5',
+      6 => '6',
+      7 => '7',
+      8 => '8',
+      9 => '9',
+      10 => '10',      
+    ),
+    //'#empty_value' => TRUE,
+    '#description' => t('Enter the rating for this book'),
+    '#required' => TRUE,
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );  
+  return $form;
+}
+
+/**
+ * The rate movie form
+ */
+function recsys_wb_movie_rating_form()
+{
+  $form['user_id'] = array(
+    '#type' => 'select',
+    '#title' => t('Rating:'),
+    '#options' => array(
+      0 => '0',
+      1 => '1',
+      2 => '2',
+      3 => '3',
+      4 => '4',
+      5 => '5',
+      6 => '6',
+      7 => '7',
+      8 => '8',
+      9 => '9',
+      10 => '10',      
+    ),
+    '#description' => t('Enter the rating for this movie'),
+    '#required' => TRUE,
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );  
+  return $form;
+}
