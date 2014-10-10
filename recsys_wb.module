@@ -10,7 +10,7 @@
  * unique user id in the rating tables
  */ 
 define('MAX_USER_ID',278858);
-define('MOVIE_DB','Movie_Rating_r0_train');
+define('MOVIE_DB','Movie_Rating_demo');
 define('BOOK_DB','Book_Rating_r0_train');
 
 // Variables
@@ -32,6 +32,20 @@ function recsys_wb_menu() {
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_myrecommendations',
+    'access arguments' => array('access content'),
+  );
+  $items['books'] = array(
+    'title' => 'Books', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_books',
+    'access arguments' => array('access content'),
+  );
+  $items['movies'] = array(
+    'title' => 'Movies', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_movies',
     'access arguments' => array('access content'),
   );
   return $items;
@@ -72,6 +86,9 @@ function recsys_wb_myratings() {
     $return_string .= theme('table', 
                             array('header' => $header, 'rows' => $rows) );
   }
+  
+  // Add the link to the rating page
+  $return_string .= "<p>You can rate books " . l('here','/books') . "</p>";
 
   // Add the Movie section
   $return_string .= "<h2>Movies</h2>";
@@ -104,6 +121,9 @@ function recsys_wb_myratings() {
     $return_string .= theme('table', 
                             array('header' => $header, 'rows' => $rows) );
   }
+  
+  // Add the link to the rating page
+  $return_string .= "<p>You can rate movies " . l('here','/movies') . "</p>";
   
   // Return the HTML string
   return $return_string;
@@ -186,6 +206,42 @@ function recsys_wb_block_view($delta = '')
 }
 
 /**
+ * Custom page which displays all book of the demo section
+ */
+function recsys_wb_books() {
+  return "Here go all books";
+}
+
+/**
+ * Custom page which displays all movies of the demo section
+ */
+function recsys_wb_movies() {
+  // Get all movies form the database
+  $query = db_select('field_data_field_movie_id', 'ids');
+  $query->join('field_data_field_year','year','ids.entity_id = year.entity_id');
+  $query->join('node', 'node', 'ids.entity_id = node.nid');
+  $query->fields('ids',array('entity_id'));
+  $query->fields('node',array('title'));
+  $query->groupBy('node.title');
+  $query->condition('year.field_year_value',2008);
+  $results = $query->execute();
+  
+  $header = array( t('Node ID'));
+  $rows = array();
+  
+  foreach ($results AS $result)
+    {
+      $id = $result->entity_id;
+      $rows[] = array(
+        l($result->title,'node/' . $id)
+      );
+    }
+    
+
+  return theme('table', array('header' => $header, 'rows' => $rows) );
+}
+
+/**
  * The rate book form
  */
 function recsys_wb_book_rating_form()
@@ -222,7 +278,7 @@ function recsys_wb_book_rating_form()
  */
 function recsys_wb_movie_rating_form()
 {
-  $form['user_id'] = array(
+  $form['rating'] = array(
     '#type' => 'select',
     '#title' => t('Rating:'),
     '#options' => array(
@@ -246,4 +302,29 @@ function recsys_wb_movie_rating_form()
     '#value' => t('Submit'),
   );  
   return $form;
+}
+
+/**
+ * Action to take when recsys_wb_movie_rating_form is submitted
+ */
+function recsys_wb_movie_rating_form_submit($form, &$form_state) {
+  // Get the rating from the form, divide it by 2 to get movielens ratings
+  $rating = $form_state['values']['rating'] / 2;
+  
+  // Get the node
+  $node = menu_get_object();
+  
+  // Get the movies id
+  $movie_id = field_get_items("node", $node, "field_movie_id");
+  $movie_id = $movie_id[0]["value"];
+
+  // Insert the values into the database
+  $result = db_insert( MOVIE_DB )->fields( array(
+    'MovieID' => $movie_id,
+    'UserID' => user_id,
+    'Rating' => $rating,
+    'Timestamp' => time(),
+  ))->execute();
+  
+  drupal_set_message("Insert done!");
 }
