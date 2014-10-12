@@ -280,16 +280,16 @@ function recsys_wb_book_rating_form()
     '#title' => t('Rating:'),
     '#options' => array(
       0 => '0',
+      0.5 => '0.5',
       1 => '1',
+      1.5 => '1.5',
       2 => '2',
+      2.5 => '2.5',
       3 => '3',
+      3.5 => '3.5',
       4 => '4',
-      5 => '5',
-      6 => '6',
-      7 => '7',
-      8 => '8',
-      9 => '9',
-      10 => '10',      
+      4.5 => '4.5',
+      5 => '5',      
     ),
     //'#empty_value' => TRUE,
     '#description' => t('Enter the rating for this book'),
@@ -312,16 +312,16 @@ function recsys_wb_movie_rating_form()
     '#title' => t('Rating:'),
     '#options' => array(
       0 => '0',
+      0.5 => '0.5',
       1 => '1',
+      1.5 => '1.5',
       2 => '2',
+      2.5 => '2.5',
       3 => '3',
+      3.5 => '3.5',
       4 => '4',
-      5 => '5',
-      6 => '6',
-      7 => '7',
-      8 => '8',
-      9 => '9',
-      10 => '10',      
+      4.5 => '4.5',
+      5 => '5',      
     ),
     '#description' => t('Enter the rating for this movie'),
     '#required' => TRUE,
@@ -337,8 +337,8 @@ function recsys_wb_movie_rating_form()
  * Action to take when recsys_wb_movie_rating_form is submitted
  */
 function recsys_wb_movie_rating_form_submit($form, &$form_state) {
-  // Get the rating from the form, divide it by 2 to get movielens ratings
-  $rating = $form_state['values']['rating'] / 2;
+  // Get the rating from the form
+  $rating = $form_state['values']['rating'];
   
   // Get the node
   $node = menu_get_object();
