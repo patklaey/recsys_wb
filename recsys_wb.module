@@ -16,8 +16,11 @@ define('BOOK_DB','Book_Rating_r0_train');
 // Variables
 define('user_id',$GLOBALS['user']->uid + MAX_USER_ID);
 
-// Load the movie util php functions
-require_once('movie/util.php');
+// Load the necessary php files
+require_once 'movie/util.php';
+require_once 'recommendations.php';
+require_once 'forms/forms_view.php';
+require_once 'forms/forms_submit.php';
 
 /**
  * Implements hook_menu()
@@ -137,34 +140,53 @@ function recsys_wb_myratings() {
  * in user
  */
 function recsys_wb_myrecommendations() {
-  // Fetch all recommendations from the prediction table
-  $query = db_select('recommender_prediction','p');
-  $query->join('field_data_field_movie_id','id',
-    'p.target_eid = id.field_movie_id_value');
-  $query->fields('p',array('target_eid','score'));
-  $query->fields('id',array('entity_id'));
-  $query->condition('p.score',4,'>');
-  $query->condition('p.source_eid',user_id);
-  $results = $query->execute();
+  // Define the return string variable
+  $return_string = drupal_render( drupal_get_form('recsys_wb_get_recommendations_form') );
   
-  if ( $results->rowCount() == 0 )
-    return "You have no recommendations yet. Make sure you rate some movies "
-           . " and/or books and come back later!";
-           
-  // Prepare the table headers and rows
-  $header = array( t('Movie'), t('Score') );
-  $rows = array();
+  // Check if the session variable form submitted is set. If yes display the 
+  // results, otherwise display the form
+  if ( isset( $_SESSION['recommendations_form_submitted'] )
+&& $_SESSION['recommendations_form_submitted'] === TRUE ) {
+    // Get the recommender app session var
+    $recommender_app = $_SESSION['recommender_app'];
+    
+    // Get the recommender_type_value session var
+    $value = $_SESSION['recommender_type_value'];
+    
+    // Check which recommender type if is
+    if ( $_SESSION['recommender_type'] === 'top n' ) {
+      $results = getTopNRecommendations( user_id, $recommender_app, $value );
+    } 
+    else {
+      $results = getRecommendationsByScore( user_id, $recommender_app, $value );
+    }    
   
-  // Loop through the db query results and add each of them to the rows array
-  foreach ($results as $result ) {
-    $rows[] = array(
-      l( getMovieNameById( $result->target_eid ), 'node/' . $result->entity_id),
-      $result->score,
-    );
+    if ( $results->rowCount() == 0 )
+      return "You have no recommendations yet. Make sure you rate some movies "
+             . " and/or books and come back later!";
+             
+    // Prepare the table headers and rows
+    $header = array( t('Movie'), t('Score') );
+    $rows = array();
+    
+    // Loop through the db query results and add each of them to the rows array
+    foreach ($results as $result ) {
+      $rows[] = array(
+        l( getMovieNameById($result->target_eid), 'node/' . $result->entity_id),
+        $result->score,
+      );
+    }
+  
+    // Assign the renderable array to the return string 
+    $return_string .= "<br/>";
+    $return_string .= theme('table', array( 'header' => $header, 'rows' => $rows ) );
   }
-  
-  // Return a renderable array
-  return theme('table', array( 'header' => $header, 'rows' => $rows ) );
+
+  // For esthetic reasons unset the form submitted session var, so if a user
+  // comes back to "My Recommendations" the page is empty again
+  unset( $_SESSION['recommendations_form_submitted'] );
+
+  return $return_string;
 }
 
 /**
@@ -251,7 +273,7 @@ function recsys_wb_movies() {
   $query->join('node', 'node', 'year.entity_id = node.nid');
   $query->fields('year',array('entity_id'));
   $query->fields('node',array('title'));
-  $query->groupBy('node.title');
+  $query->orderBy('node.title');
   $query->condition('year.field_year_value',2008);
   $results = $query->execute();
   
@@ -268,92 +290,4 @@ function recsys_wb_movies() {
     
 
   return theme('table', array('header' => $header, 'rows' => $rows) );
-}
-
-/**
- * The rate book form
- */
-function recsys_wb_book_rating_form()
-{
-  $form['user_id'] = array(
-    '#type' => 'select',
-    '#title' => t('Rating:'),
-    '#options' => array(
-      '0' => '0',
-      '0.5' => '0.5',
-      '1' => '1',
-      '1.5'=> '1.5',
-      '2' => '2',
-      '2.5' => '2.5',
-      '3' => '3',
-      '3.5' => '3.5',
-      '4' => '4',
-      '4.5' => '4.5',
-      '5' => '5',     
-    ),
-    //'#empty_value' => TRUE,
-    '#description' => t('Enter the rating for this book'),
-    '#required' => TRUE,
-  );
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Submit'),
-  );  
-  return $form;
-}
-
-/**
- * The rate movie form
- */
-function recsys_wb_movie_rating_form()
-{
-  $form['rating'] = array(
-    '#type' => 'select',
-    '#title' => t('Rating:'),
-    '#options' => array(
-      '0' => '0',
-      '0.5' => '0.5',
-      '1' => '1',
-      '1.5'=> '1.5',
-      '2' => '2',
-      '2.5' => '2.5',
-      '3' => '3',
-      '3.5' => '3.5',
-      '4' => '4',
-      '4.5' => '4.5',
-      '5' => '5',      
-    ),
-    '#description' => t('Enter the rating for this movie'),
-    '#required' => TRUE,
-  );
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Submit'),
-  );  
-  return $form;
-}
-
-/**
- * Action to take when recsys_wb_movie_rating_form is submitted
- */
-function recsys_wb_movie_rating_form_submit($form, &$form_state) {
-  // Get the rating from the form
-  $rating = $form_state['values']['rating'];
-  
-  // Get the node
-  $node = menu_get_object();
-  
-  // Get the movies id
-  $movie_id = field_get_items("node", $node, "field_movie_id");
-  $movie_id = $movie_id[0]["value"];
-
-  // Insert the values into the database
-  $result = db_insert( MOVIE_DB )->fields( array(
-    'MovieID' => $movie_id,
-    'UserID' => user_id,
-    'Rating' => $rating,
-    'Timestamp' => time(),
-  ))->execute();
-  
-  drupal_set_message("Insert done!");
 }
