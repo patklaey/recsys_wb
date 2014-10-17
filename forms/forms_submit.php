@@ -22,7 +22,37 @@ function recsys_wb_movie_rating_form_submit($form, &$form_state) {
     'Timestamp' => time(),
   ))->execute();
   
-  drupal_set_message("Insert done!");
+  drupal_set_message("Movie succesfully rated!");
+}
+
+
+/**
+ * Action to take when recsys_wb_book_rating_form is submitted
+ */
+function recsys_wb_book_rating_form_submit($form, &$form_state) {
+  // Get the rating from the form
+  $rating = $form_state['values']['rating'];
+  
+  // Get the node
+  $node = menu_get_object();
+  
+  // Get the books id
+  $book_id = field_get_items("node", $node, "field_book_id");
+  $book_id = $book_id[0]["value"];
+  
+  // Get the books isbn
+  $isbn = field_get_items("node", $node, "field_isbn");
+  $isbn = $isbn[0]["value"];
+
+  // Insert the values into the database
+  $result = db_insert( BOOK_DB )->fields( array(
+    'BookID' => $book_id,
+    'UserID' => user_id,
+    'Rating' => $rating,
+    'ISBN' => $isbn,
+  ))->execute();
+  
+  drupal_set_message("Book succesfully rated!");
 }
 
 /**

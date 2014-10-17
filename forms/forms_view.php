@@ -5,21 +5,21 @@
  */
 function recsys_wb_book_rating_form()
 {
-  $form['user_id'] = array(
+  $form['rating'] = array(
     '#type' => 'select',
     '#title' => t('Rating:'),
     '#options' => array(
       '0' => '0',
-      '0.5' => '0.5',
       '1' => '1',
-      '1.5'=> '1.5',
       '2' => '2',
-      '2.5' => '2.5',
       '3' => '3',
-      '3.5' => '3.5',
       '4' => '4',
-      '4.5' => '4.5',
-      '5' => '5',     
+      '5' => '5',
+      '6' => '6',
+      '7' => '7',
+      '8' => '8',
+      '9' => '9',
+      '10' => '10',
     ),
     '#description' => t('Enter the rating for this book'),
     '#required' => TRUE,
@@ -66,14 +66,20 @@ function recsys_wb_movie_rating_form()
  * TODO write some good / useful comment
  */
 function recsys_wb_get_recommendations_form() {
+  // Get all different recommender algorithms currently registered
+  $results = db_query("Select id,title from {recommender_app}");
+  $algorithms = array();
+  
+  foreach ( $results AS $result )
+  {
+    $algorithms[$result->id] = $result->title;
+  }
+  
   // Create a form which displays a all possible recommender algorithms
   $form['recommender_app'] = array(
     '#type' => 'select',
     '#title' => t('Recommender algorithm:'),
-    '#options' => array(
-      18 => 'item2item',
-      19 => 'user2user',    
-    ),
+    '#options' => $algorithms,
     '#description' => t('Select the recommender algorithm'),
     '#required' => TRUE,
   );

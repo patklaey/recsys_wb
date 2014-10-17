@@ -11,7 +11,7 @@
  */ 
 define('MAX_USER_ID',278858);
 define('MOVIE_DB','Movie_Rating_demo');
-define('BOOK_DB','Book_Rating_r0_train');
+define('BOOK_DB','Book_Rating_demo');
 
 // Variables
 define('user_id',$GLOBALS['user']->uid + MAX_USER_ID);
@@ -261,7 +261,28 @@ function recsys_wb_block_view($delta = '')
  * Custom page which displays all book of the demo section
  */
 function recsys_wb_books() {
-  return "Here go all books";
+  // Get all movies form the database
+  $query = db_select('field_data_field_dataset', 'dataset');
+  $query->join('node', 'node', 'dataset.entity_id = node.nid');
+  $query->fields('dataset',array('entity_id'));
+  $query->fields('node',array('title'));
+  $query->orderBy('node.title');
+  $query->condition('dataset.field_dataset_value',99);
+  $results = $query->execute();
+  
+  $header = array( t('Node ID'));
+  $rows = array();
+  
+  foreach ($results AS $result)
+    {
+      $id = $result->entity_id;
+      $rows[] = array(
+        l($result->title,'node/' . $id)
+      );
+    }
+    
+
+  return theme('table', array('header' => $header, 'rows' => $rows) );
 }
 
 /**
