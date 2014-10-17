@@ -66,4 +66,12 @@ function recsys_wb_get_recommendations_form_submit($form, &$form_state) {
   $_SESSION['recommender_type_value'] = $form_state['values']['recommender_type_value'];
 }
 
+/**
+ * Action to take when recsys_wb_show_statistics_form is submitted
+ */
+function recsys_wb_show_statistics_form_submit($form, &$form_state) {
+  // Just set some session variables
+  $_SESSION['stat_recommender_app'] = $form_state['values']['stats_recommender_app'];
+}
+
 ?>

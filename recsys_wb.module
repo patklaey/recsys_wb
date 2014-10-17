@@ -21,6 +21,7 @@ require_once 'movie/util.php';
 require_once 'recommendations.php';
 require_once 'forms/forms_view.php';
 require_once 'forms/forms_submit.php';
+require_once 'statistics.php';
 
 /**
  * Implements hook_menu()
@@ -52,6 +53,13 @@ function recsys_wb_menu() {
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_movies',
+    'access arguments' => array('access content'),
+  );
+  $items['statistics'] = array(
+    'title' => 'Statistics', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_display_stats',
     'access arguments' => array('access content'),
   );
   return $items;

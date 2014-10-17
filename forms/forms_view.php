@@ -108,4 +108,33 @@ function recsys_wb_get_recommendations_form() {
   return $form;
 }
 
+/**
+ * Display all recommender algorithms to be able to display some useful 
+ * statistics about it
+ */
+function recsys_wb_show_statistics_form() {
+  // Get all different recommender algorithms currently registered
+  $results = db_query("Select id,title from {recommender_app}");
+  $algorithms = array();
+  
+  foreach ( $results AS $result )
+  {
+    $algorithms[$result->id] = $result->title;
+  }
+  
+  // Create a simple form which only lets the user select the recommender 
+  // algorithm
+    $form['stats_recommender_app'] = array(
+    '#type' => 'select',
+    '#title' => t('Recommender algorithm:'),
+    '#options' => $algorithms,
+    '#description' => t('Select the recommender algorithm'),
+    '#required' => TRUE,
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );  
+  return $form;  
+}
 ?>
