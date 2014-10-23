@@ -17,7 +17,7 @@ define('BOOK_DB','Book_Rating_demo');
 define('user_id',$GLOBALS['user']->uid + MAX_USER_ID);
 
 // Load the necessary php files
-require_once 'movie/util.php';
+require_once 'util.php';
 require_once 'recommendations.php';
 require_once 'forms/forms_view.php';
 require_once 'forms/forms_submit.php';
@@ -73,11 +73,20 @@ function recsys_wb_myratings() {
   $return_string = "<h2>Books</h2>";
   
   // Get all the users rating from the database
-  $results = db_query("Select * from {" . BOOK_DB . "} where UserID = "
-    .":user", array(':user' => user_id) );
-    
+  $query = db_select(BOOK_DB, 'ratings');
+  $query->join(
+    'field_data_field_book_id',
+    'book_id',
+    'ratings.bookid = book_id.field_book_id_value'
+  );
+  $query->join('node','node','node.nid = book_id.entity_id');
+  $query->fields('node',array('title','nid'));
+  $query->fields('ratings',array('bookid','userid','rating'));
+  $query->condition('ratings.userid',user_id);
+  $results = $query->execute();
+  
   // Prepeare the tables headers and rows
-  $header = array( t('User ID'), t('Book ID'), t('Rating') );
+  $header = array( t('User ID'), t('Book'), t('Rating') );
   $rows = array();
   
   // Check if there are already some ratings
@@ -91,7 +100,7 @@ function recsys_wb_myratings() {
     {
       $rows[] = array(
         $result->userid,
-        $result->bookid,
+        l($result->title, 'node/' . $result->nid),
         $result->rating,
       );
     }
@@ -107,10 +116,19 @@ function recsys_wb_myratings() {
   // Add the Movie section
   $return_string .= "<h2>Movies</h2>";
   
- // Get all the users rating from the database
-  $results = db_query("Select * from {" . MOVIE_DB . "} where UserID = "
-    .":user", array(':user' => user_id) );
-
+  // Get all the users rating from the database
+  $query = db_select(MOVIE_DB, 'ratings');
+  $query->join(
+    'field_data_field_movie_id',
+    'movie_id',
+    'ratings.movieid = movie_id.field_movie_id_value'
+  );
+  $query->join('node','node','node.nid = movie_id.entity_id');
+  $query->fields('node',array('title','nid'));
+  $query->fields('ratings',array('movieid','userid','rating'));
+  $query->condition('ratings.userid',user_id);
+  $results = $query->execute();
+  
   // Prepeare the tables headers and rows
   $header = array( t('User ID'), t('Movie'), t('Rating') );
   $rows = array();
@@ -126,7 +144,7 @@ function recsys_wb_myratings() {
     {
       $rows[] = array(
         $result->userid,
-        getMovieNameById($result->movieid),
+        l( $result->title, 'node/' . $result->nid),
         $result->rating,
       );
     }
