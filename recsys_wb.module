@@ -90,9 +90,9 @@ function recsys_wb_myratings() {
     foreach ($results AS $result)
     {
       $rows[] = array(
-        $result->UserID,
-        $result->BookID,
-        $result->Rating,
+        $result->userid,
+        $result->bookid,
+        $result->rating,
       );
     }
     
@@ -110,7 +110,7 @@ function recsys_wb_myratings() {
  // Get all the users rating from the database
   $results = db_query("Select * from {" . MOVIE_DB . "} where UserID = "
     .":user", array(':user' => user_id) );
-    
+
   // Prepeare the tables headers and rows
   $header = array( t('User ID'), t('Movie'), t('Rating') );
   $rows = array();
@@ -125,9 +125,9 @@ function recsys_wb_myratings() {
     foreach ($results AS $result)
     {
       $rows[] = array(
-        $result->UserID,
-        getMovieNameById($result->MovieID),
-        $result->Rating,
+        $result->userid,
+        getMovieNameById($result->movieid),
+        $result->rating,
       );
     }
     
