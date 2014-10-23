@@ -1,0 +1,57 @@
+<?php
+
+function recsys_wb_enable(){
+    $apps = array( 
+        'book_rec_u2u_cosine' => array(
+            'title' => t("U2U book recommender (cosine)"),
+            'params' => array(
+                'algorithm' => 'user2user',
+                'table' => "{Book_Rating_demo}",
+                'fields' => array('UserID','BookID','Rating'),
+                'similarity' => 'cosine',
+                'preference' => 'score'
+            ),
+        ),
+      'book_rec_i2i_cosine' => array(
+            'title' => t("I2I book recommender (cosine)"),
+            'params' => array(
+                'algorithm' => 'item2item',
+                'table' => "{Book_Rating_demo}",
+                'fields' => array('UserID','BookID','Rating'),
+                'similarity' => 'cosine',
+                'preference' => 'score'
+            ),
+        ),
+        'movie_rec_u2u_cosine' => array(
+            'title' => t("U2U movie recommender (cosine)"),
+            'params' => array(
+                'algorithm' => 'user2user',
+                'table' => "{Movie_Rating_demo}",
+                'fields' => array('UserID','MovieID','Rating'),
+                'similarity' => 'cosine',
+                'preference' => 'score'
+            ),
+        ),
+        'movie_rec_i2i_cosine' => array(
+            'title' => t("I2I movie recommender (cosine)"),
+            'params' => array(
+                'algorithm' => 'item2item',
+                'table' => "{Movie_Rating_demo}",
+                'fields' => array('UserID','MovieID','Rating'),
+                'similarity' => 'cosine',
+                'preference' => 'score'
+            ),
+        ),
+    );
+    recommender_app_register($apps);
+}
+
+function recsys_wb_disable(){
+  $apps = array(
+    'book_rec_u2u_cosine',
+    'book_rec_i2i_cosine',
+    'movie_rec_u2u_cosine',
+    'movie_rec_i2i_cosine'
+  );
+  recommender_app_unregister($apps);
+}
