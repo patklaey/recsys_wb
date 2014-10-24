@@ -305,12 +305,14 @@ function recsys_wb_block_view($delta = '')
  */
 function recsys_wb_books() {
   // Get all movies form the database
-  $query = db_select('field_data_field_dataset', 'dataset');
+  $query = db_select('field_data_field_dataset', 'dataset')
+    ->extend('PagerDefault')->limit(100);
   $query->join('node', 'node', 'dataset.entity_id = node.nid');
   $query->fields('dataset',array('entity_id'));
   $query->fields('node',array('title'));
   $query->orderBy('node.title');
   $query->condition('dataset.field_dataset_value',99);
+
   $results = $query->execute();
   
   $header = array( t('Book'));
@@ -324,7 +326,8 @@ function recsys_wb_books() {
   }
     
 
-  return theme('table', array('header' => $header, 'rows' => $rows) );
+  $output =  theme('table', array('header' => $header, 'rows' => $rows) );
+  return $output . theme('pager');
 }
 
 /**
@@ -332,7 +335,8 @@ function recsys_wb_books() {
  */
 function recsys_wb_movies() {
   // Get all movies form the database
-  $query = db_select('field_data_field_year', 'year');
+  $query = db_select('field_data_field_year', 'year')
+    ->extend('PagerDefault')->limit(100);
   $query->join('node', 'node', 'year.entity_id = node.nid');
   $query->fields('year',array('entity_id'));
   $query->fields('node',array('title'));
@@ -350,7 +354,7 @@ function recsys_wb_movies() {
         l($result->title,'node/' . $id)
       );
     }
-    
 
-  return theme('table', array('header' => $header, 'rows' => $rows) );
+  $output =  theme('table', array('header' => $header, 'rows' => $rows) );
+  return $output . theme('pager');
 }
