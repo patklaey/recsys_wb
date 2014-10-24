@@ -179,28 +179,45 @@ function recsys_wb_myrecommendations() {
     // Get the recommender_type_value session var
     $value = $_SESSION['recommender_type_value'];
     
+    // Get the recommender app name
+    $recommender_app_name = getRecommenderAppName($recommender_app);
+    
     // Check which recommender type if is
     if ( $_SESSION['recommender_type'] === 'top n' ) {
-      $results = getTopNRecommendations( user_id, $recommender_app, $value );
+      if ( preg_match("/^book/", $recommender_app_name) ) {
+        $results = getBookRecommendations('top_n', user_id, $recommender_app, $value );
+        $entity = 'Book';
+      } else {
+        // Get movie recommendations
+        $results = getMovieRecommendations('top_n', user_id, $recommender_app, $value );
+        $entity = 'Movie';
+      }
     } 
     else {
-      $results = getRecommendationsByScore( user_id, $recommender_app, $value );
+      if ( preg_match("/^book/", $recommender_app_name) ) {
+        $results = getBookRecommendations('score', user_id, $recommender_app, $value );
+        $entity = 'Book';
+      } else {
+        // Get movie recommendations
+        $results = getMovieRecommendations('score', user_id, $recommender_app, $value );
+        $entity = 'Movie';
+      }
     }    
   
-    if ( $results->rowCount() == 0 )
+    if ( sizeof($results) == 0 )
+    {
+      unset( $_SESSION['recommendations_form_submitted'] );
       return "You have no recommendations yet. Make sure you rate some movies "
              . " and/or books and come back later!";
+    }
              
     // Prepare the table headers and rows
-    $header = array( t('Movie'), t('Score') );
+    $header = array( $entity, t('Score') );
     $rows = array();
     
     // Loop through the db query results and add each of them to the rows array
     foreach ($results as $result ) {
-      $rows[] = array(
-        l( getMovieNameById($result->target_eid), 'node/' . $result->entity_id),
-        $result->score,
-      );
+      $rows[] = $result;
     }
   
     // Assign the renderable array to the return string 
@@ -296,16 +313,15 @@ function recsys_wb_books() {
   $query->condition('dataset.field_dataset_value',99);
   $results = $query->execute();
   
-  $header = array( t('Node ID'));
+  $header = array( t('Book'));
   $rows = array();
   
   foreach ($results AS $result)
-    {
-      $id = $result->entity_id;
-      $rows[] = array(
-        l($result->title,'node/' . $id)
-      );
-    }
+  {
+    $rows[] = array(
+      l($result->title,'node/' . $result->entity_id)
+    );
+  }
     
 
   return theme('table', array('header' => $header, 'rows' => $rows) );

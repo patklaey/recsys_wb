@@ -36,4 +36,18 @@ function getBookNameById( $id ){
   return $results->fetchField();
 }
 
+/**
+ * Get the recommender app name by the recommender app id
+ */
+function getRecommenderAppName( $recommender_app_id = 0 ) {
+  // Simply execute a simple database query to get the app name
+  $result = db_query("SELECT name from {recommender_app} where id = :id", 
+    array(":id" => $recommender_app_id) );
+    
+  if ( $result->rowCount() == 0 )
+    return NULL;
+  
+  return $result->fetchField();
+}
+
 ?>
