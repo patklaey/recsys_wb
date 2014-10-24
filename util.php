@@ -50,4 +50,18 @@ function getRecommenderAppName( $recommender_app_id = 0 ) {
   return $result->fetchField();
 }
 
+/**
+ * Get the recommender app title by the recommender app id
+ */
+function getRecommenderAppTitle( $recommender_app_id = 0 ) {
+  // Simply execute a simple database query to get the app name
+  $result = db_query("SELECT title from {recommender_app} where id = :id", 
+    array(":id" => $recommender_app_id) );
+    
+  if ( $result->rowCount() == 0 )
+    return NULL;
+  
+  return $result->fetchField();
+}
+
 ?>

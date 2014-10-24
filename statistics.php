@@ -4,6 +4,10 @@
  * Display statistics for the different recommender algorithms
  */
 function recsys_wb_display_stats() {
+  // Display the statistics form 
+  $return_string = drupal_render (
+    drupal_get_form('recsys_wb_show_statistics_form')
+  );
   // Check if the recommender app SESSION variable is set, if yes display its
   // stats, if not display the form to select the recommender app
   if( isset( $_SESSION['stat_recommender_app'] ) ) {
@@ -24,34 +28,39 @@ function recsys_wb_display_stats() {
     );
     $rows = array();
     
-    unset ($_SESSION['stat_recommender_app'] );
-    
     // Check if there are already some ratings
     if( $results->rowCount() == 0 ) {
-      return "<strong>No statistics available yet</strong></br>";
+      $return_string .= "<strong>No statistics available yet</strong></br>";
     }
     else {
       // Loop through the results of the DB query and fill in the tables rows
       foreach ($results AS $result)
       {
+        $date = date('r',$result->created);
+        preg_match("/\(Time spent: (.+)\)/", $result->message, $time_spent);
+        
         $rows[] = array(
-          $result->created,
+          $date,
           $result->description,
           $result->number1,
           $result->number2,
           $result->number3,
           $result->number4,
-          $result->message,
+          $time_spent[1],
         );
       }
-    
+      // Add a decent title
+      $return_string .= "<h2>Statistics for " 
+        . getRecommenderAppTitle($_SESSION['stat_recommender_app']) . "</h2>";
       // Add the table to the result string
-      return theme('table', array('header' => $header, 'rows' => $rows) );
+      $return_string .= theme(
+        'table', 
+        array('header' => $header, 'rows' => $rows) 
+      );
     }
+    unset ($_SESSION['stat_recommender_app'] );
   }
-  else{
-    return drupal_get_form('recsys_wb_show_statistics_form');
-  }
+  return $return_string;
 }
 
 ?>
