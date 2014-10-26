@@ -26,7 +26,9 @@ function getBookNameById( $id ){
   // nodes title
   $query = db_select('node','node');
   $query->join('field_data_field_book_id','id','node.nid = id.entity_id');
+  $query->join('field_data_field_dataset','data','node.nid = data.entity_id');
   $query->condition('id.field_book_id_value',$id);
+  $query->condition('data.field_dataset_value','99');
   $query->fields('node',array('title'));
   $results = $query->execute();
   
