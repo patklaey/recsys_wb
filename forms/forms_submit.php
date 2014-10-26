@@ -88,13 +88,28 @@ function recsys_wb_run_recommender_form_submit($form, &$form_state) {
     
   // Generate a UUID
   $uuid = gen_uuid();
+  
+  // Get the path to the script
+  $script_path = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
+    . drupal_get_path("module","recommender") . DIRECTORY_SEPARATOR . "run.sh";
+    
+  // Get the log directory
+  $log_dir = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
+    . drupal_get_path("module","recsys_wb") . DIRECTORY_SEPARATOR . "runs" 
+    . DIRECTORY_SEPARATOR;
     
   // And execute the system command which will run the recommendation algorithm
-  exec("nohup setsid /etc/drupal/7/sites/all/modules/recommender/run.sh > /etc/drupal/7/sites/all/modules/recsys_wb/runs/$uuid.log 2>&1 &");
+  exec("nohup setsid $script_path > $log_dir$uuid.log 2>&1 &");
   
   // Display the message that the recommendation is scheduled for execution
-  // $link = "<a target='_blank' href='http://localhost/php-tail-read-only/Log.php?uuid=$uuid'>here</a>";
-  $link = l('here', 'tail', array('query' => array('uuid' => $uuid) , 'attributes' => array('target' => '_blank') )); 
+  $link = l(
+    'here', 
+    'tail', 
+    array(
+      'query' => array('uuid' => $uuid) , 
+      'attributes' => array('target' => '_blank') 
+    )
+  ); 
   drupal_set_message("The recommender algorithm " . $recommender_app_name
     . " is running now. Click " . $link . " to follow the process.");
 }

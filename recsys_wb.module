@@ -387,9 +387,14 @@ function recsys_wb_tail() {
    * Initilize a new instance of PHPTail
    * @var PHPTail
    */
+  // Get the UUID of the log file
   $uuid = $_GET['uuid'];
-  $tail = new PHPTail("/etc/drupal/7/sites/all/modules/recsys_wb/runs/$uuid.log");
   
+  // Get the log directory
+  $log_dir = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
+    . drupal_get_path("module","recsys_wb") . DIRECTORY_SEPARATOR . "runs";
+  $tail = new PHPTail($log_dir . DIRECTORY_SEPARATOR . $uuid . ".log");
+
   /**
    * We're getting an AJAX call
    */
