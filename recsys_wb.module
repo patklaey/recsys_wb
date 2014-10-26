@@ -394,6 +394,7 @@ function recsys_wb_tail() {
   $log_dir = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
     . drupal_get_path("module","recsys_wb") . DIRECTORY_SEPARATOR . "runs";
   $tail = new PHPTail($log_dir . DIRECTORY_SEPARATOR . $uuid . ".log");
+  $tail = $tail->setOrigin(0);
 
   /**
    * We're getting an AJAX call
@@ -405,5 +406,5 @@ function recsys_wb_tail() {
   /**
    * Regular GET/POST call, print out the GUI
    */
-  return $tail->generateGUI();
+  $tail->generateGUI();
 }

@@ -20,6 +20,17 @@ class PHPTail {
 	 * @var string
 	 */
 	private $maxSizeToLoad;
+  /**
+   * URL to request data from. Can be set using setUrl.
+   * @var string
+   */
+  private $url = 'Log.php';
+  /**
+   * Holds the starting position for the tail, i.e. from where is it shown
+   * initially.
+   * @var int
+   */
+  private $origin = null;
 	/**
 	 * 
 	 * PHPTail constructor
@@ -32,6 +43,34 @@ class PHPTail {
 		$this->updateTime = $defaultUpdateTime;
 		$this->maxSizeToLoad = $maxSizeToLoad;
 	}
+  /**
+   * Set a URL to retrieve updates from.
+   * @param string $url
+   * @return PHPTail $this
+   */
+  public function setUrl( $url ) {
+    $this->url = $url;
+    return $this;
+  }
+  /**
+   * Return the starting point of the tail. By default this is the size when
+   * the page in initialised, but it can be set using setOrigin.
+   * @return int
+   */
+  public function getOrigin( ) {
+    return $this->origin === null ? filesize($this->log) : $this->origin;
+  }
+  /**
+   * Set a custom origin to start the tail at.
+   * @param int $origin If this is negative, it means an offset from the end of
+   * the file, otherwise it means from the beginning.
+   * @return PHPTail $this
+   */
+  public function setOrigin( $origin ) {
+    $this->origin = $origin >= 0 ?
+    $origin : max( 0,filesize($this->log)+$origin );
+    return $this;
+  }
 	/**
 	 * This function is in charge of retrieving the latest lines from the log file
 	 * @param string $lastFetchedSize The size of the file when we lasted tailed it.  
@@ -121,9 +160,9 @@ class PHPTail {
 				<script type="text/javascript">
 					/* <![CDATA[ */
 					//Last know size of the file
-					lastSize = <?php echo filesize($this->log); ?>;
+					lastSize = <?php echo $this->getOrigin(); ?>;
 					//Grep keyword
-					grep = "";
+					grep = "INFO";
 					//Should the Grep be inverted?
 					invert = 0;
 					//Last known document height
@@ -169,6 +208,8 @@ class PHPTail {
 							$( "#settings" ).dialog('open');
 							$("#grepKeyword").removeClass('ui-state-focus');
 						});
+						// Call update log for the first time to display initial data
+						updateLog();
 						//Set up an interval for updating the log. Change updateTime in the PHPTail contstructor to change this
 						setInterval ( "updateLog()", <?php echo $this->updateTime; ?> );
 						//Some window scroll event to keep the menu at the top
