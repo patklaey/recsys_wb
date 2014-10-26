@@ -389,11 +389,15 @@ function recsys_wb_tail() {
    */
   // Get the UUID of the log file
   $uuid = $_GET['uuid'];
-  
   // Get the log directory
   $log_dir = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
     . drupal_get_path("module","recsys_wb") . DIRECTORY_SEPARATOR . "runs";
-  $tail = new PHPTail($log_dir . DIRECTORY_SEPARATOR . $uuid . ".log");
+  // Get the according file
+  $file = $log_dir . DIRECTORY_SEPARATOR . $uuid . ".log";
+  // Check if the file exists, if not return some error message
+  if ( ! file_exists ( $file ) )
+    return "Invalid file: " . $file;
+  $tail = new PHPTail($file);
   $tail = $tail->setOrigin(0);
 
   /**
