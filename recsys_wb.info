@@ -1,6 +1,8 @@
 name = "Recommender System Workbench"
 description = "This module provides necessary functionalities for the recommender system workbench"
 core = "7.x"
-version = "7.x-0.1"
+version = "7.x-0.2"
+
+dependencies[] = recommender
 
 package = Recommendation
