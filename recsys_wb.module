@@ -105,6 +105,8 @@ function recsys_wb_myratings() {
   // Check if there are already some ratings
   if( $results->rowCount() == 0 ) {
     $return_string .= "<strong>You haven't rated any books yet</strong></br>";
+    // Add the link to the rating page
+    $return_string .= "<p>You can rate books " . l('here','books') . "</p>";
   }
   else {
     
@@ -121,10 +123,9 @@ function recsys_wb_myratings() {
     // Add the table to the result string
     $return_string .= theme('table', 
                             array('header' => $header, 'rows' => $rows) );
+    // Add a link to run recommendation algorithms
+    $return_string .= l('Calculate recommendations','runrecommender');
   }
-  
-  // Add the link to the rating page
-  $return_string .= "<p>You can rate books " . l('here','/books') . "</p>";
 
   // Add the Movie section
   $return_string .= "<h2>Movies</h2>";
@@ -149,6 +150,8 @@ function recsys_wb_myratings() {
   // Check if there are already some ratings
   if( $results->rowCount() == 0 ) {
     $return_string .= "<strong>You haven't rated any movies yet</strong></br>";
+    // Add the link to the rating page
+    $return_string .= "<p>You can rate movies " . l('here','movies') . "</p>";
   }
   else {
     
@@ -165,10 +168,9 @@ function recsys_wb_myratings() {
     // Add the table to the result string
     $return_string .= theme('table', 
                             array('header' => $header, 'rows' => $rows) );
+    // Add a link to run recommendation algorithms
+    $return_string .= l('Calculate recommendations','runrecommender');
   }
-  
-  // Add the link to the rating page
-  $return_string .= "<p>You can rate movies " . l('here','/movies') . "</p>";
   
   // Return the HTML string
   return $return_string;

@@ -111,6 +111,6 @@ function recsys_wb_run_recommender_form_submit($form, &$form_state) {
     )
   ); 
   drupal_set_message("The recommender algorithm " . $recommender_app_name
-    . " is running now. Click " . $link . " to follow the process.");
+    . " is running now. Click " . $link . " to see the progress.");
 }
 ?>

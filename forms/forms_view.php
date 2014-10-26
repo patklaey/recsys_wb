@@ -91,8 +91,8 @@ function recsys_wb_get_recommendations_form() {
     '#type' => 'textfield',
     '#title' => t('Value:'),
     '#size' => 5,
-    '#description' => t('Enter the value "N" for "Top N" or the score value for'
-      .' "Score"'),
+    '#description' => t('Enter the value N for "Top N" or the minimal score '
+      .'value for "Score"'),
     '#required' => TRUE,
   );
   $form['submit'] = array(
