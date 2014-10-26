@@ -74,4 +74,28 @@ function recsys_wb_show_statistics_form_submit($form, &$form_state) {
   $_SESSION['stat_recommender_app'] = $form_state['values']['stats_recommender_app'];
 }
 
+/**
+ * Action to take when recsys_wb_run_recommender_form is submitted
+ */
+function recsys_wb_run_recommender_form_submit($form, &$form_state) {
+  // Get the recommender app name form the id
+  $recommender_app_name = getRecommenderAppName(
+    $form_state['values']['run_recommender_app']
+  );
+  
+  // Simply schedule the recommendation algorithm for execution
+  recommender_create_command($recommender_app_name);
+    
+  // Generate a UUID
+  $uuid = gen_uuid();
+    
+  // And execute the system command which will run the recommendation algorithm
+  exec("nohup setsid /etc/drupal/7/sites/all/modules/recommender/run.sh > /etc/drupal/7/sites/all/modules/recsys_wb/runs/$uuid.log 2>&1 &");
+  
+  // Display the message that the recommendation is scheduled for execution
+  // $link = "<a target='_blank' href='http://localhost/php-tail-read-only/Log.php?uuid=$uuid'>here</a>";
+  $link = l('here', 'tail', array('query' => array('uuid' => $uuid) , 'attributes' => array('target' => '_blank') )); 
+  drupal_set_message("The recommender algorithm " . $recommender_app_name
+    . " is running now. Click " . $link . " to follow the process.");
+}
 ?>

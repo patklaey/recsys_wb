@@ -22,6 +22,7 @@ require_once 'recommendations.php';
 require_once 'forms/forms_view.php';
 require_once 'forms/forms_submit.php';
 require_once 'statistics.php';
+require_once 'php-tail/PHPTail.php';
 
 /**
  * Implements hook_menu()
@@ -60,6 +61,18 @@ function recsys_wb_menu() {
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_display_stats',
+    'access arguments' => array('access content'),
+  );
+  $items['runrecommender'] = array(
+    'title' => 'Run recommender',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'recsys_wb_run_recommender',
+    'access arguments' => array('access content'),  
+  );
+  $items['tail'] = array(
+    'title' => 'Tail',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'recsys_wb_tail',
     'access arguments' => array('access content'),
   );
   return $items;
@@ -357,4 +370,35 @@ function recsys_wb_movies() {
 
   $output =  theme('table', array('header' => $header, 'rows' => $rows) );
   return $output . theme('pager');
+}
+
+/**
+ * Custom page to run recommenders
+ */
+function recsys_wb_run_recommender() {
+  return drupal_get_form('recsys_wb_run_recommender_form');
+}
+
+/** 
+ * Currently just a test
+ */
+function recsys_wb_tail() {
+  /**
+   * Initilize a new instance of PHPTail
+   * @var PHPTail
+   */
+  $uuid = $_GET['uuid'];
+  $tail = new PHPTail("/etc/drupal/7/sites/all/modules/recsys_wb/runs/$uuid.log");
+  
+  /**
+   * We're getting an AJAX call
+   */
+  if(isset($_GET['ajax']))  {
+    echo $tail->getNewLines($_GET['lastsize'], $_GET['grep'], $_GET['invert']);
+    die();
+  }
+  /**
+   * Regular GET/POST call, print out the GUI
+   */
+  return $tail->generateGUI();
 }

@@ -67,13 +67,7 @@ function recsys_wb_movie_rating_form()
  */
 function recsys_wb_get_recommendations_form() {
   // Get all different recommender algorithms currently registered
-  $results = db_query("Select id,title from {recommender_app}");
-  $algorithms = array();
-  
-  foreach ( $results AS $result )
-  {
-    $algorithms[$result->id] = $result->title;
-  }
+  $algorithms = getRecommenderAppsForForm();
   
   // Create a form which displays a all possible recommender algorithms
   $form['recommender_app'] = array(
@@ -114,21 +108,38 @@ function recsys_wb_get_recommendations_form() {
  */
 function recsys_wb_show_statistics_form() {
   // Get all different recommender algorithms currently registered
-  $results = db_query("Select id,title from {recommender_app}");
-  $algorithms = array();
-  
-  foreach ( $results AS $result )
-  {
-    $algorithms[$result->id] = $result->title;
-  }
+  $algorithms = getRecommenderAppsForForm();
   
   // Create a simple form which only lets the user select the recommender 
   // algorithm
-    $form['stats_recommender_app'] = array(
+  $form['stats_recommender_app'] = array(
     '#type' => 'select',
     '#title' => t('Recommender algorithm:'),
     '#options' => $algorithms,
     '#description' => t('Select the recommender algorithm'),
+    '#required' => TRUE,
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );  
+  return $form;  
+}
+
+/**
+ * Display all recommender apps to be able to run it
+ */
+function recsys_wb_run_recommender_form() {
+  // Get all different recommender algorithms currently registered
+  $algorithms = getRecommenderAppsForForm();
+  
+  // Create a simple form which only lets the user select the recommender 
+  // algorithm
+  $form['run_recommender_app'] = array(
+    '#type' => 'select',
+    '#title' => t('Recommender algorithm:'),
+    '#options' => $algorithms,
+    '#description' => t('Select the recommender algorithm to run'),
     '#required' => TRUE,
   );
   $form['submit'] = array(
