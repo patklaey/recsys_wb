@@ -92,10 +92,12 @@ function recsys_wb_myratings() {
     'book_id',
     'ratings.bookid = book_id.field_book_id_value'
   );
+  $query->join('field_data_field_dataset','dataset','dataset.entity_id = book_id.entity_id');
   $query->join('node','node','node.nid = book_id.entity_id');
   $query->fields('node',array('title','nid'));
   $query->fields('ratings',array('bookid','userid','rating'));
   $query->condition('ratings.userid',user_id);
+  $query->condition('dataset.field_dataset_value','99');
   $results = $query->execute();
   
   // Prepeare the tables headers and rows
