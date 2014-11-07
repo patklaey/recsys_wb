@@ -39,6 +39,20 @@ function getBookNameById( $id ){
 }
 
 /**
+ * Create a link to the book or movie by the given name
+ */
+function createEntityLinkByName( $name ) {
+  // Get the books node id by its name and return the link
+  $result = db_query("SELECT nid from {node} where title = :title", 
+    array(":title" => $name) );
+
+  if ( $result->rowCount() == 0 )
+    return NULL;
+  
+  return l($name, "node/" . $result->fetchField() );    
+    
+}
+/**
  * Get the recommender app name by the recommender app id
  */
 function getRecommenderAppName( $recommender_app_id = 0 ) {

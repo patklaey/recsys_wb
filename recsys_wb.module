@@ -234,6 +234,9 @@ function recsys_wb_myrecommendations() {
     
     // Loop through the db query results and add each of them to the rows array
     foreach ($results as $result ) {
+      $name = $result[0];
+      $link= createEntityLinkByName($name);
+      $result[0] = $link;
       $rows[] = $result;
     }
   
