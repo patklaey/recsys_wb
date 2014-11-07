@@ -113,4 +113,11 @@ function recsys_wb_run_recommender_form_submit($form, &$form_state) {
   drupal_set_message("The recommender algorithm " . $recommender_app_name
     . " is running now. Click " . $link . " to see the progress.");
 }
+
+function recsys_wb_compare_form_submit($form, &$form_state) {
+  // Simply set some SESSION vars
+  $_SESSION['recommendations_form_submitted'] = TRUE;
+  $_SESSION['recommendation_compare_form_submitted'] = TRUE;
+  $_SESSION['recommendation_compare_app_id'] = $form_state['values']['compare_recommender_app'];
+}
 ?>

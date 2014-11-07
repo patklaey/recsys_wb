@@ -148,4 +148,25 @@ function recsys_wb_run_recommender_form() {
   );  
   return $form;  
 }
+
+function recsys_wb_compare_form() {
+  // Get all different recommender algorithms currently registered
+  $algorithms = getRecommenderAppsForForm();  
+  
+  // Create a simple form which only lets the user select the recommender 
+  // algorithm
+  $form['compare_recommender_app'] = array(
+    '#type' => 'select',
+    '#title' => t('Compare to:'),
+    '#options' => $algorithms,
+    '#description' => t('Select the recommender algorithm'),
+    '#required' => TRUE,
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );  
+  return $form;  
+  
+}
 ?>

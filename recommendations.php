@@ -54,7 +54,7 @@ function getTopNRecommendations( $user_id = 0, $app_id = 0, $n = 10 ) {
  * @param user_id int
  * @param recommender_app_id int
  * @param n int
- * @return $recoomendations
+ * @return $recomendations
  * Get book recommendations for a given type an a given app id and user
  */
 function getBookRecommendations($type = 'top_n', $user_id = 0, $app_id = 0, $n = 0) {
