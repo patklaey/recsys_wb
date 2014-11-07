@@ -1,7 +1,8 @@
 <?php
 
-function recsys_wb_enable(){
-    $apps = array( 
+function recsys_wb_enable() {
+    $apps = array(
+        // Cosine similarity
         'book_rec_u2u_cosine' => array(
             'title' => t("U2U book recommender (cosine)"),
             'params' => array(
@@ -42,6 +43,88 @@ function recsys_wb_enable(){
                 'preference' => 'score'
             ),
         ),
+      // Euclidean similarity
+      'book_rec_u2u_euclidean' => array(
+            'title' => t("U2U book recommender (euclidean)"),
+            'params' => array(
+                'algorithm' => 'user2user',
+                'table' => "{Book_Rating_demo}",
+                'fields' => array('UserID','BookID','Rating'),
+                'similarity' => 'euclidean',
+                'preference' => 'score'
+            ),
+        ),
+      'book_rec_i2i_euclidean' => array(
+            'title' => t("I2I book recommender (euclidean)"),
+            'params' => array(
+                'algorithm' => 'item2item',
+                'table' => "{Book_Rating_demo}",
+                'fields' => array('UserID','BookID','Rating'),
+                'similarity' => 'euclidean',
+                'preference' => 'score'
+            ),
+        ),
+        'movie_rec_u2u_euclidean' => array(
+            'title' => t("U2U movie recommender (euclidean)"),
+            'params' => array(
+                'algorithm' => 'user2user',
+                'table' => "{Movie_Rating_demo}",
+                'fields' => array('UserID','MovieID','Rating'),
+                'similarity' => 'euclidean',
+                'preference' => 'score'
+            ),
+        ),
+        'movie_rec_i2i_euclidean' => array(
+            'title' => t("I2I movie recommender (euclidean)"),
+            'params' => array(
+                'algorithm' => 'item2item',
+                'table' => "{Movie_Rating_demo}",
+                'fields' => array('UserID','MovieID','Rating'),
+                'similarity' => 'euclidean',
+                'preference' => 'score'
+            ),
+        ),
+      // Pearson similarity
+      'book_rec_u2u_pearson' => array(
+            'title' => t("U2U book recommender (pearson)"),
+            'params' => array(
+                'algorithm' => 'user2user',
+                'table' => "{Book_Rating_demo}",
+                'fields' => array('UserID','BookID','Rating'),
+                'similarity' => 'pearson',
+                'preference' => 'score'
+            ),
+        ),
+      'book_rec_i2i_pearson' => array(
+            'title' => t("I2I book recommender (pearson)"),
+            'params' => array(
+                'algorithm' => 'item2item',
+                'table' => "{Book_Rating_demo}",
+                'fields' => array('UserID','BookID','Rating'),
+                'similarity' => 'pearson',
+                'preference' => 'score'
+            ),
+        ),
+        'movie_rec_u2u_pearson' => array(
+            'title' => t("U2U movie recommender (pearson)"),
+            'params' => array(
+                'algorithm' => 'user2user',
+                'table' => "{Movie_Rating_demo}",
+                'fields' => array('UserID','MovieID','Rating'),
+                'similarity' => 'pearson',
+                'preference' => 'score'
+            ),
+        ),
+        'movie_rec_i2i_pearson' => array(
+            'title' => t("I2I movie recommender (pearson)"),
+            'params' => array(
+                'algorithm' => 'item2item',
+                'table' => "{Movie_Rating_demo}",
+                'fields' => array('UserID','MovieID','Rating'),
+                'similarity' => 'pearson',
+                'preference' => 'score'
+            ),
+        ),    
     );
     recommender_app_register($apps);
 }
@@ -51,7 +134,15 @@ function recsys_wb_disable(){
     'book_rec_u2u_cosine',
     'book_rec_i2i_cosine',
     'movie_rec_u2u_cosine',
-    'movie_rec_i2i_cosine'
+    'movie_rec_i2i_cosine',
+    'book_rec_u2u_euclidean',
+    'book_rec_i2i_euclidean',
+    'movie_rec_u2u_euclidean',
+    'movie_rec_i2i_euclidean',
+    'book_rec_u2u_pearson',
+    'book_rec_i2i_pearson',
+    'movie_rec_u2u_pearson',
+    'movie_rec_i2i_pearson',
   );
   recommender_app_unregister($apps);
 }
