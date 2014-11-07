@@ -244,7 +244,8 @@ function recsys_wb_myrecommendations() {
 
   // For esthetic reasons unset the form submitted session var, so if a user
   // comes back to "My Recommendations" the page is empty again
-  unset( $_SESSION['recommendations_form_submitted'] );
+  if ( isset($_SESSION['recommendations_form_submitted']) )
+    unset( $_SESSION['recommendations_form_submitted'] );
 
   return $return_string;
 }
