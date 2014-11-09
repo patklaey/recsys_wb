@@ -147,8 +147,8 @@ function showRecommendations() {
     $recommender_app_name = getRecommenderAppName($recommender_app);
     
     // Check if the user wants to compare two algorithms
-    if ( isset($_SESSION['recommendation_compare_form_submitted']) 
-&& $_SESSION['recommendation_compare_form_submitted'] === TRUE) {
+    if ( isset($_SESSION['recsys_wb_compare_form_submitted']) 
+&& $_SESSION['recsys_wb_compare_form_submitted'] === TRUE) {
       $compare = TRUE;
     }
     
@@ -163,7 +163,7 @@ function showRecommendations() {
       
       // Check if compare is set
       if ( $compare ) {
-        $compare_app = $_SESSION['recommendation_compare_app_id'];
+        $compare_app = $_SESSION['recsys_wb_compare_app_id'];
         $compare_results = getBookRecommendations($type, user_id, $compare_app, $value );
       }
     } 
@@ -174,7 +174,7 @@ function showRecommendations() {
       
       // Check if compare is set
       if ( $compare ) {
-        $compare_app = $_SESSION['recommendation_compare_app_id'];
+        $compare_app = $_SESSION['recsys_wb_compare_app_id'];
         $compare_results = getMovieRecommendations($type, user_id, $compare_app, $value );
       }
     } 
@@ -275,7 +275,7 @@ function showRecommendations() {
     
     // Add the reset form
     $return_string .= "<br/>" . drupal_render( 
-      drupal_get_form('recsys_wb_reset_recommendations_form') 
+      drupal_get_form('recsys_wb_reset_form') 
     );
   } 
   else{

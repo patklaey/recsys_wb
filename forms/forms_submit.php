@@ -119,20 +119,22 @@ function recsys_wb_run_recommender_form_submit($form, &$form_state) {
  */
 function recsys_wb_compare_form_submit($form, &$form_state) {
   // Simply set some SESSION vars
-  $_SESSION['recommendations_form_submitted'] = TRUE;
-  $_SESSION['recommendation_compare_form_submitted'] = TRUE;
-  $_SESSION['recommendation_compare_app_id'] = $form_state['values']['compare_recommender_app'];
+  $_SESSION['recsys_wb_compare_form_submitted'] = TRUE;
+  $_SESSION['recsys_wb_compare_app_id'] = $form_state['values']['compare_recommender_app'];
 }
 
 /**
  * Action to take when recsys_wb_reset_recommendations_form is submitted
  */
-function recsys_wb_reset_recommendations_form_submit($form, &$form_state) {
+function recsys_wb_reset_form_submit($form, &$form_state) {
   // Simply unset some SESSION vars
   if ( isset( $_SESSION['recommendations_form_submitted'] ) )
     unset( $_SESSION['recommendations_form_submitted'] );
   
-  if ( isset( $_SESSION['recommendation_compare_form_submitted'] ) )
-    unset( $_SESSION['recommendation_compare_form_submitted'] );
+  if ( isset( $_SESSION['recsys_wb_compare_form_submitted'] ) )
+    unset( $_SESSION['recsys_wb_compare_form_submitted'] );
+  
+  if ( isset( $_SESSION['stat_recommender_app'] ) )
+    unset( $_SESSION['stat_recommender_app'] );
 }
 ?>

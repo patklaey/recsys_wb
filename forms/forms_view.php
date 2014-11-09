@@ -176,7 +176,7 @@ function recsys_wb_compare_form() {
 /**
  * Display a single button to reset the recommendation properties
  */
-function recsys_wb_reset_recommendations_form() {
+function recsys_wb_reset_form() {
   // A simple reset submit button
   $form['submit'] = array(
     '#type' => 'submit',

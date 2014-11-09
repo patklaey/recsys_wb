@@ -4,10 +4,7 @@
  * Display statistics for the different recommender algorithms
  */
 function recsys_wb_display_stats() {
-  // Display the statistics form 
-  $return_string = drupal_render (
-    drupal_get_form('recsys_wb_show_statistics_form')
-  );
+  $return_string = "";
   // Check if the recommender app SESSION variable is set, if yes display its
   // stats, if not display the form to select the recommender app
   if( isset( $_SESSION['stat_recommender_app'] ) ) {
@@ -50,16 +47,32 @@ function recsys_wb_display_stats() {
         );
       }
       // Add a decent title
-      $return_string .= "<h2>Statistics for " 
-        . getRecommenderAppTitle($_SESSION['stat_recommender_app']) . "</h2>";
+      $return_string .= "<h4>Statistics for " 
+        . getRecommenderAppTitle($_SESSION['stat_recommender_app']) . "</h4>";
       // Add the table to the result string
       $return_string .= theme(
         'table', 
         array('header' => $header, 'rows' => $rows) 
       );
+      // Add the compare_to form
+      $return_string .= drupal_render(
+        drupal_get_form('recsys_wb_compare_form')
+      );
+      
+      $return_string .= "<br/><strong>OR</strong><br/>";
+      // Add the reset form
+      $return_string .= "<br/>" . drupal_render( 
+        drupal_get_form('recsys_wb_reset_form') 
+      );
     }
-    unset ($_SESSION['stat_recommender_app'] );
   }
+  else{
+    // Display the statistics form 
+    $return_string = drupal_render (
+      drupal_get_form('recsys_wb_show_statistics_form')
+    );
+  }
+
   return $return_string;
 }
 
