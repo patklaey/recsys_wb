@@ -1,6 +1,8 @@
 <?php
 
 require_once 'util.php';
+require_once 'forms/forms_view.php';
+require_once 'forms/forms_submit.php';
 
 /**
  * @param user_id int
@@ -115,4 +117,143 @@ function getMovieRecommendations($type = 'top_n', $user_id = 0, $app_id = 0, $n 
   return $returns;
 }
 
+/**
+ * Show recommendations with forms etc
+ */
+function showRecommendations() {
+  // Define the return string variable
+  $return_string = "";
+  
+  // Check if the session variable form submitted is set. If yes display the 
+  // results, otherwise display the form
+  if ( isset( $_SESSION['recommendations_form_submitted'] )
+&& $_SESSION['recommendations_form_submitted'] === TRUE ) {
+      
+    // Initialize some variables;
+    $compare = FALSE;
+    $compare_results = array();
+    $results = array();
+    $header = array();
+    $rows = array();
+    
+    // Get the recommender app session var
+    $recommender_app = $_SESSION['recommender_app'];
+    
+    // Get the recommender_type_value session var
+    $value = $_SESSION['recommender_type_value'];
+    
+    // Get the recommender app name
+    $recommender_app_name = getRecommenderAppName($recommender_app);
+    
+    // Check if the user wants to compare two algorithms
+    if ( isset($_SESSION['recommendation_compare_form_submitted']) 
+&& $_SESSION['recommendation_compare_form_submitted'] === TRUE) {
+      $compare = TRUE;
+    }
+    
+    // Check which recommender type if is
+    $type = 'score';
+    if ( $_SESSION['recommender_type'] === 'top n' )
+      $type = 'top_n';
+    
+    if ( preg_match("/^book/", $recommender_app_name) ) {
+      $results = getBookRecommendations($type, user_id, $recommender_app, $value );
+      $entity = 'Book';
+      
+      // Check if compare is set
+      if ( $compare ) {
+        $compare_app = $_SESSION['recommendation_compare_app_id'];
+        $compare_results = getBookRecommendations($type, user_id, $compare_app, $value );
+      }
+    } 
+    else {
+      // Get movie recommendations
+      $results = getMovieRecommendations($type, user_id, $recommender_app, $value );
+      $entity = 'Movie';
+      
+      // Check if compare is set
+      if ( $compare ) {
+        $compare_app = $_SESSION['recommendation_compare_app_id'];
+        $compare_results = getMovieRecommendations($type, user_id, $compare_app, $value );
+      }
+    } 
+  
+    if ( sizeof($results) == 0 )
+    {
+      unset( $_SESSION['recommendations_form_submitted'] );
+      return "You have no recommendations yet. Make sure you rate some movies "
+             . " and/or books and come back later!";
+    }
+
+    if ( $compare ) {
+      // Prepare the table headers and rows
+      $header = array(
+        $recommender_app_name,
+        t('Score'),
+        getRecommenderAppName($compare_app),
+        t('Score'),
+      );
+      $rows = array();
+      
+      if ( sizeof($compare_results) > sizeof($results) )
+      {
+        $max = sizeof($compare_results);
+      }
+      else {
+        $max = sizeof($results);
+      }
+      
+      // Loop through all results and fill up the list
+      for ($i=0; $i < $max; $i++) { 
+        $orig = array("-","-");
+        $comp = array("-","-");
+        
+        if ( array_key_exists($i, $results) ) {
+          $orig = $results[$i];
+          $orig[0] = createEntityLinkByName($orig[0]);
+        }
+        
+        if ( array_key_exists($i, $compare_results) ) {
+          $comp = $compare_results[$i];
+          $comp[0] = createEntityLinkByName($comp[0]);
+        }
+        
+        $rows[] = array($orig[0],$orig[1],$comp[0],$comp[1]);
+      }
+    }
+    else {
+      // Prepare the table headers and rows
+      $header = array( $entity, t('Score') );
+      $rows = array();
+      
+      // Loop through the db query results and add each of them to the rows array
+      foreach ($results as $result ) {
+        $result[0] = createEntityLinkByName($result[0]);
+        $rows[] = $result;
+      }
+    }
+  
+    // Assign the renderable array to the return string 
+    $return_string .= "<br/>";
+    $return_string .= theme('table', array( 'header' => $header, 'rows' => $rows ) );
+    
+    // Add the compare to form
+    if ( isset($_SESSION['recommendation_compare_form_submitted']) 
+&& $_SESSION['recommendation_compare_form_submitted'] === TRUE ) {
+      $_SESSION['recommendation_compare_form_submitted'] = FALSE;
+      $_SESSION['recommendations_form_submitted'] = FALSE;
+    } 
+    else {
+      $return_string .= drupal_render( drupal_get_form('recsys_wb_compare_form')); 
+    }
+    
+  } 
+  else{
+    $return_string .= drupal_render( 
+      drupal_get_form('recsys_wb_get_recommendations_form')
+    );
+  }
+
+  return $return_string;
+}
 ?>
