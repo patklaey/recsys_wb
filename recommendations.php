@@ -132,6 +132,7 @@ function showRecommendations() {
     // Initialize some variables;
     $compare = FALSE;
     $compare_results = array();
+    $compare_app = "";
     $results = array();
     $header = array();
     $rows = array();
@@ -233,20 +234,49 @@ function showRecommendations() {
       }
     }
   
+    // Add some description
+    if ( $type === 'score' ) {
+      if ( ! $compare )
+      {
+        $return_string .= "<h4>Recommendations based on prediction score >= ";
+        $return_string .= $value . " and algorithm ";
+        $return_string .=  getRecommenderAppTitle($recommender_app) . "</h4>";
+      }
+      else {
+        $return_string .= "<h4>Recommendations based on prediction score >= ";
+        $return_string .= $value . "<br/>";
+        $return_string .= getRecommenderAppTitle($recommender_app) . " vs. ";
+        $return_string .= getRecommenderAppTitle($compare_app) . "</h4>";
+      }
+    }
+    else {
+      if ( ! $compare )
+      {
+        $return_string .= "<h4>Top " . $value . " recommendations based on ";
+        $return_string .= getRecommenderAppTitle($recommender_app) . "</h4>";
+      }
+      else {
+        $return_string .= "<h4>Top " . $value . " recommendations<br/>";
+        $return_string .= getRecommenderAppTitle($recommender_app) . " vs. ";
+        $return_string .= getRecommenderAppTitle($compare_app) . "</h4>";
+      }
+    }  
+  
     // Assign the renderable array to the return string 
-    $return_string .= "<br/>";
     $return_string .= theme('table', array( 'header' => $header, 'rows' => $rows ) );
     
-    // Add the compare to form
-    if ( isset($_SESSION['recommendation_compare_form_submitted']) 
-&& $_SESSION['recommendation_compare_form_submitted'] === TRUE ) {
-      $_SESSION['recommendation_compare_form_submitted'] = FALSE;
-      $_SESSION['recommendations_form_submitted'] = FALSE;
-    } 
-    else {
-      $return_string .= drupal_render( drupal_get_form('recsys_wb_compare_form')); 
+    // Add the compare_to form
+    if ( ! $compare ) {
+      $return_string .= drupal_render( 
+        drupal_get_form('recsys_wb_compare_form') 
+      );
+      $return_string .= "<br/><strong>OR</strong><br/>";
     }
     
+    // Add the reset form
+    $return_string .= "<br/>" . drupal_render( 
+      drupal_get_form('recsys_wb_reset_recommendations_form') 
+    );
   } 
   else{
     $return_string .= drupal_render( 

@@ -91,8 +91,8 @@ function recsys_wb_get_recommendations_form() {
     '#type' => 'textfield',
     '#title' => t('Value:'),
     '#size' => 5,
-    '#description' => t('Enter the value N for "Top N" or the minimal score '
-      .'value for "Score"'),
+    '#description' => t('Enter the value N for "Top N" or the minimal '
+      .'prediction score value for "Score"'),
     '#required' => TRUE,
   );
   $form['submit'] = array(
@@ -149,6 +149,10 @@ function recsys_wb_run_recommender_form() {
   return $form;  
 }
 
+/**
+ * Display a form which lets the user select another recommendation algorithm
+ * which will be then used to compare it to the previously selected one
+ */
 function recsys_wb_compare_form() {
   // Get all different recommender algorithms currently registered
   $algorithms = getRecommenderAppsForForm();  
@@ -166,7 +170,18 @@ function recsys_wb_compare_form() {
     '#type' => 'submit',
     '#value' => t('Submit'),
   );  
-  return $form;  
-  
+  return $form;   
+}
+
+/**
+ * Display a single button to reset the recommendation properties
+ */
+function recsys_wb_reset_recommendations_form() {
+  // A simple reset submit button
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Reset'),
+  );  
+  return $form; 
 }
 ?>
