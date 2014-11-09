@@ -188,9 +188,9 @@ function showRecommendations() {
     if ( $compare ) {
       // Prepare the table headers and rows
       $header = array(
-        $recommender_app_name,
+        getRecommenderAppTitle($recommender_app),
         t('Score'),
-        getRecommenderAppName($compare_app),
+        getRecommenderAppTitle($compare_app),
         t('Score'),
       );
       $rows = array();
