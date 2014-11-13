@@ -14,7 +14,9 @@ function recsys_wb_display_stats() {
 && $_SESSION['recsys_wb_compare_form_submitted'] === TRUE) {
       $compare = TRUE;
     } 
-
+    
+    // The cell style formatting
+    $style = 'text-align:center;vertical-align:middle';
     // Prepeare the tables headers and rows
     $header = array( 
       t('Run'), 
@@ -46,13 +48,13 @@ function recsys_wb_display_stats() {
           preg_match("/\(Time spent: (.+)\)/", $result->message, $time_spent);
           
           $rows[] = array(
-            $date,
-            $result->description,
-            $result->number1,
-            $result->number2,
-            $result->number3,
-            $result->number4,
-            $time_spent[1],
+            'date' => array('data' => $date,'style' => $style ),
+            'description' => array('data' => $result->description,'style' => $style ),
+            'users' => array('data' => $result->number1,'style' => $style ),
+            'items' => array('data' => $result->number2, 'style' => $style ),
+            'similarity' => array('data' => $result->number3,'style' => $style ),
+            'predictions' => array('data' => $result->number4,'style' => $style ),
+            'time' => array('data' => $time_spent[1],'style' => $style )
           );
         }
       }
@@ -73,24 +75,24 @@ function recsys_wb_display_stats() {
       $date = date('r',$result['created']);
       preg_match("/\(Time spent: (.+)\)/", $result['message'], $time_spent);
       $rows[] = array(
-        $date,
-        $result['description'],
-        $result['number1'],
-        $result['number2'],
-        $result['number3'],
-        $result['number4'],
-        $time_spent[1],
+        'date' => array('data' => $date,'style' => $style ),
+        'description' => array('data' => $result['description'],'style' => $style ),
+        'users' => array('data' => $result['number1'],'style' => $style ),
+        'items' => array('data' => $result['number2'], 'style' => $style ),
+        'similarity' => array('data' => $result['number3'],'style' => $style ),
+        'predictions' => array('data' => $result['number4'],'style' => $style ),
+        'time' => array('data' => $time_spent[1],'style' => $style )
       );
       $date = date('r',$compare_result['created']);
       preg_match("/\(Time spent: (.+)\)/", $compare_result['message'], $time_spent);
       $rows[] = array(
-        $date,
-        $compare_result['description'],
-        $compare_result['number1'],
-        $compare_result['number2'],
-        $compare_result['number3'],
-        $compare_result['number4'],
-        $time_spent[1],
+        'date' => array('data' => $date,'style' => $style ),
+        'description' => array('data' => $compare_result['description'],'style' => $style ),
+        'users' => array('data' => $compare_result['number1'],'style' => $style ),
+        'items' => array('data' => $compare_result['number2'], 'style' => $style ),
+        'similarity' => array('data' => $compare_result['number3'],'style' => $style ),
+        'predictions' => array('data' => $compare_result['number4'],'style' => $style ),
+        'time' => array('data' => $time_spent[1],'style' => $style )
       );
     }
     
@@ -114,9 +116,10 @@ function recsys_wb_display_stats() {
     }
       
     // Add the table to the result string
+    $attributes = array('style' => 'text-align:center;vertical-align:bottom');
     $return_string .= theme(
-      'table', 
-      array('header' => $header, 'rows' => $rows) 
+      'table',
+      array('header' => $header, 'rows' => $rows, 'attributes' => $attributes)
     );
     
     if ( ! $compare )
