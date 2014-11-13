@@ -93,6 +93,9 @@ function getRecommenderAppsForForm() {
   return $algorithms;
 }
 
+/**
+ * Generate a universal unique identifier
+ */
 function gen_uuid() {
     return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
         // 32 bits for "time_low"
@@ -115,4 +118,18 @@ function gen_uuid() {
     );
 }
 
+/**
+ * Format a given double number nicely
+ */
+function format_double( $number ) {
+  return number_format($number,3,".","`");
+}
+
+/**
+ * Format a given integer number nicely
+ */
+function format_integer( $number ) {
+  return number_format($number,0,".","`");
+}
+ 
 ?>

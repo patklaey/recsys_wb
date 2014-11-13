@@ -46,15 +46,41 @@ function recsys_wb_display_stats() {
         {
           $date = date('r',$result->created);
           preg_match("/\(Time spent: (.+)\)/", $result->message, $time_spent);
+          $description = preg_replace(
+            "/Compute recommendations: /", 
+            "", 
+            $result->description
+          );
           
           $rows[] = array(
-            'date' => array('data' => $date,'style' => $style ),
-            'description' => array('data' => $result->description,'style' => $style ),
-            'users' => array('data' => $result->number1,'style' => $style ),
-            'items' => array('data' => $result->number2, 'style' => $style ),
-            'similarity' => array('data' => $result->number3,'style' => $style ),
-            'predictions' => array('data' => $result->number4,'style' => $style ),
-            'time' => array('data' => $time_spent[1],'style' => $style )
+            'date' => array(
+              'data' => $date,
+              'style' => $style
+            ),
+            'description' => array(
+              'data' => $description,
+              'style' => $style 
+            ),
+            'users' => array(
+              'data' => format_integer($result->number1),
+              'style' => $style
+            ),
+            'items' => array(
+              'data' => format_integer($result->number2), 
+              'style' => $style 
+            ),
+            'similarity' => array(
+              'data' => format_integer($result->number3),
+              'style' => $style 
+            ),
+            'predictions' => array(
+              'data' => format_integer($result->number4),
+              'style' => $style 
+            ),
+            'time' => array(
+              'data' => $time_spent[1],
+              'style' => $style
+            )
           );
         }
       }
@@ -74,25 +100,77 @@ function recsys_wb_display_stats() {
       $compare_result = $compare_res->fetchAssoc();
       $date = date('r',$result['created']);
       preg_match("/\(Time spent: (.+)\)/", $result['message'], $time_spent);
+      $description = preg_replace(
+        "/Compute recommendations: /", 
+        "", 
+        $result['description']
+      );
       $rows[] = array(
-        'date' => array('data' => $date,'style' => $style ),
-        'description' => array('data' => $result['description'],'style' => $style ),
-        'users' => array('data' => $result['number1'],'style' => $style ),
-        'items' => array('data' => $result['number2'], 'style' => $style ),
-        'similarity' => array('data' => $result['number3'],'style' => $style ),
-        'predictions' => array('data' => $result['number4'],'style' => $style ),
-        'time' => array('data' => $time_spent[1],'style' => $style )
+        'date' => array(
+          'data' => $date,
+          'style' => $style 
+        ),
+        'description' => array(
+          'data' => $description,
+          'style' => $style
+        ),
+        'users' => array(
+          'data' => format_integer($result['number1']),
+          'style' => $style
+        ),
+        'items' => array(
+          'data' => format_integer($result['number2']), 
+          'style' => $style 
+        ),
+        'similarity' => array(
+          'data' => format_integer($result['number3']),
+          'style' => $style 
+        ),
+        'predictions' => array(
+          'data' => format_integer($result['number4']),
+          'style' => $style
+        ),
+        'time' => array(
+          'data' => $time_spent[1],
+          'style' => $style 
+        )
       );
       $date = date('r',$compare_result['created']);
       preg_match("/\(Time spent: (.+)\)/", $compare_result['message'], $time_spent);
+      $description = preg_replace(
+        "/Compute recommendations: /", 
+        "", 
+        $compare_result['description']
+      );
       $rows[] = array(
-        'date' => array('data' => $date,'style' => $style ),
-        'description' => array('data' => $compare_result['description'],'style' => $style ),
-        'users' => array('data' => $compare_result['number1'],'style' => $style ),
-        'items' => array('data' => $compare_result['number2'], 'style' => $style ),
-        'similarity' => array('data' => $compare_result['number3'],'style' => $style ),
-        'predictions' => array('data' => $compare_result['number4'],'style' => $style ),
-        'time' => array('data' => $time_spent[1],'style' => $style )
+        'date' => array(
+          'data' => $date,
+          'style' => $style 
+        ),
+        'description' => array(
+          'data' => $description,
+          'style' => $style
+        ),
+        'users' => array(
+          'data' => format_integer($compare_result['number1']),
+          'style' => $style
+        ),
+        'items' => array(
+          'data' => format_integer($compare_result['number2']), 
+          'style' => $style 
+        ),
+        'similarity' => array(
+          'data' => format_integer($compare_result['number3']),
+          'style' => $style 
+        ),
+        'predictions' => array(
+          'data' => format_integer($compare_result['number4']),
+          'style' => $style
+        ),
+        'time' => array(
+          'data' => $time_spent[1],
+          'style' => $style 
+        )
       );
     }
     
