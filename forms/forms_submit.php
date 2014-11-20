@@ -13,9 +13,14 @@ function recsys_wb_movie_rating_form_submit($form, &$form_state) {
   // Get the movies id
   $movie_id = field_get_items("node", $node, "field_movie_id");
   $movie_id = $movie_id[0]["value"];
+  
+  // The database (add 25% of the users ratings to the test set)
+  $database = MOVIE_DB_TRAIN;
+  if ( rand(0,100) > 75 )
+    $database = MOVIE_DB_TEST;
 
   // Insert the values into the database
-  $result = db_insert( MOVIE_DB )->fields( array(
+  $result = db_insert( $database )->fields( array(
     'MovieID' => $movie_id,
     'UserID' => user_id,
     'Rating' => $rating,
@@ -43,9 +48,14 @@ function recsys_wb_book_rating_form_submit($form, &$form_state) {
   // Get the books isbn
   $isbn = field_get_items("node", $node, "field_isbn");
   $isbn = $isbn[0]["value"];
+  
+    // The database (add 25% of the users ratings to the test set)
+  $database = BOOK_DB_TRAIN;
+  if ( rand(0,100) > 75 )
+    $database = BOOK_DB_TEST;
 
   // Insert the values into the database
-  $result = db_insert( BOOK_DB )->fields( array(
+  $result = db_insert( $database )->fields( array(
     'BookID' => $book_id,
     'UserID' => user_id,
     'Rating' => $rating,

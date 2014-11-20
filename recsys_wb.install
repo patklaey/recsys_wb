@@ -7,7 +7,7 @@ function recsys_wb_enable() {
             'title' => t("U2U book recommender (cosine)"),
             'params' => array(
                 'algorithm' => 'user2user',
-                'table' => "{Book_Rating_demo}",
+                'table' => "{Book_Rating_demo_train}",
                 'fields' => array('UserID','BookID','Rating'),
                 'similarity' => 'cosine',
                 'preference' => 'score'
@@ -17,7 +17,7 @@ function recsys_wb_enable() {
             'title' => t("I2I book recommender (cosine)"),
             'params' => array(
                 'algorithm' => 'item2item',
-                'table' => "{Book_Rating_demo}",
+                'table' => "{Book_Rating_demo_train}",
                 'fields' => array('UserID','BookID','Rating'),
                 'similarity' => 'cosine',
                 'preference' => 'score'
@@ -27,7 +27,7 @@ function recsys_wb_enable() {
             'title' => t("U2U movie recommender (cosine)"),
             'params' => array(
                 'algorithm' => 'user2user',
-                'table' => "{Movie_Rating_demo}",
+                'table' => "{Movie_Rating_demo_train}",
                 'fields' => array('UserID','MovieID','Rating'),
                 'similarity' => 'cosine',
                 'preference' => 'score'
@@ -37,7 +37,7 @@ function recsys_wb_enable() {
             'title' => t("I2I movie recommender (cosine)"),
             'params' => array(
                 'algorithm' => 'item2item',
-                'table' => "{Movie_Rating_demo}",
+                'table' => "{Movie_Rating_demo_train}",
                 'fields' => array('UserID','MovieID','Rating'),
                 'similarity' => 'cosine',
                 'preference' => 'score'
@@ -48,7 +48,7 @@ function recsys_wb_enable() {
             'title' => t("U2U book recommender (euclidean)"),
             'params' => array(
                 'algorithm' => 'user2user',
-                'table' => "{Book_Rating_demo}",
+                'table' => "{Book_Rating_demo_train}",
                 'fields' => array('UserID','BookID','Rating'),
                 'similarity' => 'euclidean',
                 'preference' => 'score'
@@ -58,7 +58,7 @@ function recsys_wb_enable() {
             'title' => t("I2I book recommender (euclidean)"),
             'params' => array(
                 'algorithm' => 'item2item',
-                'table' => "{Book_Rating_demo}",
+                'table' => "{Book_Rating_demo_train}",
                 'fields' => array('UserID','BookID','Rating'),
                 'similarity' => 'euclidean',
                 'preference' => 'score'
@@ -68,7 +68,7 @@ function recsys_wb_enable() {
             'title' => t("U2U movie recommender (euclidean)"),
             'params' => array(
                 'algorithm' => 'user2user',
-                'table' => "{Movie_Rating_demo}",
+                'table' => "{Movie_Rating_demo_train}",
                 'fields' => array('UserID','MovieID','Rating'),
                 'similarity' => 'euclidean',
                 'preference' => 'score'
@@ -78,7 +78,7 @@ function recsys_wb_enable() {
             'title' => t("I2I movie recommender (euclidean)"),
             'params' => array(
                 'algorithm' => 'item2item',
-                'table' => "{Movie_Rating_demo}",
+                'table' => "{Movie_Rating_demo_train}",
                 'fields' => array('UserID','MovieID','Rating'),
                 'similarity' => 'euclidean',
                 'preference' => 'score'
@@ -89,7 +89,7 @@ function recsys_wb_enable() {
             'title' => t("U2U book recommender (pearson)"),
             'params' => array(
                 'algorithm' => 'user2user',
-                'table' => "{Book_Rating_demo}",
+                'table' => "{Book_Rating_demo_train}",
                 'fields' => array('UserID','BookID','Rating'),
                 'similarity' => 'pearson',
                 'preference' => 'score'
@@ -99,7 +99,7 @@ function recsys_wb_enable() {
             'title' => t("I2I book recommender (pearson)"),
             'params' => array(
                 'algorithm' => 'item2item',
-                'table' => "{Book_Rating_demo}",
+                'table' => "{Book_Rating_demo_train}",
                 'fields' => array('UserID','BookID','Rating'),
                 'similarity' => 'pearson',
                 'preference' => 'score'
@@ -109,7 +109,7 @@ function recsys_wb_enable() {
             'title' => t("U2U movie recommender (pearson)"),
             'params' => array(
                 'algorithm' => 'user2user',
-                'table' => "{Movie_Rating_demo}",
+                'table' => "{Movie_Rating_demo_train}",
                 'fields' => array('UserID','MovieID','Rating'),
                 'similarity' => 'pearson',
                 'preference' => 'score'
@@ -119,7 +119,7 @@ function recsys_wb_enable() {
             'title' => t("I2I movie recommender (pearson)"),
             'params' => array(
                 'algorithm' => 'item2item',
-                'table' => "{Movie_Rating_demo}",
+                'table' => "{Movie_Rating_demo_train}",
                 'fields' => array('UserID','MovieID','Rating'),
                 'similarity' => 'pearson',
                 'preference' => 'score'
