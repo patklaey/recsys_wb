@@ -67,6 +67,18 @@ function showEvaluation() {
 }
 
 /**
+ * Schedules an algorithm for evaluation
+ */
+function scheduleForEvaluation( $recommender_app_id, $logfile ) {
+    $nid = db_insert('recsys_wb_evaluation_run')
+      ->fields(array(
+        'app_id' => $recommender_app_id,
+        'logfile' => $logfile,
+        'done' => 0,
+      ))->execute();
+}
+
+/**
  * Calculate the mean absolute error
  */
 function meanAbsoluteError( $results ) {

@@ -89,9 +89,8 @@ function recsys_wb_show_statistics_form_submit($form, &$form_state) {
  */
 function recsys_wb_run_recommender_form_submit($form, &$form_state) {
   // Get the recommender app name form the id
-  $recommender_app_name = getRecommenderAppName(
-    $form_state['values']['run_recommender_app']
-  );
+  $recommender_app_id = $form_state['values']['run_recommender_app'];
+  $recommender_app_name = getRecommenderAppName( $recommender_app_id );
   
   // Simply schedule the recommendation algorithm for execution
   recommender_create_command($recommender_app_name);
@@ -107,6 +106,9 @@ function recsys_wb_run_recommender_form_submit($form, &$form_state) {
   $log_dir = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
     . drupal_get_path("module","recsys_wb") . DIRECTORY_SEPARATOR . "runs" 
     . DIRECTORY_SEPARATOR;
+    
+  // Schedule the recommender for evaluation after the run
+  scheduleForEvaluation($recommender_app_id, "$log_dir$uuid.log");
     
   // And execute the system command which will run the recommendation algorithm
   exec("nohup setsid $script_path > $log_dir$uuid.log 2>&1 &");
