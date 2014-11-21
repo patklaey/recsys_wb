@@ -81,6 +81,9 @@ function runEvaluations() {
   
   // Go through all pending evaluations and calculate them 
   foreach( $results as $result ) {
+    $logfile = $result->logfile;
+    // Log start progress
+    writeLog($logfile, "Recommendations calculated, going to evaluate the calulated recommendations ...");
     $recommender_app_id = $result->app_id;
     // Check if book or movie recommender
     $recommender_app_name = getRecommenderAppName($recommender_app_id);
@@ -106,11 +109,23 @@ function runEvaluations() {
       $results[] = array("rating" => $result->rating, "score" => $result->score);
     }
 
+    writeLog($logfile, "Calculating Mean Absolute Error ...");
     $MAE = meanAbsoluteError($results);
-    $RMSE = rootmeanSquaredError($results);
-    $MRR = meanReciprocalRank($results, $good_item);
+    writeLog($logfile, "Mean Absolute Error calculated: $MAE");
     
-    writeEvaluationResults($recommender_app_id, $MAE, $RMSE, $MRR);
+    writeLog($logfile, "Calculating Root Mean Squared Error ...");
+    $RMSE = rootmeanSquaredError($results);
+    writeLog($logfile, "Root Mean Squared Error calculated: $RMSE");
+    
+    writeLog($logfile, "Calculating Mean Reciprocal Rank ...");
+    $MRR = meanReciprocalRank($results, $good_item);
+    writeLog($logfile, "Mean Reciprocal Rank calcualted: $MRR");
+    
+    // Write the results to the database
+    writeEvaluationResults($recommender_app_id, $MAE, $RMSE, $MRR, 0);
+    
+    // Write finish process
+    writeLog($logfile, "Recommendations evaluated. Run finished!");
   }
     
 }
@@ -118,7 +133,7 @@ function runEvaluations() {
 /**
  * Write the evaluation results to the database
  */
-function writeEvaluationResults( $app_id, $mea, $rmse, $mrr) {
+function writeEvaluationResults( $app_id, $mea, $rmse, $mrr, $ndgc) {
   // Check if the entry for the given app_id already exists
   $result = db_query("SELECT app_id from {" . DB_EVAL_TABLE . "} where app_id ="
     . " :app_id", 
@@ -131,7 +146,7 @@ function writeEvaluationResults( $app_id, $mea, $rmse, $mrr) {
         'mae' => $mea,
         'rmse' => $rmse,
         'mrr' => $mrr,
-        'ndgc' => 0
+        'ndgc' => $ndgc
       ))->execute();
   }
   else {
@@ -140,7 +155,7 @@ function writeEvaluationResults( $app_id, $mea, $rmse, $mrr) {
         'mae' => $mea,
         'rmse' => $rmse,
         'mrr' => $mrr,
-        'ndgc' => 0
+        'ndgc' => $ndgc
       ))
       ->condition('app_id', $app_id)
       ->execute();
@@ -241,6 +256,13 @@ function sortByScore( $a, $b) {
     return 0;
   }
   return ($a['score'] < $b['score']) ? 1 : -1;
+}
+
+/**
+ * Write simple log message
+ */
+function writeLog( $file, $message ) {
+  file_put_contents($file, "INFO: " . $message . "\n", FILE_APPEND | LOCK_EX );
 }
 
 ?>
