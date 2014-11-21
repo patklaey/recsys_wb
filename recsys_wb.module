@@ -25,6 +25,7 @@ require_once 'forms/forms_view.php';
 require_once 'forms/forms_submit.php';
 require_once 'statistics.php';
 require_once 'php-tail/PHPTail.php';
+require_once 'evaluation.php';
 
 /**
  * Implements hook_menu()
@@ -75,6 +76,13 @@ function recsys_wb_menu() {
     'title' => 'Tail',
     'type' => MENU_CALLBACK,
     'page callback' => 'recsys_wb_tail',
+    'access arguments' => array('access content'),
+  );
+  $items['evaluation'] = array(
+    'title' => 'Evaluation', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_evaluation',
     'access arguments' => array('access content'),
   );
   return $items;
@@ -186,6 +194,14 @@ function recsys_wb_myratings() {
  */
 function recsys_wb_myrecommendations() {
   return showRecommendations();
+}
+
+/**
+ * Custom page which displays all the recommendations of the currently logged
+ * in user
+ */
+function recsys_wb_evaluation() {
+  return showEvaluation();
 }
 
 /**

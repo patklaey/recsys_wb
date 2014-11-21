@@ -1,5 +1,66 @@
 <?php
 
+
+/**
+ * Implements hook_schema
+ */
+function recsys_wb_schema() {
+  
+  $schema['recsys_wb_recommender_evaluation'] = array(
+    'description' => 'Table to store evaluation metric of the different recommender algorithms',
+    'fields' => array(
+      'app_id' => array(
+        'description' => 'The recommender app id',
+        'type' => 'int',
+        'not null' => TRUE
+      ),
+      'mae' => array(
+        'description' => 'The mean average error value',
+        'type' => 'float',
+        'not null' => TRUE
+      ),
+      'rmse' => array(
+        'description' => 'The root mean squared error value',
+        'type' => 'float',
+        'not null' => TRUE
+      ),
+      'mrr' => array(
+        'description' => 'The mean reciprocal rank value',
+        'type' => 'float',
+        'not null' => TRUE
+      ),
+      'ndgc' => array(
+        'description' => 'The normalized DGC value',
+        'type' => 'float',
+        'not null' => TRUE
+      ),
+    ),
+  );
+  $schema['recsys_wb_evaluation_run'] = array(
+    'description' => 'Saves which algorithms must be evaluated',
+    'fields' => array(
+      'app_id' => array(
+        'description' => 'The recommender app id',
+        'type' => 'int',
+        'not null' => TRUE
+      ),
+      'logfile' => array(
+        'description' => 'The logfile to write the progress to',
+        'type' => 'text',
+        'not null' => TRUE
+      ),
+      'done' => array(
+        'description' => '1 if completed, 0 otherwise',
+        'type' => 'int',
+        'not null' => TRUE
+      ),
+    ),
+  );
+  
+  return $schema;
+}
+
+
 function recsys_wb_enable() {
     $apps = array(
         // Cosine similarity

@@ -146,5 +146,17 @@ function recsys_wb_reset_form_submit($form, &$form_state) {
   
   if ( isset( $_SESSION['stat_recommender_app'] ) )
     unset( $_SESSION['stat_recommender_app'] );
+  
+  if ( isset( $_SESSION['recsys_wb_evaluation_form_submitted'] ) )
+    unset( $_SESSION['recsys_wb_evaluation_form_submitted'] );
+}
+
+/**
+ * Action to take when recsys_wb_evaluation_form is submitted
+ */
+function recsys_wb_evaluation_form_submit($form, &$form_state) {
+  // Simply set some SESSION vars
+  $_SESSION['recsys_wb_evaluation_form_submitted'] = TRUE;
+  $_SESSION['recsys_wb_evaluation_app_id'] = $form_state['values']['evaluation_recommender_app'];
 }
 ?>

@@ -184,4 +184,29 @@ function recsys_wb_reset_form() {
   );  
   return $form; 
 }
+
+/**
+ * Display all recommender algorithms to be able to display some useful 
+ * evaluation about it
+ */
+function recsys_wb_evaluation_form() {
+  // Get all different recommender algorithms currently registered
+  $algorithms = getRecommenderAppsForForm();
+  
+  // Create a simple form which only lets the user select the recommender 
+  // algorithm
+  $form['evaluation_recommender_app'] = array(
+    '#type' => 'select',
+    '#title' => t('Recommender algorithm:'),
+    '#options' => $algorithms,
+    '#description' => t('Select the recommender algorithm to evaluate'),
+    '#required' => TRUE,
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );  
+  return $form;  
+}
+
 ?>
