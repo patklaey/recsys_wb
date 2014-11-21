@@ -85,6 +85,12 @@ function recsys_wb_menu() {
     'page callback' => 'recsys_wb_evaluation',
     'access arguments' => array('access content'),
   );
+  $items['runevaluations'] = array(
+    'title' => 'Run Evaluations',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'recsys_wb_run_evaluations',
+    'access arguments' => array('access content'),
+  );
   return $items;
 }
 
@@ -202,6 +208,13 @@ function recsys_wb_myrecommendations() {
  */
 function recsys_wb_evaluation() {
   return showEvaluation();
+}
+
+/**
+ * 
+ */
+function recsys_wb_run_evaluations(){
+  runEvaluations();
 }
 
 /**

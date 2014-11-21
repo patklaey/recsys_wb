@@ -6,6 +6,8 @@ require_once 'forms/forms_submit.php';
 // Define some constants
 define('GOOD_BOOK_ITEM', 8);
 define('GOOD_MOVIE_ITEM', 4);
+define('DB_EVAL_TABLE','recsys_wb_recommender_evaluation');
+define('DB_RUN_TABLE','recsys_wb_evaluation_run');
 
 /**
  * Displays evaluation form or selected recommender algorithm evaluation
@@ -13,9 +15,6 @@ define('GOOD_MOVIE_ITEM', 4);
 function showEvaluation() {
   // The return string
   $return_string = "";
-  // The test database
-  $test_db = MOVIE_DB_TEST;
-  $good_item = GOOD_MOVIE_ITEM;
   
   if ( ! isset($_SESSION['recsys_wb_evaluation_form_submitted']) 
 || $_SESSION['recsys_wb_evaluation_form_submitted'] === FALSE ) {
@@ -67,15 +66,120 @@ function showEvaluation() {
 }
 
 /**
+ * Run the scheduled evaluations
+ */
+function runEvaluations() {
+  // Get a list of all pending evaluations
+  $query = db_select( 'recsys_wb_evaluation_run' , 'run');
+  $query->fields('run', array('app_id','logfile'));
+  $query->condition('run.done',0);
+  $results = $query->execute();
+  
+  // Define test database and good item value
+  $test_db = MOVIE_DB_TEST;
+  $good_item = GOOD_MOVIE_ITEM;
+  
+  // Go through all pending evaluations and calculate them 
+  foreach( $results as $result ) {
+    $recommender_app_id = $result->app_id;
+    // Check if book or movie recommender
+    $recommender_app_name = getRecommenderAppName($recommender_app_id);
+    if ( preg_match("/^book/", $recommender_app_name) ) {
+      $test_db = BOOK_DB_TEST;
+      $good_item = GOOD_BOOK_ITEM;
+    }
+    // Get the apps recommendations and the corresponding test entries
+    $query = db_select($test_db, 'test');
+    $query->join(
+      'recommender_prediction',
+      'prediction',
+      'test.UserID = prediction.source_eid'
+    );
+    $query->fields('test',array('Rating'));
+    $query->fields('prediction',array('score'));
+    $query->condition('prediction.app_id',$recommender_app_id);
+    $query_result = $query->execute();
+
+    // Save the query results in an array
+    $results = array();    
+    foreach ($query_result as $result) {
+      $results[] = array("rating" => $result->rating, "score" => $result->score);
+    }
+
+    $MAE = meanAbsoluteError($results);
+    $RMSE = rootmeanSquaredError($results);
+    $MRR = meanReciprocalRank($results, $good_item);
+    
+    writeEvaluationResults($recommender_app_id, $MAE, $RMSE, $MRR);
+  }
+    
+}
+
+/**
+ * Write the evaluation results to the database
+ */
+function writeEvaluationResults( $app_id, $mea, $rmse, $mrr) {
+  // Check if the entry for the given app_id already exists
+  $result = db_query("SELECT app_id from {" . DB_EVAL_TABLE . "} where app_id ="
+    . " :app_id", 
+    array(":app_id" => $app_id) );
+  // If the entry does not exist, add a new one, otherwise just update the old
+  if ( $result->rowCount() == 0 ) {
+    $result = db_insert( DB_EVAL_TABLE )
+      ->fields(array(
+        'app_id' => $app_id,
+        'mae' => $mea,
+        'rmse' => $rmse,
+        'mrr' => $mrr,
+        'ndgc' => 0
+      ))->execute();
+  }
+  else {
+    $num = db_update( DB_EVAL_TABLE ) 
+      ->fields(array(
+        'mae' => $mea,
+        'rmse' => $rmse,
+        'mrr' => $mrr,
+        'ndgc' => 0
+      ))
+      ->condition('app_id', $app_id)
+      ->execute();
+  }
+  // Update the schedule table to remember that the evaluation is done
+  $num = db_update( DB_RUN_TABLE ) 
+    ->fields(array(
+      'done' => 1,
+    ))
+    ->condition('app_id', $app_id)
+    ->execute();
+}
+
+/**
  * Schedules an algorithm for evaluation
  */
 function scheduleForEvaluation( $recommender_app_id, $logfile ) {
-    $nid = db_insert('recsys_wb_evaluation_run')
+  // Check if the entry for the given app_id already exists
+  $result = db_query("SELECT app_id from {" . DB_RUN_TABLE . "} where app_id = "
+    . ":app_id", 
+    array(":app_id" => $recommender_app_id) );
+  // If the entry does not exist, add a new one, otherwise just update the old
+  if ( $result->rowCount() == 0 ) {
+    $nid = db_insert( DB_RUN_TABLE )
       ->fields(array(
         'app_id' => $recommender_app_id,
         'logfile' => $logfile,
         'done' => 0,
       ))->execute();
+  } 
+  else {
+    $num = db_update( DB_RUN_TABLE ) 
+      ->fields(array(
+        'done' => 0,
+        'logfile' => $logfile
+      ))
+      ->condition('app_id', $recommender_app_id)
+      ->execute();
+  }
 }
 
 /**
