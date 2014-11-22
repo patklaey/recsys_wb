@@ -161,4 +161,12 @@ function recsys_wb_evaluation_form_submit($form, &$form_state) {
   $_SESSION['recsys_wb_evaluation_form_submitted'] = TRUE;
   $_SESSION['recsys_wb_evaluation_app_id'] = $form_state['values']['evaluation_recommender_app'];
 }
+
+/**
+ * Action to take when recsys_wb_evalutae_all_form is submitted
+ */
+function recsys_wb_evaluate_all_form_submit() {
+  // SImply set a SESSION var
+  $_SESSION['recsys_wb_evaluate_all_form_submitted'] = TRUE;
+}
 ?>

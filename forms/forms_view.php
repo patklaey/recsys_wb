@@ -196,10 +196,10 @@ function recsys_wb_evaluation_form() {
   // Create a simple form which only lets the user select the recommender 
   // algorithm
   $form['evaluation_recommender_app'] = array(
-    '#type' => 'select',
+    '#type' => 'checkboxes',
     '#title' => t('Recommender algorithm:'),
     '#options' => $algorithms,
-    '#description' => t('Select the recommender algorithm to evaluate'),
+    '#description' => t('Select the recommender algorithms to evaluate'),
     '#required' => TRUE,
   );
   $form['submit'] = array(
@@ -207,6 +207,15 @@ function recsys_wb_evaluation_form() {
     '#value' => t('Submit'),
   );  
   return $form;  
+}
+
+function recsys_wb_evaluate_all_form() {
+  // A simple compare all button
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Compare all')
+  );
+  return $form;
 }
 
 ?>

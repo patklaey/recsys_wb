@@ -19,42 +19,67 @@ function showEvaluation() {
   if ( ! isset($_SESSION['recsys_wb_evaluation_form_submitted']) 
 || $_SESSION['recsys_wb_evaluation_form_submitted'] === FALSE ) {
     // Simply display the evaluation from
-    $return_string .= drupal_render( drupal_get_form('recsys_wb_evaluation_form') );
+    $return_string .= drupal_render( 
+      drupal_get_form('recsys_wb_evaluation_form') 
+    );
+    
+    $return_string .= "<br/><strong>OR</strong><br/><br/>";
+    
+    $return_string .= drupal_render(
+      drupal_get_form('recsys_wb_evaluate_all_form')
+    );
   } 
   else {
-    $recommender_app_id = $_SESSION['recsys_wb_evaluation_app_id'];
-    // Check if book or movie recommender
-    $recommender_app_name = getRecommenderAppName($recommender_app_id);
-    if ( preg_match("/^book/", $recommender_app_name) ) {
-      $test_db = BOOK_DB_TEST;
-      $good_item = GOOD_BOOK_ITEM;
-    }
-    // Get the apps recommendations and the corresponding test entries
-    $query = db_select($test_db, 'test');
-    $query->join(
-      'recommender_prediction',
-      'prediction',
-      'test.UserID = prediction.source_eid'
+    // Prepeare the table header
+    $header = array( 
+      t('Recommender algorithm'),
+      t('Mean Absolute Error'),
+      t('Root Mean Squared Error'),
+      t('Mean Reciprocal Rank'),
+      t('Normalized DGC'),
     );
-    $query->fields('test',array('Rating'));
-    $query->fields('prediction',array('score'));
-    $query->condition('prediction.app_id',$recommender_app_id);
-    $query_result = $query->execute();
-
-    // Save the query results in an array
-    $results = array();    
-    foreach ($query_result as $result) {
-      $results[] = array("rating" => $result->rating, "score" => $result->score);
-    }
-
-    $MAE = meanAbsoluteError($results);
-    $RMSE = rootmeanSquaredError($results);
-    $MRR = meanReciprocalRank($results, $good_item);
-    $return_string .= "Mean Absolute Error: " . $MAE . "<br/>";
-    $return_string .= "Root Mean Squared Error: " . $RMSE. "<br/>";
-    $return_string .= "Mean Reciprocal Rank: " . $MRR;
+    $rows = array();
+    // The cell style formatting
+    $style = 'text-align:center;vertical-align:middle';
     
-    $return_string .= "<br/><strong>OR</strong><br/>";
+    if ( isset( $_SESSION['recsys_wb_evaluate_all_form_submitted'] )
+&& $_SESSION['recsys_wb_evaluate_all_form_submitted'] === TRUE ) 
+    {
+      
+    } 
+    else {
+      $recommender_app_ids = $_SESSION['recsys_wb_evaluation_app_id'];
+      foreach ($recommender_app_ids as $key => $value) {
+        // Get the evaluation results from the database
+        $result = getEvaluationResults( $value );
+        if ( $value != 0 ) {
+          $rows[] = array(
+            'title' => array(
+              'data' => getRecommenderAppTitle( $value ),
+              'style' => $style
+            ),
+            'mae' => array(
+              'data' => $result['mae'],
+              'style' => $style
+            ),
+            'rmse' => array(
+              'data' => $result['rmse'],
+              'style' => $style
+            ),
+            'mrr' => array(
+              'data' => $result['mrr'],
+              'style' => $style
+            ),
+            'ndgc' => array(
+              'data' => $result['ndgc'],
+              'style' => $style
+            )
+          );
+        }
+      }
+    }
+    // Render the table
+    $return_string .= theme('table', array( 'header' => $header , 'rows' => $rows) );
     
     // Add the reset form
     $return_string .= "<br/>" . drupal_render( 
@@ -169,6 +194,16 @@ function writeEvaluationResults( $app_id, $mea, $rmse, $mrr, $ndgc) {
     ->execute();
 }
 
+/**
+ * Read the evaluation results for a recommender algorithm from the database
+ */
+function getEvaluationResults( $app_id ) {
+  // Get the evaluation results from the database
+  $results = db_query("Select mae,rmse,mrr,ndgc from {" . DB_EVAL_TABLE . "} " 
+        . "where app_id = :app_id ",  array(':app_id' => $app_id ) );
+  return $results->fetchAssoc();
+}
+ 
 /**
  * Schedules an algorithm for evaluation
  */
