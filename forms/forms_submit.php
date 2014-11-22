@@ -151,6 +151,9 @@ function recsys_wb_reset_form_submit($form, &$form_state) {
   
   if ( isset( $_SESSION['recsys_wb_evaluation_form_submitted'] ) )
     unset( $_SESSION['recsys_wb_evaluation_form_submitted'] );
+    
+  if ( isset ( $_SESSION['recsys_wb_evaluate_all_form_submitted'] ) )
+    unset( $_SESSION['recsys_wb_evaluate_all_form_submitted'] );
 }
 
 /**
@@ -165,8 +168,9 @@ function recsys_wb_evaluation_form_submit($form, &$form_state) {
 /**
  * Action to take when recsys_wb_evalutae_all_form is submitted
  */
-function recsys_wb_evaluate_all_form_submit() {
-  // SImply set a SESSION var
+function recsys_wb_evaluate_all_form_submit($form, &$form_state) {
+  // Simply set a SESSION var
   $_SESSION['recsys_wb_evaluate_all_form_submitted'] = TRUE;
+  print_r($_SESSION);
 }
 ?>

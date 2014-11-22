@@ -15,21 +15,10 @@ define('DB_RUN_TABLE','recsys_wb_evaluation_run');
 function showEvaluation() {
   // The return string
   $return_string = "";
-  
-  if ( ! isset($_SESSION['recsys_wb_evaluation_form_submitted']) 
-|| $_SESSION['recsys_wb_evaluation_form_submitted'] === FALSE ) {
-    // Simply display the evaluation from
-    $return_string .= drupal_render( 
-      drupal_get_form('recsys_wb_evaluation_form') 
-    );
-    
-    $return_string .= "<br/><strong>OR</strong><br/><br/>";
-    
-    $return_string .= drupal_render(
-      drupal_get_form('recsys_wb_evaluate_all_form')
-    );
-  } 
-  else {
+  if ( ( isset($_SESSION['recsys_wb_evaluation_form_submitted']) 
+&& $_SESSION['recsys_wb_evaluation_form_submitted'] === TRUE )
+|| ( isset( $_SESSION['recsys_wb_evaluate_all_form_submitted'] ) 
+&& $_SESSION['recsys_wb_evaluate_all_form_submitted'] === TRUE ) ) {
     // Prepeare the table header
     $header = array( 
       t('Recommender algorithm'),
@@ -41,49 +30,76 @@ function showEvaluation() {
     $rows = array();
     // The cell style formatting
     $style = 'text-align:center;vertical-align:middle';
-    
+    $recommender_app_ids = array();
     if ( isset( $_SESSION['recsys_wb_evaluate_all_form_submitted'] )
 && $_SESSION['recsys_wb_evaluate_all_form_submitted'] === TRUE ) 
     {
-      
+      $results = db_query("Select id from {recommender_app}");
+      foreach ( $results AS $result )
+      {
+        $recommender_app_ids[] = $result->id;
+      }
     } 
     else {
       $recommender_app_ids = $_SESSION['recsys_wb_evaluation_app_id'];
-      foreach ($recommender_app_ids as $key => $value) {
-        // Get the evaluation results from the database
-        $result = getEvaluationResults( $value );
-        if ( $value != 0 ) {
-          $rows[] = array(
-            'title' => array(
-              'data' => getRecommenderAppTitle( $value ),
-              'style' => $style
-            ),
-            'mae' => array(
-              'data' => $result['mae'],
-              'style' => $style
-            ),
-            'rmse' => array(
-              'data' => $result['rmse'],
-              'style' => $style
-            ),
-            'mrr' => array(
-              'data' => $result['mrr'],
-              'style' => $style
-            ),
-            'ndgc' => array(
-              'data' => $result['ndgc'],
-              'style' => $style
-            )
-          );
-        }
+    }
+
+    foreach ($recommender_app_ids as $key => $value) {
+      // Get the evaluation results from the database
+      $result = getEvaluationResults( $value );
+      $eval = array( 
+        'mae' => 'NA*',
+        'rmse' => 'NA*',
+        'mrr' => 'NA*',
+        'ndgc' => 'NA*'
+      );
+      if ( $result != null )
+        $eval = $result;
+      if ( $value != 0 ) {
+        $rows[] = array(
+          'title' => array(
+            'data' => getRecommenderAppTitle( $value ),
+            'style' => $style
+          ),
+          'mae' => array(
+            'data' => $eval['mae'],
+            'style' => $style
+          ),
+          'rmse' => array(
+            'data' => $eval['rmse'],
+            'style' => $style
+          ),
+          'mrr' => array(
+            'data' => $eval['mrr'],
+            'style' => $style
+          ),
+          'ndgc' => array(
+            'data' => $eval['ndgc'],
+            'style' => $style
+          )
+        );
       }
     }
+
     // Render the table
     $return_string .= theme('table', array( 'header' => $header , 'rows' => $rows) );
+    $return_string .= "* not available<br/>";
     
     // Add the reset form
     $return_string .= "<br/>" . drupal_render( 
       drupal_get_form('recsys_wb_reset_form') 
+    );
+  } 
+  else {
+    // Simply display the evaluation from
+    $return_string .= drupal_render( 
+      drupal_get_form('recsys_wb_evaluation_form') 
+    );
+    
+    $return_string .= "<br/><strong>OR</strong><br/><br/>";
+    
+    $return_string .= drupal_render(
+      drupal_get_form('recsys_wb_evaluate_all_form')
     );
   }
   

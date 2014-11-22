@@ -210,12 +210,12 @@ function recsys_wb_evaluation_form() {
 }
 
 function recsys_wb_evaluate_all_form() {
-  // A simple compare all button
+
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Compare all')
-  );
-  return $form;
+    '#value' => t('Compare all'),
+  );  
+  return $form;  
 }
 
 ?>
