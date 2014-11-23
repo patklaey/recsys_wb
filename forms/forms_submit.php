@@ -77,11 +77,21 @@ function recsys_wb_get_recommendations_form_submit($form, &$form_state) {
 }
 
 /**
- * Action to take when recsys_wb_show_statistics_form is submitted
+ * Action to take when recsys_wb_show_statistics_with_history_form is submitted
  */
-function recsys_wb_show_statistics_form_submit($form, &$form_state) {
+function recsys_wb_statistics_with_history_form_submit($form, &$form_state) {
   // Just set some session variables
-  $_SESSION['stat_recommender_app'] = $form_state['values']['stats_recommender_app'];
+  $_SESSION['statistics_history_form_submitted'] = TRUE;
+  $_SESSION['stat_history_recommender_app'] = $form_state['values']['stats_recommender_app'];
+}
+
+/**
+ * Action to take when recsys_wb_show_statistics_with_history_form is submitted
+ */
+function recsys_wb_compare_statistics_form_submit($form, &$form_state) {
+  // Just set some session variables
+  $_SESSION['statistics_compare_form_submitted'] = TRUE;
+  $_SESSION['stat_compare_recommender_apps'] = $form_state['values']['stats_compare_recommender_apps'];
 }
 
 /**
@@ -146,14 +156,18 @@ function recsys_wb_reset_form_submit($form, &$form_state) {
   if ( isset( $_SESSION['recsys_wb_compare_form_submitted'] ) )
     unset( $_SESSION['recsys_wb_compare_form_submitted'] );
   
-  if ( isset( $_SESSION['stat_recommender_app'] ) )
-    unset( $_SESSION['stat_recommender_app'] );
+  if ( isset( $_SESSION['statistics_history_form_submitted'] ) )
+    unset( $_SESSION['statistics_history_form_submitted'] );
+  
+  if ( isset ( $_SESSION['statistics_compare_form_submitted'] ) )
+    unset( $_SESSION['statistics_compare_form_submitted'] );
   
   if ( isset( $_SESSION['recsys_wb_evaluation_form_submitted'] ) )
     unset( $_SESSION['recsys_wb_evaluation_form_submitted'] );
     
   if ( isset ( $_SESSION['recsys_wb_evaluate_all_form_submitted'] ) )
     unset( $_SESSION['recsys_wb_evaluate_all_form_submitted'] );
+ 
 }
 
 /**

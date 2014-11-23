@@ -106,7 +106,7 @@ function recsys_wb_get_recommendations_form() {
  * Display all recommender algorithms to be able to display some useful 
  * statistics about it
  */
-function recsys_wb_show_statistics_form() {
+function recsys_wb_statistics_with_history_form() {
   // Get all different recommender algorithms currently registered
   $algorithms = getRecommenderAppsForForm();
   
@@ -114,6 +114,30 @@ function recsys_wb_show_statistics_form() {
   // algorithm
   $form['stats_recommender_app'] = array(
     '#type' => 'select',
+    '#title' => t('Recommender algorithm:'),
+    '#options' => $algorithms,
+    '#description' => t('Select the recommender algorithm'),
+    '#required' => TRUE,
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );  
+  return $form;  
+}
+
+/**
+ * Display all recommender algorithms to be able to display some useful 
+ * statistics about it
+ */
+function recsys_wb_compare_statistics_form() {
+  // Get all different recommender algorithms currently registered
+  $algorithms = getRecommenderAppsForForm();
+  
+  // Create a simple form which only lets the user select the recommender 
+  // algorithm
+  $form['stats_compare_recommender_apps'] = array(
+    '#type' => 'checkboxes',
     '#title' => t('Recommender algorithm:'),
     '#options' => $algorithms,
     '#description' => t('Select the recommender algorithm'),
