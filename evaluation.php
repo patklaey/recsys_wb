@@ -4,8 +4,7 @@ require_once 'forms/forms_view.php';
 require_once 'forms/forms_submit.php';
 
 // Define some constants
-define('GOOD_BOOK_ITEM', 8);
-define('GOOD_MOVIE_ITEM', 4);
+define('GOOD_ITEM', 4);
 define('DB_EVAL_TABLE','recsys_wb_recommender_evaluation');
 define('DB_RUN_TABLE','recsys_wb_evaluation_run');
 
@@ -118,7 +117,7 @@ function runEvaluations() {
   
   // Define test database and good item value
   $test_db = MOVIE_DB_TEST;
-  $good_item = GOOD_MOVIE_ITEM;
+  $good_item = GOOD_ITEM;
   
   // Go through all pending evaluations and calculate them 
   foreach( $results as $result ) {
@@ -128,10 +127,9 @@ function runEvaluations() {
     $recommender_app_id = $result->app_id;
     // Check if book or movie recommender
     $recommender_app_name = getRecommenderAppName($recommender_app_id);
-    if ( preg_match("/^book/", $recommender_app_name) ) {
+    if ( preg_match("/^book/", $recommender_app_name) )
       $test_db = BOOK_DB_TEST;
-      $good_item = GOOD_BOOK_ITEM;
-    }
+
     // Get the apps recommendations and the corresponding test entries
     $query = db_select($test_db, 'test');
     $query->join(
@@ -287,6 +285,7 @@ function meanReciprocalRank( $results, $good) {
       return 1/$i;
     $i++;
   }
+  return 0;
 }
 
 /**
