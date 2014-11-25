@@ -19,16 +19,16 @@ function showEvaluation() {
 || ( isset( $_SESSION['recsys_wb_evaluate_all_form_submitted'] ) 
 && $_SESSION['recsys_wb_evaluate_all_form_submitted'] === TRUE ) ) {
     // Prepeare the table header
-    $header = array( 
-      t('Recommender algorithm'),
-      t('Mean Absolute Error'),
-      t('Root Mean Squared Error'),
-      t('Mean Reciprocal Rank'),
-      t('Normalized DGC'),
-    );
-    $rows = array();
     // The cell style formatting
     $style = 'text-align:center;vertical-align:middle';
+    $header = array( 
+      array( 'data' => t('Recommender algorithm'), 'style' => $style ),
+      array( 'data' => t('Mean Absolute Error'), 'field' => 'mae', 'style' => $style ),
+      array( 'data' => t('Root Mean Squared Error'),'field' => 'rmse', 'style' => $style ),
+      array( 'data' => t('Mean Reciprocal Rank'), 'field' => 'mrr', 'style' => $style ),
+      array( 'data' => t('Normalized DGC'), 'field' => 'ndgc', 'style' => $style )
+    );
+    $rows = array();
     $recommender_app_ids = array();
     if ( isset( $_SESSION['recsys_wb_evaluate_all_form_submitted'] )
 && $_SESSION['recsys_wb_evaluate_all_form_submitted'] === TRUE ) 
@@ -36,52 +36,51 @@ function showEvaluation() {
       $results = db_query("Select id from {recommender_app}");
       foreach ( $results AS $result )
       {
-        $recommender_app_ids[] = $result->id;
+        $recommender_app_ids[ $result->id ] = $result->id;
       }
     } 
     else {
       $recommender_app_ids = $_SESSION['recsys_wb_evaluation_app_id'];
     }
 
-    foreach ($recommender_app_ids as $key => $value) {
-      // Get the evaluation results from the database
-      $result = getEvaluationResults( $value );
-      $eval = array( 
-        'mae' => 'NA*',
-        'rmse' => 'NA*',
-        'mrr' => 'NA*',
-        'ndgc' => 'NA*'
-      );
-      if ( $result != null )
-        $eval = $result;
-      if ( $value != 0 ) {
+    $results = getEvaluationResults( $header );
+
+    foreach ($results as $eval ) {
+      if ( $recommender_app_ids[ "" . $eval->app_id ] > 0 ) {
         $rows[] = array(
           'title' => array(
-            'data' => getRecommenderAppTitle( $value ),
+            'data' => getRecommenderAppTitle( $eval->app_id ),
             'style' => $style
           ),
           'mae' => array(
-            'data' => $eval['mae'],
+            'data' => $eval->mae,
+            'field' => 'mae',
             'style' => $style
           ),
           'rmse' => array(
-            'data' => $eval['rmse'],
+            'data' => $eval->rmse,
+            'field' => 'rmse',
             'style' => $style
           ),
           'mrr' => array(
-            'data' => $eval['mrr'],
+            'data' => $eval->mrr,
+            'field' => 'mrr',
             'style' => $style
           ),
           'ndgc' => array(
-            'data' => $eval['ndgc'],
+            'data' => $eval->ndgc,
+            'field' => 'ndgc',
             'style' => $style
           )
         );
       }
     }
 
+      
+
+
     // Render the table
-    $return_string .= theme('table', array( 'header' => $header , 'rows' => $rows) );
+    $return_string .= theme('table', array( 'header' => $header , 'rows' => $rows, 'attributes' => array('id' => 'sort-table') ) );
     $return_string .= "* not available<br/>";
     
     // Add the reset form
@@ -211,11 +210,12 @@ function writeEvaluationResults( $app_id, $mea, $rmse, $mrr, $ndgc) {
 /**
  * Read the evaluation results for a recommender algorithm from the database
  */
-function getEvaluationResults( $app_id ) {
-  // Get the evaluation results from the database
-  $results = db_query("Select mae,rmse,mrr,ndgc from {" . DB_EVAL_TABLE . "} " 
-        . "where app_id = :app_id ",  array(':app_id' => $app_id ) );
-  return $results->fetchAssoc();
+function getEvaluationResults( $header ) {
+  $select = db_select(DB_EVAL_TABLE, 'e')->extend('TableSort');
+  $select->fields('e',array('app_id', 'mae','rmse','mrr','ndgc'));
+  $select->orderByHeader($header);
+  $results = $select->execute();
+  return $results;
 }
  
 /**
