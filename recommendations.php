@@ -158,24 +158,44 @@ function showRecommendations() {
       $type = 'top_n';
     
     if ( preg_match("/^book/", $recommender_app_name) ) {
-      $results = getBookRecommendations($type, user_id, $recommender_app, $value );
+      $results = getBookRecommendations(
+        $type, 
+        user_id, 
+        $recommender_app, 
+        $value 
+      );
       $entity = 'Book';
       
       // Check if compare is set
       if ( $compare ) {
         $compare_app = $_SESSION['recsys_wb_compare_app_id'];
-        $compare_results = getBookRecommendations($type, user_id, $compare_app, $value );
+        $compare_results = getBookRecommendations(
+          $type, 
+          user_id, 
+          $compare_app, 
+          $value 
+        );
       }
     } 
     else {
       // Get movie recommendations
-      $results = getMovieRecommendations($type, user_id, $recommender_app, $value );
+      $results = getMovieRecommendations(
+        $type, 
+        user_id, 
+        $recommender_app, 
+        $value 
+      );
       $entity = 'Movie';
       
       // Check if compare is set
       if ( $compare ) {
         $compare_app = $_SESSION['recsys_wb_compare_app_id'];
-        $compare_results = getMovieRecommendations($type, user_id, $compare_app, $value );
+        $compare_results = getMovieRecommendations(
+          $type, 
+          user_id, 
+          $compare_app, 
+          $value 
+        );
       }
     } 
   
@@ -227,7 +247,8 @@ function showRecommendations() {
       $header = array( $entity, t('Score') );
       $rows = array();
       
-      // Loop through the db query results and add each of them to the rows array
+      // Loop through the db query results and add each of them to the rows 
+      // array
       foreach ($results as $result ) {
         $result[0] = createEntityLinkByName($result[0]);
         $rows[] = $result;
@@ -263,7 +284,10 @@ function showRecommendations() {
     }  
   
     // Assign the renderable array to the return string 
-    $return_string .= theme('table', array( 'header' => $header, 'rows' => $rows ) );
+    $return_string .= theme(
+      'table', 
+      array( 'header' => $header, 'rows' => $rows ) 
+    );
     
     // Add the compare_to form
     if ( ! $compare ) {

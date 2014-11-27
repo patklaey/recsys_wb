@@ -23,13 +23,40 @@ function showEvaluation() {
     // The cell style formatting
     $style = 'text-align:center;vertical-align:middle';
     $header = array( 
-      array( 'data' => t('Recommender algorithm'), 'style' => $style ),
-      array( 'data' => t('Mean Absolute Error'), 'field' => 'mae', 'style' => $style ),
-      array( 'data' => t('Root Mean Squared Error'),'field' => 'rmse', 'style' => $style ),
-      array( 'data' => t('Mean Reciprocal Rank'), 'field' => 'mrr', 'style' => $style ),
-      array( 'data' => t('Normalized DGC'), 'field' => 'ndgc', 'style' => $style ),
-      array( 'data' => t('# of prediction records'), 'field' => 'predictions', 'style' => $style ),
-      array( 'data' => t('Time spent'), 'field' => 'time', 'style' => $style )
+      array( 
+        'data' => t('Recommender algorithm'), 
+        'style' => $style 
+      ),
+      array( 
+        'data' => t('Mean Absolute Error'), 
+        'field' => 'mae', 
+        'style' => $style 
+      ),
+      array( 
+        'data' => t('Root Mean Squared Error'),
+        'field' => 'rmse', 
+        'style' => $style 
+      ),
+      array( 
+        'data' => t('Mean Reciprocal Rank'), 
+        'field' => 'mrr', 
+        'style' => $style 
+      ),
+      array( 
+        'data' => t('Normalized DGC'), 
+        'field' => 'ndgc', 
+        'style' => $style 
+      ),
+      array( 
+        'data' => t('# of prediction records'), 
+        'field' => 'predictions', 
+        'style' => $style 
+      ),
+      array( 
+        'data' => t('Time spent'), 
+        'field' => 'time', 
+        'style' => $style 
+      )
     );
     $rows = array();
     $recommender_app_ids = array();
@@ -134,7 +161,9 @@ function runEvaluations() {
   foreach( $results as $result ) {
     $logfile = $result->logfile;
     // Log start progress
-    writeLog($logfile, "Recommendations calculated, going to evaluate the calulated recommendations ...");
+    $message = "Recommendations calculated, going to evaluate the calulated "
+      . "recommendations ...";
+    writeLog($logfile, $message );
     $recommender_app_id = $result->app_id;
     // Check if book or movie recommender
     $recommender_app_name = getRecommenderAppName($recommender_app_id);
@@ -156,7 +185,10 @@ function runEvaluations() {
     // Save the query results in an array
     $results = array();    
     foreach ($query_result as $result) {
-      $results[] = array("rating" => $result->rating, "score" => $result->score);
+      $results[] = array( 
+        "rating" => $result->rating, 
+        "score" => $result->score
+      );
     }
 
     writeLog($logfile, "Calculating Mean Absolute Error ...");
@@ -234,7 +266,10 @@ function writeEvaluationResults( $app_id, $mea, $rmse, $mrr, $ndgc) {
  */
 function getEvaluationResults( $header ) {
   $select = db_select(DB_EVAL_TABLE, 'e')->extend('TableSort');
-  $select->fields('e',array('app_id', 'mae','rmse','mrr','ndgc','predictions','time'));
+  $select->fields( 
+    'e',
+    array( 'app_id', 'mae', 'rmse', 'mrr', 'ndgc', 'predictions', 'time' )
+  );
   $select->orderByHeader($header);
   $results = $select->execute();
   return $results;
