@@ -116,7 +116,6 @@ function runEvaluations() {
   
   // Define test database and good item value
   $test_db = MOVIE_DB_TEST;
-  $good_item = GOOD_ITEM;
   
   // Go through all pending evaluations and calculate them 
   foreach( $results as $result ) {
@@ -156,7 +155,7 @@ function runEvaluations() {
     writeLog($logfile, "Root Mean Squared Error calculated: $RMSE");
     
     writeLog($logfile, "Calculating Mean Reciprocal Rank ...");
-    $MRR = meanReciprocalRank($results, $good_item);
+    $MRR = meanReciprocalRank($results);
     writeLog($logfile, "Mean Reciprocal Rank calcualted: $MRR");
     
     // Write the results to the database
@@ -277,11 +276,11 @@ function rootmeanSquaredError( $results ) {
 /**
  * Calculate the mean reciprocal rank
  */
-function meanReciprocalRank( $results, $good) {
+function meanReciprocalRank( $results ) {
   usort($results,"sortByScore");
   $i = 1;
   foreach ($results as $result) {
-    if ( $result['rating'] >= $good )
+    if ( $result['rating'] >= GOOD_ITEM )
       return 1/$i;
     $i++;
   }
