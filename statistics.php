@@ -102,19 +102,19 @@ function recsys_wb_display_stats() {
             'style' => $style
           ),
           'users' => array(
-            'data' => $result['users'],
+            'data' => format_integer($result['users']),
             'style' => $style
           ),
           'items' => array(
-            'data' => $result['items'],
+            'data' => format_integer($result['items']),
             'style' => $style
           ),
           'similarity' => array(
-            'data' => $result['similarity'],
+            'data' => format_integer($result['similarity']),
             'style' => $style
           ),
           'predictions' => array(
-            'data' => $result['predictions'],
+            'data' => format_integer($result['predictions']),
             'style' => $style
           ),
           'time' => array(
@@ -169,10 +169,10 @@ function getRecommenderStatistics( $app_id ) {
   $stats = array(
     'date' => $date,
     'description' => $description,
-    'users' => format_integer($result['number1']),
-    'items' => format_integer($result['number2']),
-    'similarity' => format_integer($result['number3']),
-    'predictions' => format_integer($result['number4']),
+    'users' => $result['number1'],
+    'items' => $result['number2'],
+    'similarity' => $result['number3'],
+    'predictions' => $result['number4'],
     'time' => $time_spent[1],
   );
   return $stats;

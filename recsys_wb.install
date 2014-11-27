@@ -34,6 +34,16 @@ function recsys_wb_schema() {
         'type' => 'float',
         'not null' => TRUE
       ),
+      'predictions' => array(
+        'description' => 'The number of prediction records',
+        'type' => 'int',
+        'not null' => TRUE
+      ),
+      'time' => array(
+        'description' => 'The time spent for calculating the recommendations',
+        'type' => 'text',
+        'not null' => TRUE
+      ),
     ),
   );
   $schema['recsys_wb_evaluation_run'] = array(

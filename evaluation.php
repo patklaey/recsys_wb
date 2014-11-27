@@ -2,6 +2,7 @@
 
 require_once 'forms/forms_view.php';
 require_once 'forms/forms_submit.php';
+require_once 'statistics.php';
 
 // Define some constants
 define('GOOD_ITEM', 4);
@@ -26,7 +27,9 @@ function showEvaluation() {
       array( 'data' => t('Mean Absolute Error'), 'field' => 'mae', 'style' => $style ),
       array( 'data' => t('Root Mean Squared Error'),'field' => 'rmse', 'style' => $style ),
       array( 'data' => t('Mean Reciprocal Rank'), 'field' => 'mrr', 'style' => $style ),
-      array( 'data' => t('Normalized DGC'), 'field' => 'ndgc', 'style' => $style )
+      array( 'data' => t('Normalized DGC'), 'field' => 'ndgc', 'style' => $style ),
+      array( 'data' => t('# of prediction records'), 'field' => 'predictions', 'style' => $style ),
+      array( 'data' => t('Time spent'), 'field' => 'time', 'style' => $style )
     );
     $rows = array();
     $recommender_app_ids = array();
@@ -54,22 +57,26 @@ function showEvaluation() {
           ),
           'mae' => array(
             'data' => $eval->mae,
-            'field' => 'mae',
             'style' => $style
           ),
           'rmse' => array(
             'data' => $eval->rmse,
-            'field' => 'rmse',
             'style' => $style
           ),
           'mrr' => array(
             'data' => $eval->mrr,
-            'field' => 'mrr',
             'style' => $style
           ),
           'ndgc' => array(
             'data' => $eval->ndgc,
-            'field' => 'ndgc',
+            'style' => $style
+          ),
+          'predictions' => array(
+            'data' => format_integer($eval->predictions),
+            'style' => $style
+          ),
+          'time' => array(
+            'data' => $eval->time,
             'style' => $style
           )
         );
@@ -80,8 +87,14 @@ function showEvaluation() {
 
 
     // Render the table
-    $return_string .= theme('table', array( 'header' => $header , 'rows' => $rows, 'attributes' => array('id' => 'sort-table') ) );
-    $return_string .= "* not available<br/>";
+    $return_string .= theme(
+      'table', 
+      array( 
+        'header' => $header , 
+        'rows' => $rows, 
+        'attributes' => array('id' => 'sort-table') 
+      )
+    );
     
     // Add the reset form
     $return_string .= "<br/>" . drupal_render( 
@@ -175,6 +188,8 @@ function runEvaluations() {
  * Write the evaluation results to the database
  */
 function writeEvaluationResults( $app_id, $mea, $rmse, $mrr, $ndgc) {
+  // Get the statitics first
+  $stats = getRecommenderStatistics($app_id);
   // Check if the entry for the given app_id already exists
   $result = db_query("SELECT app_id from {" . DB_EVAL_TABLE . "} where app_id ="
     . " :app_id", 
@@ -187,7 +202,9 @@ function writeEvaluationResults( $app_id, $mea, $rmse, $mrr, $ndgc) {
         'mae' => $mea,
         'rmse' => $rmse,
         'mrr' => $mrr,
-        'ndgc' => $ndgc
+        'ndgc' => $ndgc,
+        'predictions' => $stats['predictions'],
+        'time' => $stats['time']
       ))->execute();
   }
   else {
@@ -196,7 +213,9 @@ function writeEvaluationResults( $app_id, $mea, $rmse, $mrr, $ndgc) {
         'mae' => $mea,
         'rmse' => $rmse,
         'mrr' => $mrr,
-        'ndgc' => $ndgc
+        'ndgc' => $ndgc,
+        'predictions' => $stats['predictions'],
+        'time' => $stats['time']
       ))
       ->condition('app_id', $app_id)
       ->execute();
@@ -215,7 +234,7 @@ function writeEvaluationResults( $app_id, $mea, $rmse, $mrr, $ndgc) {
  */
 function getEvaluationResults( $header ) {
   $select = db_select(DB_EVAL_TABLE, 'e')->extend('TableSort');
-  $select->fields('e',array('app_id', 'mae','rmse','mrr','ndgc'));
+  $select->fields('e',array('app_id', 'mae','rmse','mrr','ndgc','predictions','time'));
   $select->orderByHeader($header);
   $results = $select->execute();
   return $results;
