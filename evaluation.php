@@ -158,8 +158,12 @@ function runEvaluations() {
     $MRR = meanReciprocalRank($results);
     writeLog($logfile, "Mean Reciprocal Rank calcualted: $MRR");
     
+    writeLog($logfile, "Calculating nDCG ...");
+    $nDCG = nDCG($results);
+    writeLog($logfile, "nDCG calcualted: $nDCG");
+    
     // Write the results to the database
-    writeEvaluationResults($recommender_app_id, $MAE, $RMSE, $MRR, 0);
+    writeEvaluationResults($recommender_app_id, $MAE, $RMSE, $MRR, $nDCG);
     
     // Write finish process
     writeLog($logfile, "Recommendations evaluated. Run finished!");
@@ -285,6 +289,37 @@ function meanReciprocalRank( $results ) {
     $i++;
   }
   return 0;
+}
+
+/**
+ * Calculate the nDCG
+ */
+function nDCG( $results ) {
+  usort($results,"sortByScore");
+  $gain = discountedCumulativeGain( $results );
+  usort($results,"sortByRating");
+  $perfect_gain = discountedCumulativeGain( $results );
+  return ( $gain / $perfect_gain ) ;
+} 
+
+/**
+ * Calculate the discounted cumulative gain
+ */
+function discountedCumulativeGain( $array ) {
+  $sum = 0;
+  for ($i=0; $i < sizeof( $array ); $i++) { 
+    $utility = $array[$i]['rating'];
+    $discount = logarithmicDiscount( $i + 1 );
+    $sum += $utility * $discount; 
+  }
+  return $sum;
+}
+
+/**
+ * Calculate the discount based on a logarithmic scale
+ */
+function logarithmicDiscount( $position ) {
+  return ( 1 / max(1,log($position,2)) );  
 }
 
 /**
