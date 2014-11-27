@@ -4,6 +4,7 @@
  * Display statistics for the different recommender algorithms
  */
 function recsys_wb_display_stats() {
+  print_r($_SESSION['debug']);
   $return_string = "";
   // The cell style formatting
   $style = 'text-align:center;vertical-align:middle';
@@ -88,10 +89,31 @@ function recsys_wb_display_stats() {
   }
   elseif (isset( $_SESSION['statistics_compare_form_submitted'] ) 
 && $_SESSION['statistics_compare_form_submitted'] === TRUE ) {
-    $recommender_app_ids = $_SESSION['stat_compare_recommender_apps'];
+    // Check if comapre all or not
+    $recommender_app_ids = array();
+    if ( $_SESSION['stat_compare_type'] === "Submit" ) {
+      $recommender_app_ids = $_SESSION['stat_compare_recommender_apps'];
+    } 
+    else {
+      foreach ($_SESSION['stat_compare_recommender_apps'] as $key => $value) {
+        $recommender_app_ids[ $key ] = $key;
+      }
+    }
     foreach ($recommender_app_ids as $key => $value) {
+      $result = array();
       if( $value != 0 ) {
         $result = getRecommenderStatistics( $value );
+        if ( $result == null )
+          $result = array(
+            'date' => "NA*",
+            'description' => getRecommenderAppTitle($key),
+            'users' => 0,
+            'items' => 0,
+            'similarity' => 0,
+            'predictions' => 0,
+            'time' => "NA*"
+          );
+        
         $rows[] = array(
           'date' => array(
             'data' => $result['date'],
@@ -129,6 +151,8 @@ function recsys_wb_display_stats() {
       'table',
       array('header' => $header, 'rows' => $rows)
     );
+    $return_string .= "* not available<br/>";
+    
     // Add the reset form
     $return_string .= "<br/>" . drupal_render(
       drupal_get_form('recsys_wb_reset_form')
@@ -160,7 +184,8 @@ function getRecommenderStatistics( $app_id ) {
   array(':app_id' => $app_id ) );
   $result = $results->fetchAssoc();
   $date = date('r',$result['created']);
-  preg_match("/\(Time spent: (.+)\)/", $result['message'], $time_spent);
+  if ( preg_match("/\(Time spent: (.+)\)/", $result['message'], $time_spent) == 0 )
+    return null;
   $description = preg_replace(
     "/Compute recommendations: /",
     "",

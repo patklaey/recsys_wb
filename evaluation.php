@@ -76,7 +76,7 @@ function showEvaluation() {
     $results = getEvaluationResults( $header );
 
     foreach ($results as $eval ) {
-      if ( $recommender_app_ids[ "" . $eval->app_id ] > 0 ) {
+      if ( $recommender_app_ids[ $eval->app_id ] > 0 ) {
         $rows[] = array(
           'title' => array(
             'data' => getRecommenderAppTitle( $eval->app_id ),

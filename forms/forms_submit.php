@@ -91,6 +91,7 @@ function recsys_wb_statistics_with_history_form_submit($form, &$form_state) {
 function recsys_wb_compare_statistics_form_submit($form, &$form_state) {
   // Just set some session variables
   $_SESSION['statistics_compare_form_submitted'] = TRUE;
+  $_SESSION['stat_compare_type'] = $form_state['values']['op'];
   $_SESSION['stat_compare_recommender_apps'] = $form_state['values']['stats_compare_recommender_apps'];
 }
 
@@ -167,6 +168,9 @@ function recsys_wb_reset_form_submit($form, &$form_state) {
     
   if ( isset ( $_SESSION['recsys_wb_evaluate_all_form_submitted'] ) )
     unset( $_SESSION['recsys_wb_evaluate_all_form_submitted'] );
+  
+  if ( isset( $_SESSION['stat_compare_type'] ) )
+    unset( $_SESSION['stat_compare_type'] );
  
 }
 
