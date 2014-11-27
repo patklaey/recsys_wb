@@ -114,14 +114,21 @@ function showEvaluation() {
 
 
     // Render the table
-    $return_string .= theme(
-      'table', 
-      array( 
-        'header' => $header , 
-        'rows' => $rows, 
-        'attributes' => array('id' => 'sort-table') 
-      )
-    );
+    if ( sizeof($rows) > 0 ) {
+      $return_string .= theme(
+        'table', 
+        array( 
+          'header' => $header , 
+          'rows' => $rows, 
+          'attributes' => array('id' => 'sort-table') 
+        )
+      );  
+    }
+    else {
+      $return_string .= "Unfortunatley there are no evaluations for the ";
+      $return_string .= "selected recommender algorithms.<br/>";
+    }
+    
     
     // Add the reset form
     $return_string .= "<br/>" . drupal_render( 
