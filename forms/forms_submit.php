@@ -186,12 +186,12 @@ function recsys_wb_evaluate_all_form_submit($form, &$form_state) {
 function recsys_wb_evaluate_algorithms_form_submit( $form, &$form_state) {
   // Get the logfile
   $logfile = generateUniqueLogfile();
-  
+    
   // Schedule all the selected apps for evaluation
   foreach ($form_state['values']['evalute_algorithms'] as $key => $value) {
-    if ( $value != 0 ) {
+    if ( $value != 0 || $form_state['values']['op'] === 'Evaluate all') {
       // Schedule the recommender for evaluation after the run
-      scheduleForEvaluation($value, $logfile);
+      scheduleForEvaluation($key, $logfile);
     }
   }
   
