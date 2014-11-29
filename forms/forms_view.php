@@ -224,7 +224,7 @@ function recsys_wb_evaluation_form() {
     '#type' => 'checkboxes',
     '#title' => t('Recommender algorithm:'),
     '#options' => $algorithms,
-    '#description' => t('Select the recommender algorithms to evaluate'),
+    '#description' => t('Select the recommender algorithms to show evaluation'),
     '#required' => TRUE,
   );
   $form['submit'] = array(

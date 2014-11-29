@@ -79,7 +79,7 @@ function recsys_wb_menu() {
     'access arguments' => array('access content'),
   );
   $items['evaluation'] = array(
-    'title' => 'Evaluation', 
+    'title' => 'Show evaluations', 
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_evaluation',
