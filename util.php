@@ -1,5 +1,7 @@
 <?php
 
+define("WHOLE_MATCH",0);
+
 /**
  * Get the movie name from its ID
  */
@@ -132,4 +134,54 @@ function format_integer( $number ) {
   return number_format($number,0,".","`");
 }
  
+/**
+ * Generate a unique logfile
+ */
+function generateUniqueLogfile() {
+  // Generate a UUID
+  $uuid = gen_uuid();
+  
+  // Get the log directory
+  $log_dir = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
+    . drupal_get_path("module","recsys_wb") . DIRECTORY_SEPARATOR . "runs" 
+    . DIRECTORY_SEPARATOR;
+    
+  // Return the unique logfile
+  return $log_dir . $uuid . ".log";
+}
+
+/**
+ * Extracts the UUID from the given filename
+ */
+function extractUUIDFromFilename( $filename ) {
+  $uuid_pattern = "/[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}/";
+  preg_match($uuid_pattern, $filename, $uuid);
+  return $uuid[WHOLE_MATCH];
+}
+
+/**
+ * 
+ */
+function generateLinkToLogfileTail($logfile_uuid, $link_text) {
+  return l(
+    $link_text, 
+    'tail', 
+    array(
+      'query' => array('uuid' => $logfile_uuid) , 
+      'attributes' => array('target' => '_blank') 
+    )
+  );
+}
+
+/**
+ * 
+ */
+function displayLinkToLogfileTail( $logfile, $message = "" ) {
+  // Extract the uuid from the logfile
+  $uuid = extractUUIDFromFilename( $logfile );
+  
+  // Display the message that the recommendation is scheduled for execution
+  $link = generateLinkToLogfileTail($uuid, "here"); 
+  drupal_set_message( $message . " Click " . $link . " to see the progress.");
+}
 ?>

@@ -91,6 +91,13 @@ function recsys_wb_menu() {
     'page callback' => 'recsys_wb_run_evaluations',
     'access arguments' => array('access content'),
   );
+    $items['evaluatealgorithms'] = array(
+    'title' => 'Evaluate Algorithms', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_evaluate_algorithms',
+    'access arguments' => array('administrator'),
+  );
   return $items;
 }
 
@@ -217,10 +224,17 @@ function recsys_wb_evaluation() {
 /**
  * 
  */
-function recsys_wb_run_evaluations(){
+function recsys_wb_run_evaluations() {
   runEvaluations();
 }
 
+/**
+ * 
+ */
+function recsys_wb_evaluate_algorithms() {
+  return drupal_get_form('recsys_wb_evaluate_algorithms_form');
+}
+ 
 /**
  * Implements hook_block_info
  */

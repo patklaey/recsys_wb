@@ -243,4 +243,29 @@ function recsys_wb_evaluate_all_form() {
   return $form;  
 }
 
+/**
+ * 
+ */
+function recsys_wb_evaluate_algorithms_form() {
+  // Get all different recommender algorithms currently registered
+  $algorithms = getRecommenderAppsForForm();
+  
+  // Create a simple form which only lets the user select the recommender 
+  // algorithm
+  $form['evalute_algorithms'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Recommender algorithm:'),
+    '#options' => $algorithms,
+    '#description' => t('Select the recommender algorithms to evaluate')
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Evaluate'),
+  );
+  $form['evaluate_all'] = array(
+    '#type' => 'submit',
+    '#value' => t('Evaluate all'),
+  );
+  return $form;  
+}
 ?>

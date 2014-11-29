@@ -105,36 +105,24 @@ function recsys_wb_run_recommender_form_submit($form, &$form_state) {
   
   // Simply schedule the recommendation algorithm for execution
   recommender_create_command($recommender_app_name);
-    
-  // Generate a UUID
-  $uuid = gen_uuid();
   
   // Get the path to the script
   $script_path = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
     . drupal_get_path("module","recommender") . DIRECTORY_SEPARATOR . "run.sh";
     
-  // Get the log directory
-  $log_dir = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
-    . drupal_get_path("module","recsys_wb") . DIRECTORY_SEPARATOR . "runs" 
-    . DIRECTORY_SEPARATOR;
+  // Get the logfile
+  $logfile = generateUniqueLogfile();
     
   // Schedule the recommender for evaluation after the run
-  scheduleForEvaluation($recommender_app_id, "$log_dir$uuid.log");
+  scheduleForEvaluation($recommender_app_id, $logfile);
     
   // And execute the system command which will run the recommendation algorithm
-  exec("nohup setsid $script_path > $log_dir$uuid.log 2>&1 &");
+  exec("nohup setsid $script_path > $logfile 2>&1 &");
   
-  // Display the message that the recommendation is scheduled for execution
-  $link = l(
-    'here', 
-    'tail', 
-    array(
-      'query' => array('uuid' => $uuid) , 
-      'attributes' => array('target' => '_blank') 
-    )
-  ); 
-  drupal_set_message("The recommender algorithm " . $recommender_app_name
-    . " is running now. Click " . $link . " to see the progress.");
+  // Display the link to follow the progress
+  $message = "The recommender algorithm " . $recommender_app_name
+    . " is running now.";
+  displayLinkToLogfileTail($logfile, $message );
 }
 
 /**
@@ -191,4 +179,32 @@ function recsys_wb_evaluate_all_form_submit($form, &$form_state) {
   $_SESSION['recsys_wb_evaluate_all_form_submitted'] = TRUE;
   print_r($_SESSION);
 }
+
+/**
+ * Action to take when recsys_wb_evaluate_algorithms_form is submitted
+ */
+function recsys_wb_evaluate_algorithms_form_submit( $form, &$form_state) {
+  // Get the logfile
+  $logfile = generateUniqueLogfile();
+  
+  // Schedule all the selected apps for evaluation
+  foreach ($form_state['values']['evalute_algorithms'] as $key => $value) {
+    if ( $value != 0 ) {
+      // Schedule the recommender for evaluation after the run
+      scheduleForEvaluation($value, $logfile);
+    }
+  }
+  
+  // And display the link to the logfile where the user can track the progress
+  displayLinkToLogfileTail($logfile, "Evaluation in progress.");
+  
+  // Get the path to the script
+  $script_path = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
+    . drupal_get_path("module","recsys_wb") . DIRECTORY_SEPARATOR 
+    . "scripts" . DIRECTORY_SEPARATOR . "evaluate.sh";
+    
+  // And execute the evaluation in the background
+  exec("nohup setsid $script_path > $logfile 2>&1 &");
+}
+ 
 ?>

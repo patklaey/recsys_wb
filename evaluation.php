@@ -167,13 +167,15 @@ function runEvaluations() {
   // Go through all pending evaluations and calculate them 
   foreach( $results as $result ) {
     $logfile = $result->logfile;
-    // Log start progress
-    $message = "Recommendations calculated, going to evaluate the calulated "
-      . "recommendations ...";
-    writeLog($logfile, $message );
     $recommender_app_id = $result->app_id;
+    
     // Check if book or movie recommender
     $recommender_app_name = getRecommenderAppName($recommender_app_id);
+    $recommender_app_title = getRecommenderAppTitle( $recommender_app_id );
+    
+    // Log start progress
+    writeLog($logfile, "Evaluating $recommender_app_title ..." );
+    
     if ( preg_match("/^book/", $recommender_app_name) )
       $test_db = BOOK_DB_TEST;
 
@@ -217,8 +219,16 @@ function runEvaluations() {
     // Write the results to the database
     writeEvaluationResults($recommender_app_id, $MAE, $RMSE, $MRR, $nDCG);
     
+    // Update the schedule table to remember that the evaluation is done
+    $num = db_update( DB_RUN_TABLE ) 
+      ->fields(array(
+        'done' => 1,
+      ))
+      ->condition('app_id', $recommender_app_id)
+      ->execute();
+    
     // Write finish process
-    writeLog($logfile, "Recommendations evaluated. Run finished!");
+    writeLog($logfile, "Recommendations for $recommender_app_title evaluated");
   }
     
 }
@@ -259,13 +269,7 @@ function writeEvaluationResults( $app_id, $mea, $rmse, $mrr, $ndgc) {
       ->condition('app_id', $app_id)
       ->execute();
   }
-  // Update the schedule table to remember that the evaluation is done
-  $num = db_update( DB_RUN_TABLE ) 
-    ->fields(array(
-      'done' => 1,
-    ))
-    ->condition('app_id', $app_id)
-    ->execute();
+
 }
 
 /**
