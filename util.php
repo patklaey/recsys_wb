@@ -143,7 +143,7 @@ function generateUniqueLogfile() {
   
   // Get the log directory
   $log_dir = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
-    . drupal_get_path("module","recsys_wb") . DIRECTORY_SEPARATOR . "runs" 
+    . drupal_get_path("module","recsys_wb") . DIRECTORY_SEPARATOR . "log" 
     . DIRECTORY_SEPARATOR;
     
   // Return the unique logfile

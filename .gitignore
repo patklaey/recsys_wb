@@ -1,2 +1,2 @@
 # Ignore all local run log files
-runs/*.log
+log/*.log
