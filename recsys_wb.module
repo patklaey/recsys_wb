@@ -26,6 +26,7 @@ require_once 'forms/forms_submit.php';
 require_once 'statistics.php';
 require_once 'php-tail/PHPTail.php';
 require_once 'evaluation.php';
+require_once 'explain.php';
 
 /**
  * Implements hook_menu()
@@ -97,6 +98,13 @@ function recsys_wb_menu() {
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_evaluate_algorithms',
     'access arguments' => array('administrator'),
+  );
+  $items['explanation'] = array(
+    'title' => 'Explanation', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_explanation',
+    'access arguments' => array('access content'),
   );
   return $items;
 }
@@ -403,4 +411,14 @@ function recsys_wb_tail() {
    * Regular GET/POST call, print out the GUI
    */
   $tail->generateGUI();
+}
+
+/**
+ * 
+ */
+function recsys_wb_explanation() {
+  $explain = "";
+  $explain .= recsys_wb_explain_item2item();
+  $explain .= recsys_wb_explain_user2user();
+  return $explain;
 }
