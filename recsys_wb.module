@@ -418,7 +418,7 @@ function recsys_wb_tail() {
  */
 function recsys_wb_explanation() {
   $explain = "";
-  $explain .= recsys_wb_explain_item2item();
   $explain .= recsys_wb_explain_user2user();
+  $explain .= recsys_wb_explain_item2item();
   return $explain;
 }

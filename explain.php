@@ -100,7 +100,15 @@ between the different items in the given dataset. To predict how much Alice
 might like Item 1, the n most similar items to Item1 (which the user has already
  rated) are selected and the users ratings are evaluated. Based on these 
 information, it is now possible to predict Alice's rating for Item 1.<br/>";
-  return $title . $explanation . recsys_wb_get_example_table();
+  $explanation .= recsys_wb_get_example_table( MARK_ITEM2ITEM );
+  $explanation .= "In the table above we can see that Item 1 is similar to Item
+ 5. The users which liked Item 1 (User 1 and Bob) also liked Item 5. User 2 did 
+not like both. And User 3 could' not really decide weather or not he liked those
+ two Items. Generally we can say that users who liked Item 1 also liked Item 5 
+and users who didn't like Item 1 neither liked Item 5. As Alice liked Item 5, we
+ can assume that she will also like Item 1, a predicted rating would be 
+somewhere between 4 and 5.";
+  return $title . $explanation;
 }
 
 /**
