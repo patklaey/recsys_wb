@@ -4,7 +4,6 @@
  * Display statistics for the different recommender algorithms
  */
 function recsys_wb_display_stats() {
-  print_r($_SESSION['debug']);
   $return_string = "";
   // The cell style formatting
   $style = 'text-align:center;vertical-align:middle';
