@@ -87,7 +87,14 @@ function recsys_wb_get_example_table( $marking = 0 ) {
       $row[5]['style'] = $style_mark;   
     }
   }
-  return theme('table',array( 'header' => $header, 'rows' => $rows ) );
+  return theme( 
+    'table',
+    array( 
+      'header' => $header, 
+      'rows' => $rows, 
+      'caption' => "Rating scale: 1 => Worst, 5 => Best" 
+    )
+  );
 }
 
 /**
