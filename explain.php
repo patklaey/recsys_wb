@@ -1,9 +1,12 @@
 <?php
 
+define("MARK_USER2USER",1);
+define("MARK_ITEM2ITEM",2);
+
 /**
  * An example table which will illustrate the explanations
  */
-function recsys_wb_get_example_table() {
+function recsys_wb_get_example_table( $marking = 0 ) {
   $style = 'text-align:center;vertical-align:middle';
   $header = array(
     array( 'data' => ('User'), 'style' => $style ),
@@ -55,6 +58,35 @@ function recsys_wb_get_example_table() {
       array( 'data' => 3, 'style' => $style ),
     ),
   );
+  
+  // Append the red color to the style to mark ratings
+  $style_mark = $style . ";color:red";
+  
+  // Mark user2user => Similar users: Bob and User 1
+  if( $marking == MARK_USER2USER ) {
+    // Mark Bobs ratings
+    foreach ($rows[3] as &$row ) {
+      $row['style'] = $style_mark;
+    }    
+    
+    // Mark User1s ratings
+    foreach ($rows[1] as &$row ) {
+      $row['style'] = $style_mark;
+    }
+  }
+  
+  // Mark item2item => Similar items: Item 1 and Item 5
+  if ( $marking == MARK_ITEM2ITEM ) {
+    // Mark Item 1
+    foreach ($rows as &$row) {
+      $row[1]['style'] = $style_mark;   
+    }
+
+    // Mark Item 5
+    foreach ($rows as &$row) {
+      $row[5]['style'] = $style_mark;   
+    }
+  }
   return theme('table',array( 'header' => $header, 'rows' => $rows ) );
 }
 
@@ -81,7 +113,7 @@ between the different users in the given dataset. To predict how much Bob might
 like Item 3, the n most similar users to Bob are selected and their ratings of 
 Item 3 evaluated. Based on these infomration, it is now possible to predicts 
 Bob's rating for Item 3.<br/>";
-  return $title . $explanation . recsys_wb_get_example_table();
+  return $title . $explanation . recsys_wb_get_example_table( MARK_USER2USER );
 }
  
 ?>
