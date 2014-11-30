@@ -128,7 +128,13 @@ between the different users in the given dataset. To predict how much Bob might
 like Item 3, the n most similar users to Bob are selected and their ratings of 
 Item 3 evaluated. Based on these infomration, it is now possible to predicts 
 Bob's rating for Item 3.<br/>";
-  return $title . $explanation . recsys_wb_get_example_table( MARK_USER2USER );
+  $explanation .= recsys_wb_get_example_table( MARK_USER2USER );
+  $explanation .= "In the table above we can see that User 1 is pretty similar 
+to Bob. The Items Bob liked were rated as \"good\" by User 1. The items which Bob
+did not like were rated as \"bad\" by User 1. So these two users can be seen as 
+similar. As User 1 liked Item 3, we can infere that Bob will also like Item 3. 
+A predicted rating would be somewhere between 4 and 5.";
+  return $title . $explanation;
 }
  
 ?>
