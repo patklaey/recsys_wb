@@ -53,7 +53,7 @@ function showEvaluation() {
         'style' => $style 
       ),
       array( 
-        'data' => t('Time spent'), 
+        'data' => t('Time spent (seconds)'), 
         'field' => 'time', 
         'style' => $style 
       )
@@ -103,7 +103,7 @@ function showEvaluation() {
             'style' => $style
           ),
           'time' => array(
-            'data' => $eval->time,
+            'data' => format_time($eval->time),
             'style' => $style
           )
         );
@@ -200,6 +200,11 @@ function runEvaluations() {
       );
     }
 
+    if ( sizeof($results) == 0 ) {
+      writeLog($logfile, "Nothing to evaluate, skipping this algorithm");
+      continue;
+    }
+    
     writeLog($logfile, "Calculating Mean Absolute Error ...");
     $MAE = meanAbsoluteError($results);
     writeLog($logfile, "Mean Absolute Error calculated: $MAE");
@@ -239,10 +244,19 @@ function runEvaluations() {
 function writeEvaluationResults( $app_id, $mea, $rmse, $mrr, $ndgc) {
   // Get the statitics first
   $stats = getRecommenderStatistics($app_id);
+  
   // Check if the entry for the given app_id already exists
   $result = db_query("SELECT app_id from {" . DB_EVAL_TABLE . "} where app_id ="
     . " :app_id", 
     array(":app_id" => $app_id) );
+    
+  // Parse the time value from the statistics
+  preg_match("/^(\d+)h(\d+)m(\d+)s$/", $stats['time'], $time_spent);
+  $time_spent_in_seconds = 0;
+  $time_spent_in_seconds += $time_spent[1] * 3600;
+  $time_spent_in_seconds += $time_spent[2] * 60;
+  $time_spent_in_seconds += $time_spent[3];
+  
   // If the entry does not exist, add a new one, otherwise just update the old
   if ( $result->rowCount() == 0 ) {
     $result = db_insert( DB_EVAL_TABLE )
@@ -253,7 +267,7 @@ function writeEvaluationResults( $app_id, $mea, $rmse, $mrr, $ndgc) {
         'mrr' => $mrr,
         'ndgc' => $ndgc,
         'predictions' => $stats['predictions'],
-        'time' => $stats['time']
+        'time' => $time_spent_in_seconds
       ))->execute();
   }
   else {
@@ -264,7 +278,7 @@ function writeEvaluationResults( $app_id, $mea, $rmse, $mrr, $ndgc) {
         'mrr' => $mrr,
         'ndgc' => $ndgc,
         'predictions' => $stats['predictions'],
-        'time' => $stats['time']
+        'time' => $time_spent_in_seconds
       ))
       ->condition('app_id', $app_id)
       ->execute();

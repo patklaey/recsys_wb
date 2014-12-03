@@ -40,8 +40,8 @@ function recsys_wb_schema() {
         'not null' => TRUE
       ),
       'time' => array(
-        'description' => 'The time spent for calculating the recommendations',
-        'type' => 'text',
+        'description' => 'The time spent in seconds for calculating the recommendations',
+        'type' => 'int',
         'not null' => TRUE
       ),
     ),

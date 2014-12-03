@@ -184,4 +184,17 @@ function displayLinkToLogfileTail( $logfile, $message = "" ) {
   $link = generateLinkToLogfileTail($uuid, "here"); 
   drupal_set_message( $message . " Click " . $link . " to see the progress.");
 }
+
+/**
+ * 
+ */
+function format_time( $time_in_seconds ) {
+  $date_formatted = gmdate("H:i:s", $time_in_seconds);
+  $date = explode(":", $date_formatted);
+  $hours = (int) $date[0];
+  $minutes = (int) $date[1];
+  $seconds = (int) $date[2];
+  return $hours . "h" . $minutes . "m" . $seconds . "s";
+}
+
 ?>
