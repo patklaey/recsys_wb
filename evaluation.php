@@ -53,7 +53,7 @@ function showEvaluation() {
         'style' => $style 
       ),
       array( 
-        'data' => t('Time spent (seconds)'), 
+        'data' => t('Time spent'), 
         'field' => 'time', 
         'style' => $style 
       )
