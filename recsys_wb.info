@@ -4,5 +4,6 @@ core = "7.x"
 version = "7.x-0.2"
 
 dependencies[] = recommender
+dependencies[] = mathjax
 
 package = Recommendation

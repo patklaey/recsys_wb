@@ -197,4 +197,17 @@ function format_time( $time_in_seconds ) {
   return $hours . "h" . $minutes . "m" . $seconds . "s";
 }
 
+/**
+ * Code for an math inline formula
+ */
+function mathInline( $formula ) {
+  return "\( " . $formula . "\)";
+}
+
+/**
+ * Code for an math inline formula
+ */
+function mathBlock( $formula ) {
+  return "\[ " . $formula . "\]";
+}
 ?>

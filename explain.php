@@ -130,11 +130,38 @@ Item 3 evaluated. Based on these infomration, it is now possible to predicts
 Bob's rating for Item 3.<br/>";
   $explanation .= recsys_wb_get_example_table( MARK_USER2USER );
   $explanation .= "In the table above we can see that User 1 is pretty similar 
-to Bob. The Items Bob liked were rated as \"good\" by User 1. The items which Bob
-did not like were rated as \"bad\" by User 1. So these two users can be seen as 
-similar. As User 1 liked Item 3, we can infere that Bob will also like Item 3. 
-A predicted rating would be somewhere between 4 and 5.";
+to Bob. The Items Bob liked were rated as \"good\" by User 1. The items which 
+Bob did not like were rated as \"bad\" by User 1. So these two users can be seen 
+ as similar. As User 1 liked Item 3, we can infere that Bob will also like Item 
+3. A predicted rating would be somewhere between 4 and 5.";
   return $title . $explanation;
+}
+
+/**
+ * Shortly explain the cosine similarity metrics
+ */
+function recsys_wb_explain_cosine( $marking = 0 ) {
+  $title = "<h2>Cosine similarity</h2>";
+  $explanation = "<div class='tex2jax'>";
+  $explanation .= "For the cosine similarity the products or users are seen as 
+ vectors in n-dimensional space. The similarity of two products or users 
+ (vectors) is given by the angle that they form: ";
+  $cosine = '\cos(x,y) = {x \bullet y \over |x| \times |y|}';
+  $explanation .= mathBlock($cosine);
+  $explanation .= "The result will be between 0 and 1 (as normal for a cosine) 
+where 0 indicates no similarity and 1 indicates absolute similarity. <br/> Let's
+ have a look at a concrete exaple. Take the table below: ";
+  $explanation .= recsys_wb_get_example_table( MARK_USER2USER );
+  $explanation .= "Now the similarity between User 1 and Bob is:";
+  $example = '\cos(User 1,Bob) = {4 \times 5 + 1 \times 2 + 2 \times 3 + 4 '
+   . '\times 4 \over \sqrt{4^2+1^2+2^2+4^2} \times \sqrt{5^2+2^2+3^2+4^2} } = '
+   . '0.98';
+  $explanation .= mathBlock($example);
+  $explanation .= "As we can see a value of 0.98 means that there is some huge 
+similarity between User 1 and Bob.<br/>To apply cosine similarity to items the 
+process is exactly the same. You just compare the ratings of the given product 
+instead of the ratings of the given users (just invert the matrix).";
+  return $title . $explanation . "</div>";
 }
  
 ?>
