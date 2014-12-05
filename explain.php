@@ -126,13 +126,13 @@ function recsys_wb_explain_user2user() {
   $explanation = "User-User recommender algorithms analyze the similarity 
 between the different users in the given dataset. To predict how much Bob might 
 like Item 3, the n most similar users to Bob are selected and their ratings of 
-Item 3 evaluated. Based on these infomration, it is now possible to predicts 
+Item 3 evaluated. Based on these information, it is now possible to predicts 
 Bob's rating for Item 3.<br/>";
   $explanation .= recsys_wb_get_example_table( MARK_USER2USER );
   $explanation .= "In the table above we can see that User 1 is pretty similar 
 to Bob. The Items Bob liked were rated as \"good\" by User 1. The items which 
 Bob did not like were rated as \"bad\" by User 1. So these two users can be seen 
- as similar. As User 1 liked Item 3, we can infere that Bob will also like Item 
+ as similar. As User 1 liked Item 3, we can infer that Bob will also like Item 
 3. A predicted rating would be somewhere between 4 and 5.";
   return $title . $explanation;
 }
@@ -152,7 +152,7 @@ function recsys_wb_explain_cosine( $marking = 0 ) {
   $explanation .= mathBlock($cosine);
   $explanation .= "The result will be between 0 and 1 (as normal for a cosine) 
 where 0 indicates no similarity and 1 indicates absolute similarity. <br/> Let's
- have a look at a concrete exaple. Take the table below: ";
+ have a look at a concrete example. Take the table below: ";
   $explanation .= recsys_wb_get_example_table( MARK_USER2USER );
   $explanation .= "The similarity between User 1 and Bob is:";
   $example = '\cos(User 1,Bob) = {4 \times 5 + 1 \times 2 + 2 \times 3 + 4 '
@@ -180,8 +180,8 @@ set of ratings of the users or items with the formula:";
   $explanation .= mathBlock($pearson);
   $explanation .= "Where " . mathInline('\overline{X}') . " and " . 
 mathInline('\overline{Y}') . "is the average rating of " . mathInline('X') . 
-" and " . mathInline('Y') . " respectivly. The result will be between -1 and 1 
-where 1 means strong positiv correaltion (similarity), 0 means no correlation (
+" and " . mathInline('Y') . " respectively. The result will be between -1 and 1 
+where 1 means strong positive correlation (similarity), 0 means no correlation (
 no similarity) and -1 means strong negative correlation (dissimilarity).<br/>
 Let's have a look at a concrete example. Take the table below: ";
   $explanation .= recsys_wb_get_example_table( MARK_ITEM2ITEM );
