@@ -153,16 +153,33 @@ function recsys_wb_explain_cosine( $marking = 0 ) {
   $explanation .= "The result will be between 0 and 1 (as normal for a cosine) 
 where 0 indicates no similarity and 1 indicates absolute similarity. <br/> Let's
  have a look at a concrete example. Take the table below: ";
-  $explanation .= recsys_wb_get_example_table( MARK_USER2USER );
-  $explanation .= "The similarity between User 1 and Bob is:";
-  $example = 'Cosine(User 1,Bob) = {4 \times 5 + 1 \times 2 + 2 \times 3 + 4 '
-   . '\times 4 \over \sqrt{4^2+1^2+2^2+4^2} \times \sqrt{5^2+2^2+3^2+4^2} } = '
-   . '0.98';
-  $explanation .= mathBlock($example);
-  $explanation .= "As we can see a value of 0.98 means that there is some huge 
+
+   // If marking is user2user or nothing then the example should be user2user
+  if ( $marking == MARK_USER2USER || $marking == 0 )
+  {
+    $explanation .= recsys_wb_get_example_table( MARK_USER2USER );
+    $explanation .= "The similarity between User 1 and Bob is:";
+    $example = 'Cosine(User 1,Bob) = {4 \times 5 + 1 \times 2 + 2 \times 3 + 4 '
+      . '\times 4 \over \sqrt{4^2+1^2+2^2+4^2} \times \sqrt{5^2+2^2+3^2+4^2} } '
+      . ' = 0.98';
+    $explanation .= mathBlock($example);
+    $explanation .= "As we can see a value of 0.98 means that there is some huge 
 similarity between User 1 and Bob.<br/>To apply cosine similarity to items the 
 process is exactly the same. You just compare the ratings of the given products 
 instead of the ratings of the given users (just invert the matrix).";
+  }
+  else {
+    $explanation .= recsys_wb_get_example_table( MARK_ITEM2ITEM );
+    $explanation .= "The similarity between Item 1 and Item 5 is:";
+    $example = 'Cosine(Item1,Item5) = {4 \times 4 + 2 \times 2 + 5 \times 4 + 3'
+      . ' \times 3 \over \sqrt{4^2+2^2+5^2+3^2} \times \sqrt{4^2+2^2+4^2+3^2} }'
+      . ' = 0.99';
+    $explanation .= mathBlock($example);
+    $explanation .= "As we can see a value of 0.99 means that there is some huge 
+similarity between Item 1 and Item 5.<br/>To apply cosine similarity to users  
+the process is exactly the same. You just compare the ratings of the given users 
+ instead of the ratings of the given products (just invert the matrix).";
+  }
   return $title . $explanation . "</div>";
 }
 
