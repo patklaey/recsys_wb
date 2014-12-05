@@ -146,22 +146,63 @@ function recsys_wb_explain_cosine( $marking = 0 ) {
   $explanation .= "For the cosine similarity the products or users are seen as 
  vectors in n-dimensional space. The similarity of two products or users 
  (vectors) is given by the angle that they form: ";
-  $cosine = '\cos(x,y) = {x \bullet y \over |x| \times |y|}';
+  $cosine = '\cos( \overrightarrow{x},\overrightarrow{y}) = {\overrightarrow{x}
+\bullet \overrightarrow{y} \over |\overrightarrow{x}| \times |\overrightarrow{y}
+|}';
   $explanation .= mathBlock($cosine);
   $explanation .= "The result will be between 0 and 1 (as normal for a cosine) 
 where 0 indicates no similarity and 1 indicates absolute similarity. <br/> Let's
  have a look at a concrete exaple. Take the table below: ";
   $explanation .= recsys_wb_get_example_table( MARK_USER2USER );
-  $explanation .= "Now the similarity between User 1 and Bob is:";
+  $explanation .= "The similarity between User 1 and Bob is:";
   $example = '\cos(User 1,Bob) = {4 \times 5 + 1 \times 2 + 2 \times 3 + 4 '
    . '\times 4 \over \sqrt{4^2+1^2+2^2+4^2} \times \sqrt{5^2+2^2+3^2+4^2} } = '
    . '0.98';
   $explanation .= mathBlock($example);
   $explanation .= "As we can see a value of 0.98 means that there is some huge 
 similarity between User 1 and Bob.<br/>To apply cosine similarity to items the 
-process is exactly the same. You just compare the ratings of the given product 
+process is exactly the same. You just compare the ratings of the given products 
 instead of the ratings of the given users (just invert the matrix).";
   return $title . $explanation . "</div>";
 }
- 
+
+/**
+ * Shortly explain the pearson correlation
+ */
+function recsys_wb_explain_pearson( $marking = 0 ) {
+  $title = "<h2>Pearson similarity</h2>";
+  $explanation = "<div class='tex2jax'>";
+  $explanation .= "The pearson method calculates the correlation between the 
+set of ratings of the users or items with the formula:";
+  $pearson = 'Pearson(X,Y) = { \sum_{i=1}^{n} { (X_i - \overline{X})( Y_i - 
+\overline{Y}) } \over \sqrt{\sum_{i=1}^{n} { (X_i - \overline{X})^2}} 
+\sqrt{\sum_{i=1}^{n} { (Y_i - \overline{Y})^2}}}';
+  $explanation .= mathBlock($pearson);
+  $explanation .= "Where " . mathInline('\overline{X}') . " and " . 
+mathInline('\overline{Y}') . "is the average rating of " . mathInline('X') . 
+" and " . mathInline('Y') . " respectivly. The result will be between -1 and 1 
+where 1 means strong positiv correaltion (similarity), 0 means no correlation (
+no similarity) and -1 means strong negative correlation (dissimilarity).<br/>
+Let's have a look at a concrete example. Take the table below: ";
+  $explanation .= recsys_wb_get_example_table( MARK_ITEM2ITEM );
+  $explanation .= "To calculate the similarity between Item 1 and Item 5 we 
+first calculate " . mathInline('\overline{Item 1}') . " and " 
+. mathInline('\overline{Item 5}') . ".<br/>";
+  $precompute = '\overline{Item1} = {4+2+5+3 \over 4} = 3.5';
+  $explanation .= mathBlock($precompute);
+  $precompute = '\overline{Item5} = {4+2+4+3 \over 4} = 3.25';
+  $explanation .= mathBlock($precompute);
+  $sum = '(0.5 \times 0.75) + (-1.5 \times -1.25) + ( 1.5 \times 0.75) + (-0.5 \times -0.25 )';
+  $sqrt_x = '\sqrt{ 0.25 + 2.25 + 2.25 + 0.25 }';
+  $sqrt_y = '\sqrt{ 0.5625 + 1.5625 + 0.5625 + 0.0625 }';
+  $example = 'Pearson(Item1,Item5) = { ' . $sum . ' \over ' . $sqrt_x 
+. ' \times ' . $sqrt_y . '} = 0.94';
+  $explanation .= mathBlock($example);
+  $explanation .= "As we can see a value of 0.98 means that there is a strong 
+positive correlation (and therefore similarity) between Item 1 and Item 5. To 
+apply the pearson similarity to users the process is exactly the same. You just 
+measure the correlation between the ratings of the given users instead of the 
+ratings of the given items (just invert the matrix).";
+  return $title . $explanation . "</div>";
+}
 ?>

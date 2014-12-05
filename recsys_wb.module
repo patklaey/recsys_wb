@@ -421,5 +421,6 @@ function recsys_wb_explanation() {
   $explain .= recsys_wb_explain_user2user();
   $explain .= recsys_wb_explain_item2item();
   $explain .= recsys_wb_explain_cosine();
+  $explain .= recsys_wb_explain_pearson();
   return $explain;
 }
