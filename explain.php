@@ -264,16 +264,32 @@ as points in n-dimensional space. The similarity of two products or users
   $explanation .= "The smaller the distance, the bigger the similarity between 
 the two users or products. <br/>Let's have a look at a concrete example. Take 
 the table below: ";
-  $explanation .= recsys_wb_get_example_table( MARK_USER2USER );
-  $explanation .= "The similarity between User 1 and Bob is:";
-  $example = 'Euclidean(User1,Bob) = \sqrt{(-1)^2 + (-1)^2 + (-1)^2 + 0^2 } = ';
-  $example .= " 1.73";
-  $explanation .= mathBlock($example);
-  $explanation .= "At a first glance, a value of 1.73 seems to be a lot, but the
+
+  // Check if marking us user2user or nothing, then explanation should be U2U
+  if ( $marking == MARK_USER2USER || $marking == 0 )
+  {
+    $explanation .= recsys_wb_get_example_table( MARK_USER2USER );
+    $explanation .= "The similarity between User 1 and Bob is:";
+    $example = 'Euclidean(User1,Bob) = \sqrt{(-1)^2 + (-1)^2 + (-1)^2 + 0^2 } ';
+    $example .= "= 1.73";
+    $explanation .= mathBlock($example);
+    $explanation .= "At a first glance, a value of 1.73 seems to be a lot, but 
 the distnace between Bob and User 2 and User 3 is 4.24 and 2.65 respectively. To
  apply the euclidean similarity to items the process is exactly the same. You 
 just measure the distance between the ratings of the items instead of the 
 ratings of the users (just invert the matrix)";
+  }
+  else {
+    $explanation .= recsys_wb_get_example_table( MARK_ITEM2ITEM );
+    $explanation .= "The similarity between Item 1 and Item 5 is:";
+    $example = 'Euclidean(Item 1,Item 5) = \sqrt{ 0^2 + 0^2 + 1^2 + 0^2 } = 1';
+    $explanation .= mathBlock($example);
+    $explanation .= "As 1 is the smallest possible distance after 0, we can
+clearly see that Item 1 and Item 5 are similar. <br/>
+To apply the euclidean similarity to users the process is exactly the same. You 
+just measure the distance between the ratings of the users instead of the 
+ratings of the items (just invert the matrix)";
+  }
   return $title . $explanation . "</div>";
 }
 ?>
