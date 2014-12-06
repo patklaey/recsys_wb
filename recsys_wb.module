@@ -418,13 +418,16 @@ function recsys_wb_tail() {
  */
 function recsys_wb_explanation() {
   $algorithm_name = null;
+  $explain = "";
+  $marking = MARK_USER2USER;
+  
   // Check if the GET[algorithm] method is set
   if ( isset($_GET['algorithm']) )
     $algorithm_name = getRecommenderAppName( $_GET['algorithm'] );
   
+  if ( $algorithm_name != null )
+    $explain = "<h2>" . getRecommenderAppTitle( $_GET['algorithm'] ) . "</h2>";
   
-  $explain = "";
-  $marking = MARK_USER2USER;
   $explain_user2user = preg_match("/_u2u_/", $algorithm_name);
   $explain_item2item = preg_match("/_i2i_/", $algorithm_name);
   $explain_cosine = preg_match("/_cosine/", $algorithm_name);
@@ -448,10 +451,10 @@ function recsys_wb_explanation() {
     $explain .= recsys_wb_explain_cosine($marking);
 
   if ( $explain_euclidean || $algorithm_name == null )
-    $explain .= recsys_wb_explain_pearson($marking);
+    $explain .= recsys_wb_explain_euclidean($marking);
   
   if ( $explain_pearson || $algorithm_name == null )
-    $explain .= recsys_wb_explain_euclidean($marking);
+    $explain .= recsys_wb_explain_pearson($marking);
   
   return $explain;
 }

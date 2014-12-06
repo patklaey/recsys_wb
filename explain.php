@@ -101,7 +101,7 @@ function recsys_wb_get_example_table( $marking = 0 ) {
  * Shortly explain what item2item algorithms do
  */
 function recsys_wb_explain_item2item() {
-  $title = "<h2>Item - Item Recommendation</h2>";
+  $title = "<strong><h3>Item - Item Recommendation</h3></strong>";
   $explanation = "Item-Item recommender algorithms analyze the similarity 
 between the different items in the given dataset. To predict how much Alice 
 might like Item 1, the n most similar items to Item1 (which the user has already
@@ -110,7 +110,7 @@ information, it is now possible to predict Alice's rating for Item 1.<br/>";
   $explanation .= recsys_wb_get_example_table( MARK_ITEM2ITEM );
   $explanation .= "In the table above we can see that Item 1 is similar to Item
  5. The users which liked Item 1 (User 1 and Bob) also liked Item 5. User 2 did 
-not like both. And User 3 could' not really decide weather or not he liked those
+not like both. And User 3 could not really decide weather or not he liked those
  two Items. Generally we can say that users who liked Item 1 also liked Item 5 
 and users who didn't like Item 1 neither liked Item 5. As Alice liked Item 5, we
  can assume that she will also like Item 1, a predicted rating would be 
@@ -122,7 +122,7 @@ somewhere between 4 and 5.";
  * Shortly explain what user2user algorithms do
  */
 function recsys_wb_explain_user2user() {
-  $title = "<h2>User - User Recommendation</h2>";
+  $title = "<strong><h3>User - User Recommendation</h3></strong>";
   $explanation = "User-User recommender algorithms analyze the similarity 
 between the different users in the given dataset. To predict how much Bob might 
 like Item 3, the n most similar users to Bob are selected and their ratings of 
@@ -141,7 +141,7 @@ Bob did not like were rated as \"bad\" by User 1. So these two users can be seen
  * Shortly explain the cosine similarity metrics
  */
 function recsys_wb_explain_cosine( $marking = 0 ) {
-  $title = "<h2>Cosine similarity</h2>";
+  $title = "<strong><h3>Cosine similarity</h3></strong>";
   $explanation = "<div class='tex2jax'>";
   $explanation .= "For the cosine similarity the products or users are seen as 
  vectors in n-dimensional space. The similarity of two products or users 
@@ -187,7 +187,7 @@ the process is exactly the same. You just compare the ratings of the given users
  * Shortly explain the pearson correlation
  */
 function recsys_wb_explain_pearson( $marking = 0 ) {
-  $title = "<h2>Pearson similarity</h2>";
+  $title = "<strong><h3>Pearson similarity</h3></strong>";
   $explanation = "<div class='tex2jax'>";
   $explanation .= "The pearson method calculates the correlation between the 
 set of ratings of the users or items with the formula:";
@@ -254,7 +254,7 @@ the ratings of the given items (just invert the matrix).";
  * Shortly explain the euclidean similarity
  */
 function recsys_wb_explain_euclidean( $marking = 0 ) {
-  $title = "<h2>Euclidean similarity</h2>";
+  $title = "<strong><h3>Euclidean similarity</h3></strong>";
   $explanation = "<div class='tex2jax'>";
   $explanation .= "For the euclidean similarity the products or users are seen 
 as points in n-dimensional space. The similarity of two products or users 
