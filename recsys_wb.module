@@ -165,7 +165,7 @@ function recsys_wb_myratings() {
   }
 
   // Add the Movie section
-  $return_string .= "<strong>Movies</strong>";
+  $return_string .= "<br/><br/><strong>Movies</strong>";
   
   // Get all the users rating from the database
   $query = db_select(MOVIE_DB_TRAIN, 'ratings');

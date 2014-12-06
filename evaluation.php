@@ -56,7 +56,11 @@ function showEvaluation() {
         'data' => t('Time spent'), 
         'field' => 'time', 
         'style' => $style 
-      )
+      ),
+      array(
+        'data' => t('Tell me more'),
+        'style' => $style,
+      ),
     );
     $rows = array();
     $recommender_app_ids = array();
@@ -77,6 +81,17 @@ function showEvaluation() {
 
     foreach ($results as $eval ) {
       if ( $recommender_app_ids[ $eval->app_id ] > 0 ) {
+        
+        // Create the link to explain the algorithm
+        $explain = l( 
+          'about this algorithm', 
+          'explanation',
+          array(
+            'query' => array( 'algorithm' => $eval->app_id ), 
+            'attributes' => array('target' => '_blank') 
+          )
+        );
+        
         $rows[] = array(
           'title' => array(
             'data' => getRecommenderAppTitle( $eval->app_id ),
@@ -105,7 +120,11 @@ function showEvaluation() {
           'time' => array(
             'data' => format_time($eval->time),
             'style' => $style
-          )
+          ),
+          'explain' => array(
+            'data' => $explain,
+            'style' => $style,
+          ),
         );
       }
     }

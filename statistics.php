@@ -16,21 +16,40 @@ function recsys_wb_display_stats() {
     t('# of similarity records'),
     t('# of prediction records'),
     t('Time spent'),
+    t('Tell me more'),
   );
   $rows = array();
   // Check if the recommender app SESSION variable is set, if yes display its
   // stats, if not display the form to select the recommender app
   if( isset( $_SESSION['statistics_history_form_submitted'] ) 
 && $_SESSION['statistics_history_form_submitted'] === TRUE ) {
+
     // Get all the users rating from the database
     $results = db_query("Select description,created,number1,number2,"
       . "number3,number4,message from {async_command} where id1 = :app_id "
       . "order by created DESC" ,
       array(':app_id' => $_SESSION['stat_history_recommender_app'] ) );
 
-        // Check if there are already some ratings
+    // Create the link to the description of the algorithm
+    $explain = l( 
+      'about this algorithm', 
+      'explanation',
+      array(
+        'query' => array(
+          'algorithm' => $_SESSION['stat_history_recommender_app']
+         ) , 
+        'attributes' => array('target' => '_blank') 
+      )
+    );
+    
+    // Check if there are already some ratings
     if( $results->rowCount() == 0 ) {
       $return_string .= "<strong>No statistics available yet</strong></br>";
+      
+      // Add the reset form
+      $return_string .= "<br/>" . drupal_render(
+        drupal_get_form('recsys_wb_reset_form')
+      );
     }
     else {
       // Loop through the results of the DB query and fill in the tables rows
@@ -72,7 +91,11 @@ function recsys_wb_display_stats() {
           'time' => array(
             'data' => $time_spent[1],
             'style' => $style
-          )
+          ),
+          'explain' => array(
+            'data' => $explain,
+            'style' => $style,
+          ),
         );
       }
       // Display the table
@@ -102,7 +125,19 @@ function recsys_wb_display_stats() {
       $result = array();
       if( $value != 0 ) {
         $result = getRecommenderStatistics( $value );
-        if ( $result == null )
+        
+        // Create the link to the description of the algorithm
+        $explain = l( 
+          'about this algorithm', 
+          'explanation',
+          array(
+            'query' => array( 'algorithm' => $value ), 
+            'attributes' => array('target' => '_blank') 
+          )
+        );
+        
+
+        if ( $result == null ) {
           $result = array(
             'date' => "NA*",
             'description' => getRecommenderAppTitle($key),
@@ -110,8 +145,13 @@ function recsys_wb_display_stats() {
             'items' => 0,
             'similarity' => 0,
             'predictions' => 0,
-            'time' => "NA*"
+            'time' => "NA*",
+            'explain' => $explain,
           );
+        }
+        else {
+          $result['explain'] = $explain;
+        }
         
         $rows[] = array(
           'date' => array(
@@ -141,7 +181,11 @@ function recsys_wb_display_stats() {
           'time' => array(
             'data' => $result['time'],
             'style' => $style
-          )
+          ),
+          'explain' => array(
+            'data' => $result['explain'],
+            'style' => $style
+          ),
         );
       }
     }
