@@ -429,8 +429,45 @@ function recsys_wb_explanation() {
     $explain = "<strong>" . getRecommenderAppTitle( $_GET['algorithm'] ) . "</strong>";
   }
   else {
-    $explain = "";
+          
+    $checked_user2user = 'checked';
+    $checked_item2item = '';
+    
+    drupal_add_css(drupal_get_path('module', 'recsys_wb') . '/css/radio-button.css');
+    
+    // Check if a POST request was sent if yes check which type it is
+    if ( isset($_POST['explain']) ) {
+      if ( $_POST['explain'] == 'user2user') {
+        $checked_user2user = 'checked';
+        $checked_item2item = '';
+        $marking = MARK_USER2USER;
+      }
+      
+      if ( $_POST['explain'] == 'item2item') {
+        $checked_user2user = '';
+        $checked_item2item = 'checked';
+        $marking = MARK_ITEM2ITEM;
+      }
+    }
+    
+    $explain .= "<strong>Similarity examples:</strong>";
+    $explain .= "
+<div class='toggle-btn-grp joint-toggle'>
+<form method='POST'>
+  <label class='toggle-btn'>
+    <input onChange='this.form.submit();' $checked_user2user type='radio' value='user2user' name='explain'/>
+    User-User
+  </label>
+  <label class='toggle-btn'>
+    <input onChange='this.form.submit();' $checked_item2item type='radio' value='item2item' name='explain'/>
+    Item-Item
+  </label>
+</form>
+</div>";
+
+    // Add the table of contents
     $explain .= recsys_wb_explanation_table_of_contents();  
+    
   }
   
   $explain_user2user = preg_match("/_u2u_/", $algorithm_name);
