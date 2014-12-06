@@ -220,7 +220,7 @@ first calculate " . mathInline('\overline{User 1}') . " and "
       . ' \times ' . $sqrt_y . '} = 0.82';
     $explanation .= mathBlock($example);
     $explanation .= "As we can see a value of 0.82 means that there is a  
-positive correlation (and therefore similarity) between User 1 and Bob. To 
+positive correlation (and therefore similarity) between User 1 and Bob.<br/>To 
 apply the pearson similarity to items the process is exactly the same. You just 
 measure the correlation between the ratings of the given items instead of the 
 ratings of the given users (just invert the matrix).";
@@ -241,11 +241,11 @@ first calculate " . mathInline('\overline{Item 1}') . " and "
     $example = 'Pearson(Item1,Item5) = { ' . $sum . ' \over ' . $sqrt_x 
       . ' \times ' . $sqrt_y . '} = 0.94';
     $explanation .= mathBlock($example);
-    $explanation .= "As we can see a value of 0.98 means that there is a strong 
-positive correlation (and therefore similarity) between Item 1 and Item 5. To 
-apply the pearson similarity to users the process is exactly the same. You just 
-measure the correlation between the ratings of the given users instead of the 
-ratings of the given items (just invert the matrix).";
+    $explanation .= "As we can see a value of 0.94 means that there is a strong 
+positive correlation (and therefore similarity) between Item 1 and Item 5.<br/>
+To apply the pearson similarity to users the process is exactly the same. You  
+just measure the correlation between the ratings of the given users instead of  
+the ratings of the given items (just invert the matrix).";
   }
   return $title . $explanation . "</div>";
 }
@@ -274,9 +274,9 @@ the table below: ";
     $example .= "= 1.73";
     $explanation .= mathBlock($example);
     $explanation .= "At a first glance, a value of 1.73 seems to be a lot, but 
-the distnace between Bob and User 2 and User 3 is 4.24 and 2.65 respectively. To
- apply the euclidean similarity to items the process is exactly the same. You 
-just measure the distance between the ratings of the items instead of the 
+the distnace between Bob and User 2 and User 3 is 4.24 and 2.65 respectively.
+<br/>To apply the euclidean similarity to items the process is exactly the same. 
+You just measure the distance between the ratings of the items instead of the 
 ratings of the users (just invert the matrix)";
   }
   else {
