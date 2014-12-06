@@ -114,7 +114,7 @@ function recsys_wb_menu() {
  */
 function recsys_wb_myratings() {
   // Prepare the return string
-  $return_string = "<h2>Books</h2>";
+  $return_string = "<strong>Books</strong>";
   
   // Get all the users rating from the database
   $query = db_select(BOOK_DB_TRAIN, 'ratings');
@@ -165,7 +165,7 @@ function recsys_wb_myratings() {
   }
 
   // Add the Movie section
-  $return_string .= "<h2>Movies</h2>";
+  $return_string .= "<strong>Movies</strong>";
   
   // Get all the users rating from the database
   $query = db_select(MOVIE_DB_TRAIN, 'ratings');
@@ -425,8 +425,13 @@ function recsys_wb_explanation() {
   if ( isset($_GET['algorithm']) )
     $algorithm_name = getRecommenderAppName( $_GET['algorithm'] );
   
-  if ( $algorithm_name != null )
-    $explain = "<h2>" . getRecommenderAppTitle( $_GET['algorithm'] ) . "</h2>";
+  if ( $algorithm_name != null ) {
+    $explain = "<strong>" . getRecommenderAppTitle( $_GET['algorithm'] ) . "</strong>";
+  }
+  else {
+    $explain = "";
+    $explain .= recsys_wb_explanation_table_of_contents();  
+  }
   
   $explain_user2user = preg_match("/_u2u_/", $algorithm_name);
   $explain_item2item = preg_match("/_i2i_/", $algorithm_name);
@@ -434,27 +439,62 @@ function recsys_wb_explanation() {
   $explain_euclidean = preg_match("/_euclidean/", $algorithm_name);
   $explain_pearson = preg_match("/_pearson/", $algorithm_name);
   
-  if( $explain_user2user || $algorithm_name == null )
+  $explain .= "<a href='#' name='algorithm'></a>";
+  if( $explain_user2user || $algorithm_name == null ){
+    $explain .= "<a href='#' name='user2user'></a>"; 
     $explain .= recsys_wb_explain_user2user();
+  }
   
   if ( $explain_item2item )
   {
+    $explain .= "<a href='#' name='item2item'></a>";
     $explain .= recsys_wb_explain_item2item();
     $marking = MARK_ITEM2ITEM;
   }
   else{
-    if ( $algorithm_name == null )
+    if ( $algorithm_name == null ) {
+      $explain .= "<a href='#' name='item2item'></a>";
       $explain .= recsys_wb_explain_item2item();
+    }
   }
 
-  if ( $explain_cosine || $algorithm_name == null )  
+  $explain .= "<a href='#' name='similarity'></a>";
+  if ( $explain_cosine || $algorithm_name == null ) {
+    $explain .= "<a href='#' name='cosine'></a>"; 
     $explain .= recsys_wb_explain_cosine($marking);
-
-  if ( $explain_euclidean || $algorithm_name == null )
-    $explain .= recsys_wb_explain_euclidean($marking);
+  }
   
-  if ( $explain_pearson || $algorithm_name == null )
+  if ( $explain_pearson || $algorithm_name == null ){
+    $explain .= "<a href='#' name='pearson'></a>"; 
     $explain .= recsys_wb_explain_pearson($marking);
+  }
+  
+  if ( $explain_euclidean || $algorithm_name == null ){
+    $explain .= "<a href='#' name='euclidean'></a>"; 
+    $explain .= recsys_wb_explain_euclidean($marking);
+  }
   
   return $explain;
+}
+
+/**
+ * Table of contents for the explanation section
+ */
+function recsys_wb_explanation_table_of_contents() {
+  $table_of_contents = "
+<ul style='list-style-type:none'>
+  <li><strong><a href='#algorithm'>Algorithm type</a></strong></li>
+  <ul style='list-style-type:none'>
+    <li><a href='#user2user'>User-User Recommendation</a></li>
+    <li><a href='#item2item'>Item-Item Recommendation</a></li>
+  </ul>
+  <li><strong><a href='#similarity'>Similarity methods</a></strong></li>
+  <ul style='list-style-type:none'>
+    <li><a href='#cosine'>Cosine similarity</a></li>
+    <li><a href='#pearson'>Pearson similarity</a></li>
+    <li><a href='#euclidean'>Euclidean similarity</a></li>
+  </ul>
+</ul>
+";
+  return $table_of_contents;
 }
