@@ -26,7 +26,7 @@ require_once 'forms/forms_submit.php';
 require_once 'statistics.php';
 require_once 'php-tail/PHPTail.php';
 require_once 'evaluation.php';
-require_once 'explain.php';
+require_once 'CF.php';
 
 /**
  * Implements hook_menu()
@@ -99,11 +99,11 @@ function recsys_wb_menu() {
     'page callback' => 'recsys_wb_evaluate_algorithms',
     'access arguments' => array('administrator'),
   );
-  $items['explanation'] = array(
-    'title' => 'Explanation', 
+  $items['cf'] = array(
+    'title' => 'Collaborative filtering', 
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
-    'page callback' => 'recsys_wb_explanation',
+    'page callback' => 'recsys_wb_explanation_cf',
     'access arguments' => array('access content'),
   );
   return $items;
@@ -416,7 +416,7 @@ function recsys_wb_tail() {
 /**
  * 
  */
-function recsys_wb_explanation() {
+function recsys_wb_explanation_cf() {
   $algorithm_name = null;
   $explain = "";
   $marking = MARK_USER2USER;
@@ -466,7 +466,7 @@ function recsys_wb_explanation() {
 </div>";
 
     // Add the table of contents
-    $explain .= recsys_wb_explanation_table_of_contents();  
+    $explain .= recsys_wb_explanation_cf_table_of_contents();  
     
   }
   
@@ -517,7 +517,7 @@ function recsys_wb_explanation() {
 /**
  * Table of contents for the explanation section
  */
-function recsys_wb_explanation_table_of_contents() {
+function recsys_wb_explanation_cf_table_of_contents() {
   $table_of_contents = "
 <ul style='list-style-type:none'>
   <li><strong><a href='#algorithm'>Algorithm type</a></strong></li>

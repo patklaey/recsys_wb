@@ -85,7 +85,7 @@ function showEvaluation() {
         // Create the link to explain the algorithm
         $explain = l( 
           'about this algorithm', 
-          'explanation',
+          'cf',
           array(
             'query' => array( 'algorithm' => $eval->app_id ), 
             'attributes' => array('target' => '_blank') 

@@ -33,7 +33,7 @@ function recsys_wb_display_stats() {
     // Create the link to the description of the algorithm
     $explain = l( 
       'about this algorithm', 
-      'explanation',
+      'cf',
       array(
         'query' => array(
           'algorithm' => $_SESSION['stat_history_recommender_app']
@@ -129,7 +129,7 @@ function recsys_wb_display_stats() {
         // Create the link to the description of the algorithm
         $explain = l( 
           'about this algorithm', 
-          'explanation',
+          'cf',
           array(
             'query' => array( 'algorithm' => $value ), 
             'attributes' => array('target' => '_blank') 
