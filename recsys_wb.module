@@ -106,6 +106,13 @@ function recsys_wb_menu() {
     'page callback' => 'recsys_wb_explanation_cf',
     'access arguments' => array('access content'),
   );
+  $items['questions'] = array(
+    'title' => 'Questions', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_so_questions',
+    'access arguments' => array('access content'),
+  );
   return $items;
 }
 
@@ -337,8 +344,7 @@ function recsys_wb_books() {
       l($result->title,'node/' . $result->entity_id)
     );
   }
-    
-
+  
   $output =  theme('table', array('header' => $header, 'rows' => $rows) );
   return $output . theme('pager');
 }
@@ -534,4 +540,30 @@ function recsys_wb_explanation_cf_table_of_contents() {
 </ul>
 ";
   return $table_of_contents;
+}
+
+/**
+ * 
+ */
+function recsys_wb_so_questions() {
+  // Get all movies form the database
+  $query = db_select('node', 'node');
+  $query->fields('node',array('title','nid'));
+  $query->orderBy('node.title');
+  $query->condition('node.type','question');
+
+  $results = $query->execute();
+  
+  $header = array( t('Question'));
+  $rows = array();
+  
+  foreach ($results AS $result)
+  {
+    $rows[] = array(
+      l($result->title,'node/' . $result->nid)
+    );
+  }
+  
+  $output =  theme('table', array('header' => $header, 'rows' => $rows) );
+  return $output;
 }
