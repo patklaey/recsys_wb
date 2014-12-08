@@ -38,6 +38,7 @@ function recsys_wb_menu() {
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_myratings',
     'access arguments' => array('access content'),
+    'weight' => 2,
   );
   $items['myrecommendations'] = array(
     'title' => 'My Recommendations', 
@@ -45,27 +46,47 @@ function recsys_wb_menu() {
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_myrecommendations',
     'access arguments' => array('access content'),
+    'weight' => 3,
   );
-  $items['books'] = array(
+  $items['content'] = array(
+    'title' => 'Content', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_content',
+    'access arguments' => array('access content'),
+    'weight' => 1,
+  );
+  $items['content/questions'] = array(
+    'title' => 'Questions', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_so_questions',
+    'access arguments' => array('access content'),
+    'weight' => 3,
+  );
+  $items['content/books'] = array(
     'title' => 'Books', 
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_books',
     'access arguments' => array('access content'),
+    'weight' => 1,
   );
-  $items['movies'] = array(
+  $items['content/movies'] = array(
     'title' => 'Movies', 
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_movies',
     'access arguments' => array('access content'),
+    'weight' => 2,
   );
   $items['statistics'] = array(
     'title' => 'Statistics', 
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
-    'page callback' => 'recsys_wb_display_stats',
+    'page callback' => 'recsys_wb_statistics',
     'access arguments' => array('access content'),
+    'weight' => 4,
   );
   $items['runrecommender'] = array(
     'title' => 'Run recommender',
@@ -79,12 +100,13 @@ function recsys_wb_menu() {
     'page callback' => 'recsys_wb_tail',
     'access arguments' => array('access content'),
   );
-  $items['evaluation'] = array(
+  $items['statistics/evaluation'] = array(
     'title' => 'Show evaluations', 
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_evaluation',
     'access arguments' => array('access content'),
+    'weight' => 1,
   );
   $items['runevaluations'] = array(
     'title' => 'Run Evaluations',
@@ -99,19 +121,29 @@ function recsys_wb_menu() {
     'page callback' => 'recsys_wb_evaluate_algorithms',
     'access arguments' => array('administrator'),
   );
-  $items['cf'] = array(
+  $items['learn'] = array(
+    'title' => 'Learn', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_explanation',
+    'access arguments' => array('access content'),
+    'weight' => 5,
+    
+  );
+  $items['learn/cf'] = array(
     'title' => 'Collaborative filtering', 
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_explanation_cf',
     'access arguments' => array('access content'),
   );
-  $items['questions'] = array(
-    'title' => 'Questions', 
+  $items['statistics/runstatistics'] = array(
+    'title' => 'Runtime statistics', 
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
-    'page callback' => 'recsys_wb_so_questions',
+    'page callback' => 'recsys_wb_display_stats',
     'access arguments' => array('access content'),
+    'weight' => 2,
   );
   return $items;
 }
@@ -422,6 +454,13 @@ function recsys_wb_tail() {
 /**
  * 
  */
+function recsys_wb_explanation () {
+  return "TODO explain here what this section is about";
+}
+
+/**
+ * 
+ */
 function recsys_wb_explanation_cf() {
   $algorithm_name = null;
   $explain = "";
@@ -541,6 +580,21 @@ function recsys_wb_explanation_cf_table_of_contents() {
 ";
   return $table_of_contents;
 }
+
+/**
+ * 
+ */
+function recsys_wb_content() {
+  return "TODO add some description of the content here";
+}
+
+/**
+ * 
+ */
+function recsys_wb_statistics() {
+  return "TODO add some description of the statistics here";
+}
+
 
 /**
  * 
