@@ -455,7 +455,20 @@ function recsys_wb_tail() {
  * 
  */
 function recsys_wb_explanation () {
-  return "TODO explain here what this section is about";
+  $cf = l("Collaborative filtering",'statistics/evaluation');
+  //$stats = l("Run Statistics",'statistics/runstatistics');
+  
+  $return_string = "There is a lot where you can learn about recommender ";
+  $return_string .= "systems.
+<ul>
+  <li>$cf<br/>Learn about collaborative filtering. What is the idea behind, what
+    are the diefferent similarity methods and see some examples how to calculate
+    them. 
+  </li>
+</ul>
+";
+  
+  return $return_string;
 }
 
 /**
@@ -585,14 +598,42 @@ function recsys_wb_explanation_cf_table_of_contents() {
  * 
  */
 function recsys_wb_content() {
-  return "TODO add some description of the content here";
+  $books = l("Books",'content/books');
+  $movies = l("Movies",'content/movies');
+  $questions = l("Stackoverflow questions",'content/questions');
+  
+  $return_string = "There are 3 different content types which you can browse: ";
+  $return_string .= "
+<ul>
+  <li>$books<br/>Some description</li>
+  <li>$movies<br/>Some description</li>
+  <li>$questions<br/>Some description</li>
+</ul>
+";
+  
+  return $return_string;
 }
 
 /**
  * 
  */
 function recsys_wb_statistics() {
-  return "TODO add some description of the statistics here";
+  $evaluation = l("Algorithm Evaluation",'statistics/evaluation');
+  $stats = l("Run Statistics",'statistics/runstatistics');
+  
+  $return_string = "There are 2 different types of statistics";
+  $return_string .= "
+<ul>
+  <li>$evaluation<br/>See detailed evaluation about the different recommender
+    algorithms. 
+  </li>
+  <li>$stats<br/>See statistics of the recommender algorithm run like number of
+    users, number of items etc.
+  </li>
+</ul>
+";
+  
+  return $return_string;
 }
 
 
