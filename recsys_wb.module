@@ -145,6 +145,13 @@ function recsys_wb_menu() {
     'access arguments' => array('access content'),
     'weight' => 2,
   );
+  $items['about'] = array(
+    'title' => 'About this Workbench', 
+    //'menu_name' => 'main-menu',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'recsys_wb_about',
+    'access arguments' => array('access content'),
+  );
   return $items;
 }
 
@@ -661,4 +668,34 @@ function recsys_wb_so_questions() {
   
   $output =  theme('table', array('header' => $header, 'rows' => $rows) );
   return $output;
+}
+
+/**
+ * The about section
+ */
+function recsys_wb_about() {
+  $andreas_meier = l(
+    "Prof. Dr. Andreas Meier", 
+    "http://diuf.unifr.ch/main/is/members/andreas-meier"
+  );
+  
+  $luis_teran = l(
+    "Dr. Luis Teran",
+    "http://diuf.unifr.ch/main/is/members/luis-teran"
+  );
+  
+  $is_group = l(
+    "Information Systems Research Group",
+    "http://diuf.unifr.ch/main/is/"
+  );
+  
+  $unifr = l(
+    "University of Freiburg (CH)",
+    "http://www.unifr.ch/home/welcomeE.php"
+  );
+  $return = "This workbench the practical part of my master thesis \"A Workbench
+ for Comparing Collaborative- and Content-Based Algorithms for Recommendations\"
+ supervised by $andreas_meier and $luis_teran form the $is_group at the $unifr";
+  
+  return $return;
 }
