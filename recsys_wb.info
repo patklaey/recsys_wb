@@ -3,7 +3,7 @@ description = "This module provides necessary functionalities for the recommende
 core = "7.x"
 version = "7.x-0.2"
 
-dependencies[] = recommender
+dependencies[] = recommender (7.x-4.0-alpha14)
 dependencies[] = mathjax
 
 package = Recommendation
