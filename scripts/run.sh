@@ -22,7 +22,7 @@ CLASSPATH=$RECOMMENDER_HOME/recommender.jar:$ASYNC_COMMAND_HOME/async-command.ja
 
 
 # specify the location and filename of config.properties file. Default is the working directory
-CONFIG_FILE=$RECOMMENDER_HOME/config.properties
+CONFIG_FILE=${RECSYS_WB_HOME}/config/config.properties
 java -cp $CLASSPATH org.drupal.project.recommender.RecommenderApp -c $CONFIG_FILE
 
 $RECSYS_WB_HOME/scripts/evaluate.sh
