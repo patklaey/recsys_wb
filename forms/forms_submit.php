@@ -108,7 +108,8 @@ function recsys_wb_run_recommender_form_submit($form, &$form_state) {
   
   // Get the path to the script
   $script_path = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
-    . drupal_get_path("module","recommender") . DIRECTORY_SEPARATOR . "run.sh";
+    . drupal_get_path("module","recsys_wb") . DIRECTORY_SEPARATOR . "scripts" 
+    . DIRECTORY_SEPARATOR . "run.sh";
     
   // Get the logfile
   $logfile = generateUniqueLogfile();
