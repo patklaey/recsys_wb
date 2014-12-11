@@ -6,7 +6,6 @@ export DRUPAL_HOME=/usr/share/drupal7
 
 DRUPAL_MODULE_HOME=${DRUPAL_HOME}/sites/all/modules
 ASYNC_COMMAND_HOME=${DRUPAL_MODULE_HOME}/async_command
-RECOMMENDER_HOME=${DRUPAL_MODULE_HOME}/recommender
 RECSYS_WB_HOME=${DRUPAL_MODULE_HOME}/recsys_wb
 MAHOUT_HOME=${RECSYS_WB_HOME}/mahout
 
@@ -15,7 +14,7 @@ command -v java >/dev/null || { echo "Cannot find java program. Please install J
 command -v php >/dev/null || { echo "Cannot find php program. Please install PHP first and make sure the executable is under PATH."; exit 1;}
 
 # set CLASSPATH
-CLASSPATH=$RECOMMENDER_HOME/recommender.jar:$ASYNC_COMMAND_HOME/async-command.jar:$ASYNC_COMMAND_HOME/lib/*:$MAHOUT_HOME/*
+CLASSPATH=${RECSYS_WB_HOME}/ContentRecommender.jar:$ASYNC_COMMAND_HOME/async-command.jar:$ASYNC_COMMAND_HOME/lib/*:$MAHOUT_HOME/*
 
 
 # using the default config.properties file in the working directory, or fall back to use settings.php directly.
@@ -24,6 +23,6 @@ CLASSPATH=$RECOMMENDER_HOME/recommender.jar:$ASYNC_COMMAND_HOME/async-command.ja
 
 # specify the location and filename of config.properties file. Default is the working directory
 CONFIG_FILE=${RECSYS_WB_HOME}/config/config.properties
-java -cp $CLASSPATH org.drupal.project.recommender.RecommenderApp -c $CONFIG_FILE
+java -cp $CLASSPATH ch.isproject.recsysWb.ContentRecommenderApp -c $CONFIG_FILE
 
-$RECSYS_WB_HOME/scripts/evaluate.sh
+#$RECSYS_WB_HOME/scripts/evaluate.sh

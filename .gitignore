@@ -1,2 +1,5 @@
 # Ignore all local run log files
 log/*.log
+
+# The java eclipse .project file
+java/.project
