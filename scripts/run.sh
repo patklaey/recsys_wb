@@ -2,12 +2,12 @@
 # Otherwise, please see README and make necessary configuration to make this script running correctly.
 
 # config parameters
-export DRUPAL_HOME=/usr/share/drupal7/
+export DRUPAL_MODULE_HOME=/usr/share/drupal7/sites/all/modules
 
-ASYNC_COMMAND_HOME=/usr/share/drupal7/sites/all/modules/async_command
-RECOMMENDER_HOME=$DRUPAL_HOME/sites/all/modules/recommender
-MAHOUT_HOME=$RECOMMENDER_HOME/mahout
-RECSYS_WB_HOME=$DRUPAL_HOME/sites/all/modules/recsys_wb
+ASYNC_COMMAND_HOME=${DRUPAL_MODULE_HOME}/async_command
+RECOMMENDER_HOME=${DRUPAL_MODULE_HOME}/recommender
+RECSYS_WB_HOME=${DRUPAL_MODULE_HOME}/recsys_wb
+MAHOUT_HOME=${RECSYS_WB_HOME}/mahout
 
 # please make sure you have java and php installed.
 command -v java >/dev/null || { echo "Cannot find java program. Please install Java first and make sure the executable is under PATH."; exit 1;}
