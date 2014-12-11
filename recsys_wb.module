@@ -226,7 +226,7 @@ function recsys_wb_myratings() {
   $query->condition('ratings.userid',user_id);
   $results = $query->execute();
   
-  // Prepeare the tables headers and rows
+  // Prepare the tables headers and rows
   $header = array( t('User ID'), t('Movie'), t('Rating') );
   $rows = array();
   
@@ -676,26 +676,93 @@ function recsys_wb_so_questions() {
 function recsys_wb_about() {
   $andreas_meier = l(
     "Prof. Dr. Andreas Meier", 
-    "http://diuf.unifr.ch/main/is/members/andreas-meier"
+    "http://diuf.unifr.ch/main/is/members/andreas-meier",
+    array(
+      'attributes' => array('target' => '_blank') 
+    )
   );
   
   $luis_teran = l(
     "Dr. Luis Teran",
-    "http://diuf.unifr.ch/main/is/members/luis-teran"
+    "http://diuf.unifr.ch/main/is/members/luis-teran",
+    array(
+      'attributes' => array('target' => '_blank') 
+    )
   );
   
   $is_group = l(
     "Information Systems Research Group",
-    "http://diuf.unifr.ch/main/is/"
+    "http://diuf.unifr.ch/main/is/",
+    array(
+      'attributes' => array('target' => '_blank') 
+    )
   );
   
   $unifr = l(
     "University of Freiburg (CH)",
-    "http://www.unifr.ch/home/welcomeE.php"
+    "http://www.unifr.ch/home/welcomeE.php",
+    array(
+      'attributes' => array('target' => '_blank') 
+    )
   );
   $return = "This workbench the practical part of my master thesis \"A Workbench
  for Comparing Collaborative- and Content-Based Algorithms for Recommendations\"
  supervised by $andreas_meier and $luis_teran form the $is_group at the $unifr";
+  
+  $return .= "<h2>Datasets</h2>";
+  
+  $grouplens = l(
+    "GroupLens dataset",
+    "http://grouplens.org/datasets/movielens/",
+    array(
+      'attributes' => array('target' => '_blank') 
+    )
+  );
+  $movielens = l(
+    "MovieLens",
+    "https://movielens.org/",
+    array(
+      'attributes' => array('target' => '_blank') 
+    )
+  );
+  $book_bx = l(
+    "Book-Crossing Dataset",
+    "http://www2.informatik.uni-freiburg.de/~cziegler/BX/",
+    array(
+      'attributes' => array('target' => '_blank') 
+    )
+  );
+  $stackoverflow = l(
+    "Stackexchange data dump",
+    "https://archive.org/details/stackexchange",
+    array(
+      'attributes' => array('target' => '_blank') 
+    )
+  );
+  
+  $return .= "
+<ul>
+  <li>Movie database: $grouplens from the $movielens project</li>
+  <li>Book dataset: $book_bx (c.f. References)</li>
+  <li>Stackoverflow dataset: $stackoverflow</li>
+</ul>";
+  
+  $return .= "<h2>References</h2>";
+  $bx_paper = l(
+    "Improving Recommendation Lists Through Topic Diversification.",
+    "http://www2.informatik.uni-freiburg.de/~dbis/Publications/05/WWW05.html",
+    array(
+      'attributes' => array('target' => '_blank') 
+    )
+  );
+  $return .= "
+<ul>
+  <li>$bx_paper<br/>
+    Cai-Nicolas Ziegler, Sean M. McNee, Joseph A. Konstan, Georg Lausen; 
+    Proceedings of the 14th International World Wide Web Conference (WWW '05), 
+    May 10-14, 2005, Chiba, Japan. To appear.
+  </li>
+</ul>";
   
   return $return;
 }
