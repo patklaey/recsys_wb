@@ -207,5 +207,17 @@ function recsys_wb_evaluate_algorithms_form_submit( $form, &$form_state) {
   // And execute the evaluation in the background
   exec("nohup setsid $script_path > $logfile 2>&1 &");
 }
- 
+
+/**
+ * 
+ */
+function recsys_wb_run_content_recommender_form_submit( $form, &$form_state ) {
+  async_command_create_command(
+    'contentRecommender', 
+    'RunContentRecommender', 
+    'A test for running content recommender', 
+    array('id1' => 1234 )
+  );
+  drupal_set_message("Recommender schduled");
+}
 ?>

@@ -268,4 +268,15 @@ function recsys_wb_evaluate_algorithms_form() {
   );
   return $form;  
 }
+
+/**
+ * 
+ */
+function recsys_wb_run_content_recommender_form() {
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Run'),
+  );
+  return $form;
+}
 ?>

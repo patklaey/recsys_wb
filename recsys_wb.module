@@ -299,7 +299,9 @@ function recsys_wb_block_info() {
   $blocks['movie_rating'] = array(
     'info' => t('Recsys workbench movie rating'),
   );
-  
+  $blocks['run_content_recommender'] = array(
+    'info' => t('Recsys workbench run content recommender'),
+  );
   return $blocks;
 }
 
@@ -352,7 +354,14 @@ function recsys_wb_block_view($delta = '')
         $block['content'] = "You have already rated this movie!";
       }
       
-      default:
+    case 'run_content_recommender':
+      $block['subject'] = t('Run content recommender');
+      $block['content'] = drupal_get_form(
+        'recsys_wb_run_content_recommender_form'
+      );
+      break;
+      
+    default:
         break;
   }
     
