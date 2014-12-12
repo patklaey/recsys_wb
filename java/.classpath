@@ -2,6 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="/home/uni/Desktop/Thesis/coding/Modules/modules/async_command/async-command.jar"/>
+	<classpathentry kind="lib" path="/home/uni/Desktop/Thesis/coding/external libs/hadoop-2.6.0/share/hadoop/common/hadoop-common-2.6.0.jar"/>
+	<classpathentry kind="lib" path="/home/uni/Documents/Informatik/Master/Thesis/coding/external libs/lucene-4.10.2/analysis/common/lucene-analyzers-common-4.10.2.jar"/>
+	<classpathentry kind="lib" path="/home/uni/Documents/Informatik/Master/Thesis/coding/Modules/modules/async_command/async-command.jar"/>
+	<classpathentry kind="lib" path="/etc/drupal/7/sites/all/modules/recsys_wb/mahout/mahout-core-0.9.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
