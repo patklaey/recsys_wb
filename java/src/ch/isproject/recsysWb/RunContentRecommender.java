@@ -59,7 +59,7 @@ public class RunContentRecommender extends AsyncCommand {
     @Override
     protected void execute() {
     	super.execute();
-    	TFIDFCreator creator = new TFIDFCreator( this.documents,"entity_id","body_value");
+    	TFIDFCreator creator = new TFIDFCreator( this.documents, "entity_id", "body_value", logger);
     	try {
 			creator.createTFIDFVector();
 		} catch (Exception e) {

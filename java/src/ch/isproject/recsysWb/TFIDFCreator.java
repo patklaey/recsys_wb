@@ -2,12 +2,14 @@ package ch.isproject.recsysWb;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.mahout.common.Pair;
 import org.apache.mahout.common.iterator.sequencefile.SequenceFileIterable;
@@ -21,13 +23,14 @@ public class TFIDFCreator {
 	private String documentKeyName;
 	private String documentValueName;
 	private List<Map<String, Object>> documents;
+	private Logger logger;
 	
-	public TFIDFCreator(List<Map<String, Object>> documents, String documentKey, String documentValue) {
+	public TFIDFCreator(List<Map<String, Object>> documents, String documentKey, String documentValue, Logger logger) {
 	
 		this.documentKeyName = documentKey;
 		this.documentValueName = documentValue;
 		this.documents = documents;
-		
+		this.logger = logger;
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -49,5 +52,28 @@ public class TFIDFCreator {
 		}
 		
 		writer.close();
+		
+		DocumentProcessor.tokenizeDocuments(documentSequencePath, 
+				StandardAnalyzer.class, tokenizedDocumentPath, conf);
+		
+		DictionaryVectorizer.createTermFrequencyVectors(tokenizedDocumentPath,
+				new Path(outputFolder), 
+				DictionaryVectorizer.DOCUMENT_VECTOR_OUTPUT_FOLDER, conf, 1, 1,
+				0.0f, PartialVectorMerger.NO_NORMALIZING, true, 1, 100, false,
+				false);
+		
+		Pair<Long[], List<Path>> documentFrequencies = TFIDFConverter
+				.calculateDF(termFrequencyVectorPath, tfidfPath, conf, 100 );
+		
+		TFIDFConverter.processTfIdf(termFrequencyVectorPath, tfidfPath, conf, 
+				documentFrequencies, 1, 100, PartialVectorMerger.NO_NORMALIZING,
+				false, false, false, 1);
+		
+		Path path = new Path( outputFolder + "/tfidf/tfidf-vectors/part-r-00000");
+		SequenceFileIterable<Writable, Writable> iterable = new SequenceFileIterable<Writable, Writable>(path, conf);
+				
+        for (Pair<Writable, Writable> pair : iterable) {
+            logger.info( pair.getFirst().toString() + "->" + pair.getSecond().toString() );
+        }
 	}
 }
