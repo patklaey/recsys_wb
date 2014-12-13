@@ -4,3 +4,7 @@ log/*.log
 # The java eclipse .project file
 java/.project
 java/.classpath
+
+# Java output
+java/bin
+output

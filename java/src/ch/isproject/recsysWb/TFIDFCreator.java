@@ -3,7 +3,6 @@ package ch.isproject.recsysWb;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -20,67 +19,86 @@ import org.apache.mahout.vectorizer.common.PartialVectorMerger;
 import org.apache.mahout.vectorizer.tfidf.TFIDFConverter;
 
 public class TFIDFCreator {
+	
+	private static final int X_COORDINATE = 0;
+	private static final int Y_COORDINATE = 1;
 
 	private String documentKeyName;
 	private String documentValueName;
 	private List<Map<String, Object>> documents;
-	private Logger logger;
+	private String outputFolder = "./output/";
+	private Configuration conf = new Configuration();
+	private Path tokenizedDocumentPath;
+	private Path tfidfPath;
+	private Path termFrequencyVectorPath;
 	
-	public TFIDFCreator(List<Map<String, Object>> documents, String documentKey, String documentValue, Logger logger) {
+	// Parameters for the TFIDF Vector generation
+	float normalizationPower = PartialVectorMerger.NO_NORMALIZING;
+	
+	public TFIDFCreator(List<Map<String, Object>> documents, String documentKey, String documentValue ) {
 	
 		this.documentKeyName = documentKey;
 		this.documentValueName = documentValue;
 		this.documents = documents;
-		this.logger = logger;
 	}
 	
 	@SuppressWarnings("deprecation")
-	public void createTFIDFVector() throws Exception {
-		Configuration conf = new Configuration(true);
+	public void prepareDocuments() throws Exception {
+		
 		FileSystem fs = FileSystem.get(conf);
-		String outputFolder = "./output/";
-		Path documentSequencePath = new Path(outputFolder,"squence");
-		Path tokenizedDocumentPath = new Path(outputFolder,DocumentProcessor.TOKENIZED_DOCUMENT_OUTPUT_FOLDER);
-		Path tfidfPath = new Path(outputFolder,"tfidf");
-		Path termFrequencyVectorPath = new Path(outputFolder + DictionaryVectorizer.DOCUMENT_VECTOR_OUTPUT_FOLDER);
+		Path documentSequencePath = new Path(this.outputFolder,"squence");
+		this.tokenizedDocumentPath = new Path(this.outputFolder,
+				DocumentProcessor.TOKENIZED_DOCUMENT_OUTPUT_FOLDER);
+		this.tfidfPath = new Path(this.outputFolder,"tfidf");
+		this.termFrequencyVectorPath = new Path(this.outputFolder 
+				+ DictionaryVectorizer.DOCUMENT_VECTOR_OUTPUT_FOLDER);
 		
-		SequenceFile.Writer writer  = new SequenceFile.Writer(fs, conf, documentSequencePath, Text.class, Text.class);
-		
+		SequenceFile.Writer writer  = new SequenceFile.Writer(fs, this.conf, 
+				documentSequencePath, Text.class, Text.class);
+	
 		for (Map<String, Object> entry : this.documents) {
-			Text id = new Text("" + entry.get(documentKeyName));
-			Text body = new Text("" + entry.get(documentValueName));
+			Text id = new Text("" + entry.get(this.documentKeyName));
+			Text body = new Text("" + entry.get(this.documentValueName));
 			writer.append(id, body);
 		}
 		
 		writer.close();
 		
 		DocumentProcessor.tokenizeDocuments(documentSequencePath, 
-				StandardAnalyzer.class, tokenizedDocumentPath, conf);
+				StandardAnalyzer.class, this.tokenizedDocumentPath, this.conf);
 		
-		float normalizationNorm = PartialVectorMerger.NO_NORMALIZING;
+	}
+	
+	public Map<Integer, Map<Integer, Double>> createTFIDFVector() 
+			throws Exception {
 		
-		DictionaryVectorizer.createTermFrequencyVectors(tokenizedDocumentPath,
-				new Path(outputFolder), 
-				DictionaryVectorizer.DOCUMENT_VECTOR_OUTPUT_FOLDER, conf, 1, 1,
-				0.0f, normalizationNorm, true, 1, 100, false,
+		DictionaryVectorizer.createTermFrequencyVectors(
+				this.tokenizedDocumentPath, new Path(this.outputFolder), 
+				DictionaryVectorizer.DOCUMENT_VECTOR_OUTPUT_FOLDER, this.conf, 
+				1, 1, 0.0f, this.normalizationPower, true, 1, 100, false,
 				false);
 		
 		Pair<Long[], List<Path>> documentFrequencies = TFIDFConverter
-				.calculateDF(termFrequencyVectorPath, tfidfPath, conf, 100 );
+				.calculateDF(this.termFrequencyVectorPath, this.tfidfPath, 
+						this.conf, 100 );
 		
-		TFIDFConverter.processTfIdf(termFrequencyVectorPath, tfidfPath, conf, 
-				documentFrequencies, 1, 100, normalizationNorm,
-				false, false, false, 1);
+		TFIDFConverter.processTfIdf(this.termFrequencyVectorPath, 
+				this.tfidfPath, this.conf,	documentFrequencies, 1, 100, 
+				this.normalizationPower, false, false, false, 1);
 		
-		Path path = new Path( outputFolder + "/tfidf/tfidf-vectors/part-r-00000");
-		SequenceFileIterable<Writable, Writable> iterable = new SequenceFileIterable<Writable, Writable>(path, conf);
+		Path tfidfVectorPath = new Path( this.outputFolder 
+				+ "/tfidf/tfidf-vectors/part-r-00000");
+		SequenceFileIterable<Writable, Writable> iterable = 
+				new SequenceFileIterable<Writable, Writable>(tfidfVectorPath, 
+						this.conf);
 		
-		Map<Long,Map<Integer, String>> vectors = new HashMap<Long, Map<Integer,String>>();
+		Map<Integer,Map<Integer, Double>> vectors = 
+				new HashMap<Integer, Map<Integer,Double>>();
 		
         for (Pair<Writable, Writable> pair : iterable) {
         	
-            Map<Integer,String> tmp = new HashMap<Integer, String>();
-            Long documentId = Long.valueOf(pair.getFirst().toString());
+            Map<Integer,Double> tmp = new HashMap<Integer, Double>();
+            Integer documentId = Integer.valueOf(pair.getFirst().toString());
             
             String vector = pair.getSecond().toString();
             vector = vector.replaceAll("[{}]", "");
@@ -88,12 +106,12 @@ public class TFIDFCreator {
             String[] pairs = vector.split(",");
             for (int i = 0; i < pairs.length; i++) {
 				String[] points = pairs[i].split(":");
-				tmp.put(Integer.valueOf(points[0]), points[1]);
+				tmp.put(Integer.valueOf(points[X_COORDINATE]), 
+						Double.valueOf(points[Y_COORDINATE]));
 			}
             vectors.put(documentId, tmp);
-            logger.info("ID: " + documentId + " Size: " + tmp.size());
         }
         
-        logger.info("Whole vectors size: " + vectors.size());
+        return vectors;
 	}
 }

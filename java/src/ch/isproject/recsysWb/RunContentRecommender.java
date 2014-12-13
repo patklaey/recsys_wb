@@ -1,7 +1,6 @@
 package ch.isproject.recsysWb;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,21 +12,10 @@ public class RunContentRecommender extends AsyncCommand {
 	
 	private DrupalConnection databaseConnection;
 	private List<Map<String,Object>> documents;
-	
-    public static RunContentRecommender create(long appId, Druplet druplet) {
-        return create(appId, null, druplet);
-    }
-
-    public static RunContentRecommender create(long appId, String prefFilename, Druplet druplet) {
-        Map<String, Object> fields = new HashMap<String, Object>();
-        fields.put("id1", appId);
-        CommandRecord record = CommandRecord.forge(fields);
-        return new RunContentRecommender(record, druplet);
-    }
     
     public RunContentRecommender(CommandRecord record, Druplet druplet) {
     	super(record,druplet);
-    	
+
     	this.record = record;
     	this.druplet = druplet;
     	this.databaseConnection = druplet.getDrupalConnection();
@@ -38,7 +26,8 @@ public class RunContentRecommender extends AsyncCommand {
     	String sqlQueryString = "SELECT body_value,entity_id FROM ";
     	sqlQueryString += "field_data_body WHERE bundle=?";
     	try {
-    		this.documents = this.databaseConnection.query(sqlQueryString,SQL_QUESTION_NODE_PARAMETER);
+    		this.documents = this.databaseConnection.query(sqlQueryString,
+    				SQL_QUESTION_NODE_PARAMETER);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -59,12 +48,16 @@ public class RunContentRecommender extends AsyncCommand {
     @Override
     protected void execute() {
     	super.execute();
-    	TFIDFCreator creator = new TFIDFCreator( this.documents, "entity_id", "body_value", logger);
+    	TFIDFCreator creator = new TFIDFCreator( this.documents, "entity_id", "body_value" );
     	try {
-			creator.createTFIDFVector();
+    		creator.prepareDocuments();
+    		
+    		Map<Integer, Map<Integer, Double>> vectors;
+    		vectors = creator.createTFIDFVector();
+    		
+    		System.out.println("Vectors: " + vectors + " can be written to database now!");
 		} catch (Exception e) {
 			logger.warning(e.getStackTrace().toString());
-			e.printStackTrace();
 		}
     	logger.info("Execute execute");
     }
