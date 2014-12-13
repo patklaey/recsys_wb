@@ -14,7 +14,7 @@ command -v java >/dev/null || { echo "Cannot find java program. Please install J
 command -v php >/dev/null || { echo "Cannot find php program. Please install PHP first and make sure the executable is under PATH."; exit 1;}
 
 # set CLASSPATH
-CLASSPATH=$ASYNC_COMMAND_HOME/async-command.jar:$ASYNC_COMMAND_HOME/lib/*:$MAHOUT_HOME/*:${RECSYS_WB_HOME}/java/lib/*
+CLASSPATH=$ASYNC_COMMAND_HOME/async-command.jar:$ASYNC_COMMAND_HOME/lib/*:$MAHOUT_HOME/*:${RECSYS_WB_HOME}/ContentRecommender.jar:${RECSYS_WB_HOME}/lib/*
 
 
 # using the default config.properties file in the working directory, or fall back to use settings.php directly.

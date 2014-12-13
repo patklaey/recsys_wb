@@ -1,5 +1,6 @@
 package ch.isproject.recsysWb;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -56,24 +57,43 @@ public class TFIDFCreator {
 		DocumentProcessor.tokenizeDocuments(documentSequencePath, 
 				StandardAnalyzer.class, tokenizedDocumentPath, conf);
 		
+		float normalizationNorm = PartialVectorMerger.NO_NORMALIZING;
+		
 		DictionaryVectorizer.createTermFrequencyVectors(tokenizedDocumentPath,
 				new Path(outputFolder), 
 				DictionaryVectorizer.DOCUMENT_VECTOR_OUTPUT_FOLDER, conf, 1, 1,
-				0.0f, PartialVectorMerger.NO_NORMALIZING, true, 1, 100, false,
+				0.0f, normalizationNorm, true, 1, 100, false,
 				false);
 		
 		Pair<Long[], List<Path>> documentFrequencies = TFIDFConverter
 				.calculateDF(termFrequencyVectorPath, tfidfPath, conf, 100 );
 		
 		TFIDFConverter.processTfIdf(termFrequencyVectorPath, tfidfPath, conf, 
-				documentFrequencies, 1, 100, PartialVectorMerger.NO_NORMALIZING,
+				documentFrequencies, 1, 100, normalizationNorm,
 				false, false, false, 1);
 		
 		Path path = new Path( outputFolder + "/tfidf/tfidf-vectors/part-r-00000");
 		SequenceFileIterable<Writable, Writable> iterable = new SequenceFileIterable<Writable, Writable>(path, conf);
-				
+		
+		Map<Long,Map<Integer, String>> vectors = new HashMap<Long, Map<Integer,String>>();
+		
         for (Pair<Writable, Writable> pair : iterable) {
-            logger.info( pair.getFirst().toString() + "->" + pair.getSecond().toString() );
+        	
+            Map<Integer,String> tmp = new HashMap<Integer, String>();
+            Long documentId = Long.valueOf(pair.getFirst().toString());
+            
+            String vector = pair.getSecond().toString();
+            vector = vector.replaceAll("[{}]", "");
+
+            String[] pairs = vector.split(",");
+            for (int i = 0; i < pairs.length; i++) {
+				String[] points = pairs[i].split(":");
+				tmp.put(Integer.valueOf(points[0]), points[1]);
+			}
+            vectors.put(documentId, tmp);
+            logger.info("ID: " + documentId + " Size: " + tmp.size());
         }
+        
+        logger.info("Whole vectors size: " + vectors.size());
 	}
 }
