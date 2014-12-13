@@ -35,11 +35,12 @@ public class TFIDFCreator {
 	// Parameters for the TFIDF Vector generation
 	float normalizationPower = PartialVectorMerger.NO_NORMALIZING;
 	
-	public TFIDFCreator(List<Map<String, Object>> documents, String documentKey, String documentValue ) {
+	public TFIDFCreator(List<Map<String, Object>> documents, String documentKey, String documentValue, String output ) {
 	
 		this.documentKeyName = documentKey;
 		this.documentValueName = documentValue;
 		this.documents = documents;
+		this.outputFolder = output;
 	}
 	
 	@SuppressWarnings("deprecation")

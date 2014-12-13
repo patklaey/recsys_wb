@@ -29,7 +29,7 @@ public class RunContentRecommender extends AsyncCommand {
     		this.documents = this.databaseConnection.query(sqlQueryString,
     				SQL_QUESTION_NODE_PARAMETER);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.severe(e.getStackTrace().toString());
 		}
     }
     
@@ -48,7 +48,8 @@ public class RunContentRecommender extends AsyncCommand {
     @Override
     protected void execute() {
     	super.execute();
-    	TFIDFCreator creator = new TFIDFCreator( this.documents, "entity_id", "body_value" );
+    	TFIDFCreator creator = new TFIDFCreator( this.documents, "entity_id", 
+    			"body_value", this.record.getString1() );
     	try {
     		creator.prepareDocuments();
     		

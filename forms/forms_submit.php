@@ -212,11 +212,13 @@ function recsys_wb_evaluate_algorithms_form_submit( $form, &$form_state) {
  * 
  */
 function recsys_wb_run_content_recommender_form_submit( $form, &$form_state ) {
+  $output_folder = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
+    . drupal_get_path("module", "recsys_wb") .  DIRECTORY_SEPARATOR . "output/";
   async_command_create_command(
     'contentRecommender', 
     'RunContentRecommender', 
     'A test for running content recommender', 
-    array('id1' => 1234 )
+    array('string1' => $output_folder )
   );
   drupal_set_message("Recommender schduled");
 }
