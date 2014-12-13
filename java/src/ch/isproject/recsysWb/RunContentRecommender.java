@@ -75,8 +75,12 @@ public class RunContentRecommender extends AsyncCommand {
     	try {
         	Connection connection = this.drupalConnection.getConnection();
 
-        	if (connection.getMetaData().supportsTransactionIsolationLevel(Connection.TRANSACTION_READ_COMMITTED)) {
-                connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+        	boolean transactionIsSupported = connection.getMetaData()
+        			.supportsTransactionIsolationLevel(
+        					Connection.TRANSACTION_READ_COMMITTED);
+        	if ( transactionIsSupported ) {
+                connection.setTransactionIsolation(
+                		Connection.TRANSACTION_READ_COMMITTED);
             }
         	
 			valueUploader = new BatchUploader(null, "Insert-Batch", 
