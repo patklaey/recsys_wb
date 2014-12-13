@@ -1,6 +1,8 @@
 package ch.isproject.recsysWb;
 
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +12,7 @@ public class RunContentRecommender extends AsyncCommand {
 	
 	private static final String SQL_QUESTION_NODE_PARAMETER = "question";
 	
-	private DrupalConnection databaseConnection;
+	private DrupalConnection drupalConnection;
 	private List<Map<String,Object>> documents;
     
     public RunContentRecommender(CommandRecord record, Druplet druplet) {
@@ -18,7 +20,7 @@ public class RunContentRecommender extends AsyncCommand {
 
     	this.record = record;
     	this.druplet = druplet;
-    	this.databaseConnection = druplet.getDrupalConnection();
+    	this.drupalConnection = druplet.getDrupalConnection();
     }
     
     public void processRequest() {
@@ -26,7 +28,7 @@ public class RunContentRecommender extends AsyncCommand {
     	String sqlQueryString = "SELECT body_value,entity_id FROM ";
     	sqlQueryString += "field_data_body WHERE bundle=?";
     	try {
-    		this.documents = this.databaseConnection.query(sqlQueryString,
+    		this.documents = this.drupalConnection.query(sqlQueryString,
     				SQL_QUESTION_NODE_PARAMETER);
 		} catch (SQLException e) {
 			logger.severe(e.getStackTrace().toString());
@@ -50,18 +52,58 @@ public class RunContentRecommender extends AsyncCommand {
     	super.execute();
     	TFIDFCreator creator = new TFIDFCreator( this.documents, "entity_id", 
     			"body_value", this.record.getString1() );
+    	
+		Map<Integer, Map<Integer, Double>> vectors = 
+				new HashMap<Integer, Map<Integer,Double>>();
+
     	try {
     		creator.prepareDocuments();
     		
-    		Map<Integer, Map<Integer, Double>> vectors;
     		vectors = creator.createTFIDFVector();
     		
-    		System.out.println("Vectors: " + vectors + " can be written to database now!");
 		} catch (Exception e) {
-			logger.warning(e.getStackTrace().toString());
+			logger.severe(e.getStackTrace().toString());
 		}
-    	logger.info("Execute execute");
+
+    	int appId = 1;
+    	String tableName = "{recsys_wb_tfidf_values}";
+    	String insertSql = this.drupalConnection.d("INSERT INTO " + tableName
+    			+ "(app_id, entity_id, word_id, tfidf_value, timestamp) " 
+    			+ "VALUES(?, ?, ?, ?, ?)");
+    	BatchUploader valueUploader;
+    	
+    	try {
+        	Connection connection = this.drupalConnection.getConnection();
+
+        	if (connection.getMetaData().supportsTransactionIsolationLevel(Connection.TRANSACTION_READ_COMMITTED)) {
+                connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            }
+        	
+			valueUploader = new BatchUploader(null, "Insert-Batch", 
+					connection, insertSql,
+					this.drupalConnection.getMaxBatchSize());
+			valueUploader.start();
+			
+	    	// Write the results to the database
+	    	for (Integer documentId : vectors.keySet() ) {
+				for (Integer wordId : vectors.get(documentId).keySet()) {
+					valueUploader.put(appId, documentId, wordId, 
+							vectors.get(documentId).get(wordId),
+							"" + System.currentTimeMillis() );
+				}
+			}
+	    	
+	    	valueUploader.accomplish();
+	    	valueUploader.join();
+	    	
+	        connection.commit();
+	        connection.close();
+	    	
+		} catch (SQLException e) {
+			logger.severe(e.getStackTrace().toString());
+		} catch (InterruptedException e) {
+			logger.severe(e.getStackTrace().toString());
+		}
     }
-    
 }
 

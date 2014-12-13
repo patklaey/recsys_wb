@@ -66,7 +66,36 @@ function recsys_wb_schema() {
       ),
     ),
   );
-  
+  $schema['recsys_wb_tfidf_values'] = array(
+    'description' => 'Holds the TFIDF values for the given word ids and documents',
+    'fields' => array(
+      'app_id' => array(
+        'description' => 'The recommender app id',
+        'type' => 'int',
+        'not null' => TRUE
+      ),
+      'entity_id' => array(
+        'description' => 'The ID of the drupal entity',
+        'type' => 'int',
+        'not null' => TRUE
+      ),
+      'word_id' => array(
+        'description' => 'The id of the word in the corresponding dictionary',
+        'type' => 'int',
+        'not null' => TRUE
+      ),
+      'tfidf_value' => array(
+        'description' => 'The TFIDF value of this word',
+        'type' => 'float',
+        'not null' => TRUE
+      ),
+      'timestamp' => array(
+        'description' => 'Timestamp of the row creation',
+        'type' => 'text',
+        'not null' => TRUE
+      ),
+    ),
+  );
   return $schema;
 }
 
