@@ -231,7 +231,7 @@ function recsys_wb_enable() {
                 'algorithm' => 'user2user',
                 'table' => "{recsys_wb_tfidf_values}",
                 'fields' => array('entity_id','word_id','tfidf_value'),
-                'similarity' => 'cosine',
+                'similarity' => 'euclidean',
                 'preference' => 'score'
             ),
         ),   

@@ -152,6 +152,13 @@ function recsys_wb_menu() {
     'page callback' => 'recsys_wb_about',
     'access arguments' => array('access content'),
   );
+  $items['contentsimilarity'] = array(
+    'title' => 'Content similarity', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_content_similarity',
+    'access arguments' => array('access content'),
+  );
   return $items;
 }
 
@@ -675,6 +682,32 @@ function recsys_wb_so_questions() {
     );
   }
   
+  $output =  theme('table', array('header' => $header, 'rows' => $rows) );
+  return $output;
+}
+
+/**
+ * A page which displays content similarity
+ */
+function recsys_wb_content_similarity() {
+  $query = db_select('recommender_similarity', 'sim');
+  $query->fields('sim',array('source_eid','target_eid','score'));
+  $query->orderBy('sim.score');
+  $query->condition('sim.app_id',26);
+  $results = $query->execute();
+  
+  $header = array( t('Source'), t('Target'), t('Score'));
+  $rows = array();
+  
+  foreach ($results AS $result)
+    {
+      $rows[] = array(
+        l($result->source_eid,'node/' . $result->source_eid),
+        l($result->target_eid,'node/' . $result->target_eid),
+        $result->score,
+      );
+    }
+
   $output =  theme('table', array('header' => $header, 'rows' => $rows) );
   return $output;
 }
