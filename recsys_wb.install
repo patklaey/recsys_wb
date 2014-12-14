@@ -224,7 +224,17 @@ function recsys_wb_enable() {
                 'similarity' => 'pearson',
                 'preference' => 'score'
             ),
-        ),    
+        ),
+        'content_rec_cosine' => array(
+            'title' => t("Content recommender (cosine)"),
+            'params' => array(
+                'algorithm' => 'user2user',
+                'table' => "{recsys_wb_tfidf_values}",
+                'fields' => array('entity_id','word_id','tfidf_value'),
+                'similarity' => 'cosine',
+                'preference' => 'score'
+            ),
+        ),   
     );
     recommender_app_register($apps);
 }
@@ -243,6 +253,7 @@ function recsys_wb_disable(){
     'book_rec_i2i_pearson',
     'movie_rec_u2u_pearson',
     'movie_rec_i2i_pearson',
+    'content_rec_cosine',
   );
   recommender_app_unregister($apps);
 }
