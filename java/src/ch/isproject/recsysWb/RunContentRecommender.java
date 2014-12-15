@@ -2,6 +2,7 @@ package ch.isproject.recsysWb;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,9 +58,16 @@ public class RunContentRecommender extends AsyncCommand {
 				new HashMap<Integer, Map<Integer,Double>>();
 
     	try {
+    		
+    		logger.info("Preparing documents");
+    		
     		creator.prepareDocuments();
     		
+    		logger.info("Documents prepared, going to create TFIDF vectors");
+    		
     		vectors = creator.createTFIDFVector();
+    		
+    		logger.info("TFIDF vectors created, uploading them to database");
     		
 		} catch (Exception e) {
 			logger.severe(e.getStackTrace().toString());
@@ -97,6 +105,8 @@ public class RunContentRecommender extends AsyncCommand {
 				}
 			}
 	    	
+	    	logger.info("Finished DB upload");
+	    	
 	    	valueUploader.accomplish();
 	    	valueUploader.join();
 	    	
@@ -108,6 +118,35 @@ public class RunContentRecommender extends AsyncCommand {
 		} catch (InterruptedException e) {
 			logger.severe(e.getStackTrace().toString());
 		}
+    	
+    	
+    	// Calculate the cosine similarity
+		Integer[] keys = vectors.keySet().toArray(new Integer[vectors.keySet().size()]);
+    	for (int i = 0; i < keys.length; i++) {
+			for (int j = i+1; j < keys.length; j++) {
+				double similarityScore = calculateSimilarity(vectors.get(keys[i]),vectors.get(keys[j]));
+				if ( similarityScore > 20 )
+					logger.info("Documents: " + keys[i] + "<-->" + keys[j] + " have a weighted similarity of " + similarityScore);
+			}
+		}
     }
+
+	private double calculateSimilarity(Map<Integer, Double> map0,
+			Map<Integer, Double> map1) {
+		List<Double> list0 = new ArrayList<Double>();
+		List<Double> list1 = new ArrayList<Double>();
+		int commonWords = 0;
+		
+		for (Integer wordId : map0.keySet()) {
+			if ( map1.containsKey(wordId) ) {
+				list0.add(map0.get(wordId));
+				list1.add(map1.get(wordId));
+				commonWords++;
+			}
+		}
+		
+		double similarity = CosineSimilarity.cosineSimilarity(list0, list1);
+		return similarity * commonWords;
+	}
 }
 
