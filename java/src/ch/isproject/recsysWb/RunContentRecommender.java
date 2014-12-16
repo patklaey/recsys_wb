@@ -125,8 +125,11 @@ public class RunContentRecommender extends AsyncCommand {
     	for (int i = 0; i < keys.length; i++) {
 			for (int j = i+1; j < keys.length; j++) {
 				double similarityScore = calculateSimilarity(vectors.get(keys[i]),vectors.get(keys[j]));
-				if ( similarityScore > 20 )
+				double weightedScore = similarityScore / (vectors.get(keys[i]).size() + vectors.get(keys[j]).size());
+				if ( weightedScore > 0.11 ) {
 					logger.info("Documents: " + keys[i] + "<-->" + keys[j] + " have a weighted similarity of " + similarityScore);
+					logger.info("Documents: " + keys[i] + "<-->" + keys[j] + " have a weighted similarity of " + weightedScore);
+				}
 			}
 		}
     }
