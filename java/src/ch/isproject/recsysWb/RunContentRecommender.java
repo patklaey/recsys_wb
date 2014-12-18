@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.drupal.project.async_command.*;
 
@@ -105,13 +106,13 @@ public class RunContentRecommender extends AsyncCommand {
 				}
 			}
 	    	
-	    	logger.info("Finished DB upload");
-	    	
 	    	valueUploader.accomplish();
 	    	valueUploader.join();
 	    	
 	        connection.commit();
 	        connection.close();
+	        
+	    	logger.info("Finished DB upload");
 	    	
 		} catch (SQLException e) {
 			logger.severe(e.getStackTrace().toString());
@@ -122,13 +123,39 @@ public class RunContentRecommender extends AsyncCommand {
     	
     	// Calculate the cosine similarity
 		Integer[] keys = vectors.keySet().toArray(new Integer[vectors.keySet().size()]);
+//    	for (int i = 0; i < keys.length; i++) {
+//			for (int j = i+1; j < keys.length; j++) {
+//				double similarityScore = calculateSimilarity(vectors.get(keys[i]),vectors.get(keys[j]));
+//				double weightedScore = similarityScore / (vectors.get(keys[i]).size() + vectors.get(keys[j]).size());
+//				if ( weightedScore > 0.11 ) {
+//					logger.info("Documents: " + keys[i] + "<-->" + keys[j] + " have a weighted similarity of " + similarityScore);
+//					logger.info("Documents: " + keys[i] + "<-->" + keys[j] + " have a weighted similarity of " + weightedScore);
+//				}
+//			}
+//		}
+    	
+    	// Calculate cosine similarity in improved arrays
     	for (int i = 0; i < keys.length; i++) {
 			for (int j = i+1; j < keys.length; j++) {
-				double similarityScore = calculateSimilarity(vectors.get(keys[i]),vectors.get(keys[j]));
-				double weightedScore = similarityScore / (vectors.get(keys[i]).size() + vectors.get(keys[j]).size());
-				if ( weightedScore > 0.11 ) {
-					logger.info("Documents: " + keys[i] + "<-->" + keys[j] + " have a weighted similarity of " + similarityScore);
-					logger.info("Documents: " + keys[i] + "<-->" + keys[j] + " have a weighted similarity of " + weightedScore);
+				Map<Integer, Double> map0 = new TreeMap<Integer, Double>(vectors.get(keys[i]));
+				Map<Integer, Double> map1 = new TreeMap<Integer, Double>(vectors.get(keys[j]));
+								
+				for (Integer integer : map0.keySet() ) {
+					if ( ! map1.containsKey(integer) )
+						map1.put(integer, (double) 0);
+				}
+				
+				for ( Integer integer : map1.keySet() ) {
+					if ( ! map0.containsKey(integer) )
+						map0.put(integer, (double) 0);
+				}
+				
+				List<Double> list0 = new ArrayList<Double>(map0.values());
+				List<Double> list1 = new ArrayList<Double>(map1.values());
+				double similarity = CosineSimilarity.cosineSimilarity(list0, list1);
+				if ( similarity > 0.2 ) { 
+					logger.info("Documents: " + keys[i] + "<-->" + keys[j] + " have a similarity of " + similarity);
+//					logger.info("Maps:\n" + map0 + "\n" + map1 );
 				}
 			}
 		}
