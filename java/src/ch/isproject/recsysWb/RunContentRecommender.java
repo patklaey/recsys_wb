@@ -77,8 +77,8 @@ public class RunContentRecommender extends AsyncCommand {
     	int appId = 1;
     	String tableName = "{recsys_wb_tfidf_values}";
     	String insertSql = this.drupalConnection.d("INSERT INTO " + tableName
-    			+ "(app_id, entity_id, word_id, tfidf_value, timestamp) " 
-    			+ "VALUES(?, ?, ?, ?, ?)");
+    			+ "(app_id, entity_id, tfidf_vector, timestamp) " 
+    			+ "VALUES(?, ?, ?, ?)");
     	BatchUploader valueUploader;
     	
     	try {
@@ -99,11 +99,8 @@ public class RunContentRecommender extends AsyncCommand {
 			
 	    	// Write the results to the database
 	    	for (Integer documentId : vectors.keySet() ) {
-				for (Integer wordId : vectors.get(documentId).keySet()) {
-					valueUploader.put(appId, documentId, wordId, 
-							vectors.get(documentId).get(wordId),
+				valueUploader.put(appId, documentId, vectors.get(documentId).toString(),
 							"" + System.currentTimeMillis() );
-				}
 			}
 	    	
 	    	valueUploader.accomplish();

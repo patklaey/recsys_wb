@@ -67,7 +67,7 @@ function recsys_wb_schema() {
     ),
   );
   $schema['recsys_wb_tfidf_values'] = array(
-    'description' => 'Holds the TFIDF values for the given word ids and documents',
+    'description' => 'Holds the TFIDF values for the given documents',
     'fields' => array(
       'app_id' => array(
         'description' => 'The recommender app id',
@@ -79,14 +79,9 @@ function recsys_wb_schema() {
         'type' => 'int',
         'not null' => TRUE
       ),
-      'word_id' => array(
-        'description' => 'The id of the word in the corresponding dictionary',
-        'type' => 'int',
-        'not null' => TRUE
-      ),
-      'tfidf_value' => array(
-        'description' => 'The TFIDF value of this word',
-        'type' => 'float',
+      'tfidf_vector' => array(
+        'description' => 'The vector if tfidf values',
+        'type' => 'text',
         'not null' => TRUE
       ),
       'timestamp' => array(
