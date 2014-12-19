@@ -18,4 +18,29 @@ information (as for example \"this movie is a fantasy movie\")";
   return $title . $explanation;
 }
 
+/**
+ * Explain the TFIDF function
+ */
+function recsys_wb_explain_tfidf() {
+  $tfidf = 'TF\text{-}IDF(w,d) = TF(w,d) \times IDF(w)';
+  $tf = 'TF(w,d) = {freq(w,d) \over max(freq(i,d), i \in otherWords(w,d))}';
+  $idf = 'IDF(w) = \log{N \over n(w)}';
+  
+  $title = "<strong><h3>TF-IDF</h3></strong>";
+  $explanation = "<div class='tex2jax'>";
+  $explanation .= "TF-IDF stands for Term Frequency-Inverse Document Frequency 
+and encodes a document as a vector in an n-dimensional Euclidean space. The 
+space dimension is equal to the number of words in the document. As an example 
+the TF-IDF value for a word " . mathInline("w") . " in document " 
+. mathInline("d") . " is calculated as follows:";
+  $explanation .= mathBlock($tf) . mathBlock($idf) . mathBlock($tfidf);
+  $explanation .= "Where " . mathInline('freq(w,d)') . " denotes how many times 
+the word " . mathInline("w") . " occures in document " . mathInline("d") . ", "
+. mathInline("otherWords(w,d)") . " specifies the set of all words of document "
+. mathInline("d") . " except word " . mathInline("w") . ", " . mathInline("N")
+. " is the total number of documents and " . mathInline("n(w)") . " is the 
+number of documents in which the word " . mathInline("w") . " occures at least 
+once.";
+  return $title . $explanation . "</div>";
+}
 ?>

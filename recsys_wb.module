@@ -652,6 +652,7 @@ function recsys_wb_explanation_cf_table_of_contents() {
  */
 function recsys_wb_explanation_cb() {
   $explanation = recsys_wb_explain_cb();
+  $explanation .= recsys_wb_explain_tfidf();
   return $explanation;
 }
 
