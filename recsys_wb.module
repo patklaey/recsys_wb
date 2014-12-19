@@ -27,6 +27,7 @@ require_once 'statistics.php';
 require_once 'php-tail/PHPTail.php';
 require_once 'evaluation.php';
 require_once 'CF.php';
+require_once 'CB.php';
 
 /**
  * Implements hook_menu()
@@ -135,6 +136,13 @@ function recsys_wb_menu() {
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_explanation_cf',
+    'access arguments' => array('access content'),
+  );
+  $items['learn/cb'] = array(
+    'title' => 'Content based filtering', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_explanation_cb',
     'access arguments' => array('access content'),
   );
   $items['statistics/runstatistics'] = array(
@@ -489,14 +497,18 @@ function recsys_wb_tail() {
  */
 function recsys_wb_explanation () {
   $cf = l("Collaborative filtering",'learn/cf');
-  //$cb = l("Content based filtering",'statistics/runstatistics');
+  $cb = l("Content based filtering",'learn/cb');
   
   $return_string = "There is a lot where you can learn about recommender ";
   $return_string .= "systems.
 <ul>
   <li>$cf<br/>Learn about collaborative filtering. What is the idea behind, what
-    are the diefferent similarity methods and see some examples how to calculate
+    are the different similarity methods and see some examples how to calculate
     them. 
+  </li>
+  <li>$cb<br/>Learn about content filtering. What is the idea behind, what
+    are the calculations to represent a document in a form which can be 
+    mathematically compared to other documents etc. 
   </li>
 </ul>
 ";
@@ -505,7 +517,7 @@ function recsys_wb_explanation () {
 }
 
 /**
- * 
+ * Explain collaborative filtering
  */
 function recsys_wb_explanation_cf() {
   $algorithm_name = null;
@@ -633,6 +645,14 @@ function recsys_wb_explanation_cf_table_of_contents() {
 </ul>
 ";
   return $table_of_contents;
+}
+
+/**
+ * Explain content based filtering
+ */
+function recsys_wb_explanation_cb() {
+  $explanation = recsys_wb_explain_cb();
+  return $explanation;
 }
 
 /**
