@@ -1,4 +1,4 @@
-package ch.isproject.recsysWb;
+package ch.isproject.recsysWb.similarity;
 
 import java.util.List;
 

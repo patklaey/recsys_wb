@@ -1,4 +1,4 @@
-package ch.isproject.recsysWb;
+package ch.isproject.recsysWb.contentRecommender;
 
 import java.sql.Connection;
 import java.sql.SQLException;

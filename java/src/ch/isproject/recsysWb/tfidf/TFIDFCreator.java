@@ -1,4 +1,4 @@
-package ch.isproject.recsysWb;
+package ch.isproject.recsysWb.tfidf;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,6 +1,7 @@
-package ch.isproject.recsysWb;
+package ch.isproject.recsysWb.contentRecommender;
 
 import org.drupal.project.async_command.*;
+
 
 @Identifier("contentRecommender")
 public class ContentRecommenderApp extends Druplet {
