@@ -37,7 +37,10 @@ public class RunContentRecommender extends AsyncCommand {
     		List<Map<String, Object>> result;
 			result = this.drupalConnection.query("SELECT entity_id,tfidf_vector" 
 					+ " FROM " + RunTFIDFCreator.TFIDF_TABLE_NAME);
-						
+			
+			if ( result.size() == 0 )
+				throw new RuntimeException("No TFIDF values in database. Generate them first!");
+			
 			for (Map<String, Object> map : result) {
 				Map<Integer, Double> tmp = createMapFromString(
 						(String) map.get("tfidf_vector"));
