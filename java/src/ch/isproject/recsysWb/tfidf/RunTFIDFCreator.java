@@ -12,10 +12,12 @@ import org.drupal.project.async_command.CommandRecord;
 import org.drupal.project.async_command.DrupalConnection;
 import org.drupal.project.async_command.Druplet;
 
+import ch.isproject.recsysWb.RecsysWbUtil;
+
 public class RunTFIDFCreator extends AsyncCommand {
 	
 	private static final String SQL_QUESTION_NODE_PARAMETER = "question";
-	private static final String TABLE_NAME = "{recsys_wb_tfidf_values}";
+	public static final String TFIDF_TABLE_NAME = "{recsys_wb_tfidf_values}";
 	
 	
 	private DrupalConnection drupalConnection;
@@ -43,7 +45,8 @@ public class RunTFIDFCreator extends AsyncCommand {
     		this.documents = this.drupalConnection.query(sqlQueryString,
     				SQL_QUESTION_NODE_PARAMETER);
 		} catch (SQLException e) {
-			logger.severe(e.getStackTrace().toString());
+			String message = RecsysWbUtil.getPrintableStacktrace(e);
+			logger.severe(message);
 		}
     }
     
@@ -61,7 +64,7 @@ public class RunTFIDFCreator extends AsyncCommand {
 	        }
 	    	
 	    	String deleteSqlCommand = this.drupalConnection.d("DELETE FROM " 
-	    			+ TABLE_NAME + " WHERE app_id = ?");
+	    			+ TFIDF_TABLE_NAME + " WHERE app_id = ?");
 	    	
 	    	BatchUploader cleanupBatchJob = new BatchUploader(null, 
 	    			"Delete-Batch", this.databaseBatchConnection, 
@@ -72,8 +75,9 @@ public class RunTFIDFCreator extends AsyncCommand {
 	    	cleanupBatchJob.join();
     	} 
     	catch ( Exception e ) {
-    		logger.severe(e.getStackTrace().toString());
-    	}
+    		String message = RecsysWbUtil.getPrintableStacktrace(e);
+			logger.severe(message);
+		}
 	}
     
     @Override
@@ -111,12 +115,13 @@ public class RunTFIDFCreator extends AsyncCommand {
     		logger.info("TFIDF vectors created, uploading them to database");
     		
 		} catch (Exception e) {
-			logger.severe(e.getStackTrace().toString());
+			String message = RecsysWbUtil.getPrintableStacktrace(e);
+			logger.severe(message);
 		}
 
-    	String insertSql = this.drupalConnection.d("INSERT INTO " + TABLE_NAME
-    			+ "(app_id, entity_id, tfidf_vector, timestamp) " 
-    			+ "VALUES(?, ?, ?, ?)");
+    	String insertSql = this.drupalConnection.d("INSERT INTO " 
+    			+ TFIDF_TABLE_NAME + " (app_id, entity_id, tfidf_vector, " 
+    			+ "timestamp) VALUES(?, ?, ?, ?)");
     	BatchUploader valueUploader;
     	
     	try {
@@ -141,10 +146,9 @@ public class RunTFIDFCreator extends AsyncCommand {
 	        
 	    	logger.info("Finished DB upload");
 	    	
-		} catch (SQLException e) {
-			logger.severe(e.getStackTrace().toString());
-		} catch (InterruptedException e) {
-			logger.severe(e.getStackTrace().toString());
+		} catch (Exception e) {
+			String message = RecsysWbUtil.getPrintableStacktrace(e);
+			logger.severe(message);
 		}
     }
 

@@ -1,21 +1,19 @@
 package ch.isproject.recsysWb.contentRecommender;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.drupal.project.async_command.*;
 
+import ch.isproject.recsysWb.RecsysWbUtil;
+import ch.isproject.recsysWb.tfidf.RunTFIDFCreator;
+
 public class RunContentRecommender extends AsyncCommand {
-	
-	private static final String SQL_QUESTION_NODE_PARAMETER = "question";
-	
+		
 	private DrupalConnection drupalConnection;
-	private List<Map<String,Object>> documents;
+	private Map<Integer, Map<Integer, Double>> tfidfVectors;
     
     public RunContentRecommender(CommandRecord record, Druplet druplet) {
     	super(record,druplet);
@@ -23,12 +21,42 @@ public class RunContentRecommender extends AsyncCommand {
     	this.record = record;
     	this.druplet = druplet;
     	this.drupalConnection = druplet.getDrupalConnection();
+    	this.tfidfVectors = new HashMap<Integer, Map<Integer,Double>>();
     }
     
     public void processRequest() {
+    	try {
+    		List<Map<String, Object>> result;
+			result = this.drupalConnection.query("SELECT entity_id,tfidf_vector" 
+					+ " FROM " + RunTFIDFCreator.TFIDF_TABLE_NAME);
+						
+			for (Map<String, Object> map : result) {
+				Map<Integer, Double> tmp = createMapFromString(
+						(String) map.get("tfidf_vector"));
+				this.tfidfVectors.put( (Integer) map.get("entity_id") , tmp);
+			}
+			
+		} catch (SQLException e) {
+			String message = RecsysWbUtil.getPrintableStacktrace(e);
+			logger.severe(message);
+		}
     }
     
-    @Override
+    private Map<Integer, Double> createMapFromString(String vector) {
+
+    	Map<Integer, Double> map = new HashMap<Integer, Double>();
+    	vector = vector.replaceAll("[{}]", "");
+
+        String[] pairs = vector.split(", ");
+        for (int i = 0; i < pairs.length; i++) {
+			String[] points = pairs[i].split("=");
+			map.put(Integer.valueOf(points[0]), 
+					Double.valueOf(points[1]));
+		}
+        return map;
+	}
+
+	@Override
     protected void beforeExecute() {
     	super.beforeExecute();
     	this.processRequest();
@@ -43,6 +71,9 @@ public class RunContentRecommender extends AsyncCommand {
     @Override
     protected void execute() {
     	super.execute();
+    	
+    	logger.info("The map currently looks like: " + this.tfidfVectors );
+
     }
 }
 
