@@ -222,4 +222,20 @@ function recsys_wb_run_content_recommender_form_submit( $form, &$form_state ) {
   );
   drupal_set_message("Recommender schduled");
 }
+
+/**
+ * 
+ */
+function recsys_wb_create_tfidf_vectors_form_submit( $form, &$form_state ) {
+  $output_folder = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
+    . drupal_get_path("module", "recsys_wb") .  DIRECTORY_SEPARATOR . "output/";
+  async_command_create_command(
+    'tfidfCreatorApp', 
+    'RunTFIDFCreator', 
+    'Calculates TFIDF vectors for all stackoverflow questions', 
+    array('string1' => $output_folder )
+  );
+  drupal_set_message("TFIDF vector creation schduled");
+}
+
 ?>

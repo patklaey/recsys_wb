@@ -309,6 +309,9 @@ function recsys_wb_block_info() {
   $blocks['run_content_recommender'] = array(
     'info' => t('Recsys workbench run content recommender'),
   );
+  $blocks['create_tfidf_vectors'] = array(
+    'info' => t('Recsys workbench create TFIDF vectors'),
+  );
   return $blocks;
 }
 
@@ -365,6 +368,13 @@ function recsys_wb_block_view($delta = '')
       $block['subject'] = t('Run content recommender');
       $block['content'] = drupal_get_form(
         'recsys_wb_run_content_recommender_form'
+      );
+      break;
+
+    case 'create_tfidf_vectors':
+      $block['subject'] = t('Create TFIDF vectors');
+      $block['content'] = drupal_get_form(
+        'recsys_wb_create_tfidf_vectors_form'
       );
       break;
       

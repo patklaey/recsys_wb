@@ -279,4 +279,15 @@ function recsys_wb_run_content_recommender_form() {
   );
   return $form;
 }
+
+/**
+ * 
+ */
+function recsys_wb_create_tfidf_vectors_form() {
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Create TFIDF vectors'),
+  );
+  return $form;
+}
 ?>
