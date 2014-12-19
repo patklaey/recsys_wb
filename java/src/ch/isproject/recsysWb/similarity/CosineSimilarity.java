@@ -2,15 +2,13 @@ package ch.isproject.recsysWb.similarity;
 
 import java.util.List;
 
-public class CosineSimilarity {
+public class CosineSimilarity implements SimilarityAlgorithm {
 	
-	/**
-     * Method to calculate cosine similarity between two documents.
-     * @param docVector1 : document vector 1 (a)
-     * @param docVector2 : document vector 2 (b)
-     * @return
-     */
-    public static double cosineSimilarity(List<Double> featureVector0, List<Double> featureVector1) {
+	/* (non-Javadoc)
+	 * @see ch.isproject.recsysWb.similarity.SimilarityType#execute(java.util.List, java.util.List)
+	 */
+    @Override
+	public double execute(List<Double> featureVector0, List<Double> featureVector1) {
         double dotProduct = 0.0;
         double magnitude0 = 0.0;
         double magnitude1 = 0.0;

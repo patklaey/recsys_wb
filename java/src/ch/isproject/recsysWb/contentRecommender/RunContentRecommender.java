@@ -1,20 +1,25 @@
 package ch.isproject.recsysWb.contentRecommender;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.drupal.project.async_command.*;
 
 import ch.isproject.recsysWb.RecsysWbUtil;
+import ch.isproject.recsysWb.similarity.CosineSimilarity;
+import ch.isproject.recsysWb.similarity.SimilarityAlgorithm;
 import ch.isproject.recsysWb.tfidf.RunTFIDFCreator;
 
 public class RunContentRecommender extends AsyncCommand {
 		
 	private DrupalConnection drupalConnection;
 	private Map<Integer, Map<Integer, Double>> tfidfVectors;
-    
+    private SimilarityAlgorithm similarityAlgorithm;
+	
     public RunContentRecommender(CommandRecord record, Druplet druplet) {
     	super(record,druplet);
 
@@ -22,6 +27,9 @@ public class RunContentRecommender extends AsyncCommand {
     	this.druplet = druplet;
     	this.drupalConnection = druplet.getDrupalConnection();
     	this.tfidfVectors = new HashMap<Integer, Map<Integer,Double>>();
+    	
+    	// TODO create similarity according to appID from record
+    	this.similarityAlgorithm = new CosineSimilarity();
     }
     
     public void processRequest() {
@@ -71,9 +79,40 @@ public class RunContentRecommender extends AsyncCommand {
     @Override
     protected void execute() {
     	super.execute();
+    	Integer[] documentIds = this.tfidfVectors.keySet().toArray(
+    			new Integer[this.tfidfVectors.keySet().size()]);
     	
-    	logger.info("The map currently looks like: " + this.tfidfVectors );
-
+    	for (int i = 0; i < documentIds.length; i++) {
+    		 for (int j = i+1; j < documentIds.length; j++) {
+    			 double similarity = this.calculateSimilarity( 
+    					 this.tfidfVectors.get( documentIds[i] ), 
+    					 this.tfidfVectors.get( documentIds[j] ) );
+    			 logger.info("Documents: " + documentIds[i] + "<-->" 
+    					 + documentIds[j] + " : " + similarity );
+    		 }
+    	}
+    }
+    
+    private double calculateSimilarity(Map<Integer, Double> documentVector1,
+    		Map<Integer, Double> documentVector2) {
+    	Map<Integer, Double> map1 = 
+    			new TreeMap<Integer, Double>(documentVector1);
+    	Map<Integer, Double> map2 = 
+    			new TreeMap<Integer, Double>(documentVector2);
+    	
+    	for (Integer integer : map1.keySet() ) {
+    		if ( ! map2.containsKey(integer) )
+    			map2.put(integer, (double) 0);
+    	}
+    	
+    	for ( Integer integer : map2.keySet() ) {
+    		if ( ! map1.containsKey(integer) )
+    			map1.put(integer, (double) 0);
+    	}
+    	
+    	List<Double> features1 = new ArrayList<Double>(map1.values());
+    	List<Double> features2 = new ArrayList<Double>(map2.values());
+    	return this.similarityAlgorithm.execute(features1, features2);
     }
 }
 
