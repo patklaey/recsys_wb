@@ -230,7 +230,7 @@ function recsys_wb_create_tfidf_vectors_form_submit( $form, &$form_state ) {
   $output_folder = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
     . drupal_get_path("module", "recsys_wb") .  DIRECTORY_SEPARATOR . "output/";
   async_command_create_command(
-    'tfidfCreatorApp', 
+    'TFIDFCreatorApp', 
     'RunTFIDFCreator', 
     'Calculates TFIDF vectors for all stackoverflow questions', 
     array('string1' => $output_folder )

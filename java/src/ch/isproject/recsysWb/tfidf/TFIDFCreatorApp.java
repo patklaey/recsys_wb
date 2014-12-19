@@ -3,16 +3,16 @@ package ch.isproject.recsysWb.tfidf;
 import org.drupal.project.async_command.*;
 
 
-@Identifier("tfidfCreatorApp")
-public class TfidfCreatorApp extends Druplet {
+@Identifier("TFIDFCreatorApp")
+public class TFIDFCreatorApp extends Druplet {
 	
-    public TfidfCreatorApp(DrupletConfig config) {
+    public TFIDFCreatorApp(DrupletConfig config) {
         super(config);
         registerCommandClass(RunTFIDFCreator.class);
     }
 	
     public static void main(String[] args) {
-        CommandLineLauncher launcher = new CommandLineLauncher(TfidfCreatorApp.class);
+        CommandLineLauncher launcher = new CommandLineLauncher(TFIDFCreatorApp.class);
         launcher.launch(args);
     }
 

@@ -23,6 +23,6 @@ CLASSPATH=$ASYNC_COMMAND_HOME/async-command.jar:$ASYNC_COMMAND_HOME/lib/*:$MAHOU
 
 # specify the location and filename of config.properties file. Default is the working directory
 CONFIG_FILE=${RECSYS_WB_HOME}/config/config.properties
-java -cp $CLASSPATH ch.isproject.recsysWb.tfidf.TfidfCreatorApp -c $CONFIG_FILE
+java -cp $CLASSPATH ch.isproject.recsysWb.tfidf.TFIDFCreatorApp -c $CONFIG_FILE
 
 #$RECSYS_WB_HOME/scripts/evaluate.sh
