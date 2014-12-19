@@ -40,6 +40,7 @@ public class RunContentRecommender extends AsyncCommand {
     }
     
     public Map<Integer, Map<Integer, Double>> getTFIDFValuesFromDatabase() {
+    	logger.info("Getting documents from database");
     	Map<Integer, Map<Integer, Double>> tfidfValues = 
     			new HashMap<Integer, Map<Integer,Double>>();
     	try {
@@ -134,6 +135,8 @@ public class RunContentRecommender extends AsyncCommand {
     			"Similarity-Batch", this.databaseBatchConnection, insertSql,
 				this.drupalConnection.getMaxBatchSize());
 		valueUploader.start();
+		
+		logger.info("Starting calculation ...");
     	
 		for (int i = 0; i < documentIds.length; i++) {
 			for (int j = i+1; j < documentIds.length; j++) {
@@ -146,6 +149,9 @@ public class RunContentRecommender extends AsyncCommand {
  						similarity);
  			
 			}
+				
+			double progressInPercent = ( ((double) i) / documentIds.length * 100 );
+			logger.info("Progress: " + progressInPercent + "% ...");
     	}
     	
     	try {
