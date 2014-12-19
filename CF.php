@@ -98,6 +98,19 @@ function recsys_wb_get_example_table( $marking = 0 ) {
 }
 
 /**
+ * Shortly explain the basics of collaborative filtering
+ */
+function recsys_wb_explain_cf() {
+  $title = "<strong><h2>Collaborative Filtering</h2></strong>";
+  $explanation = "In collaborative filtering the idea is to learn form the past 
+to predict the future. So if two users had the same taste in the past, it is 
+likely that they will also have common interests in the future. This obviously 
+requiers a lot of user data (ratings, purchase history etc) but on the other 
+hand, no knowledge about the items is necessary.";
+  return $title . $explanation;
+}
+
+/**
  * Shortly explain what item2item algorithms do
  */
 function recsys_wb_explain_item2item() {

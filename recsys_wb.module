@@ -517,14 +517,17 @@ function recsys_wb_explanation_cf() {
     $algorithm_name = getRecommenderAppName( $_GET['algorithm'] );
   
   if ( $algorithm_name != null ) {
-    $explain = "<strong>" . getRecommenderAppTitle( $_GET['algorithm'] ) . "</strong>";
+    $explain = "<strong>Explanation for " 
+      . getRecommenderAppTitle( $_GET['algorithm'] ) . "</strong>";
   }
   else {
           
     $checked_user2user = 'checked';
     $checked_item2item = '';
     
-    drupal_add_css(drupal_get_path('module', 'recsys_wb') . '/css/radio-button.css');
+    drupal_add_css(
+      drupal_get_path('module', 'recsys_wb') . '/css/radio-button.css'
+    );
     
     // Check if a POST request was sent if yes check which type it is
     if ( isset($_POST['explain']) ) {
@@ -560,6 +563,10 @@ function recsys_wb_explanation_cf() {
     $explain .= recsys_wb_explanation_cf_table_of_contents();  
     
   }
+
+  // Explain the basics of collaborative filtering
+  $explain .= "<a href='#' name='cf'></a>";
+  $explain .= recsys_wb_explain_cf();
   
   $explain_user2user = preg_match("/_u2u_/", $algorithm_name);
   $explain_item2item = preg_match("/_i2i_/", $algorithm_name);
@@ -611,6 +618,7 @@ function recsys_wb_explanation_cf() {
 function recsys_wb_explanation_cf_table_of_contents() {
   $table_of_contents = "
 <ul style='list-style-type:none'>
+  <li><strong><a href='#cf'>Collaborative filtering</a></strong></li>
   <li><strong><a href='#algorithm'>Algorithm type</a></strong></li>
   <ul style='list-style-type:none'>
     <li><a href='#user2user'>User-User Recommendation</a></li>
