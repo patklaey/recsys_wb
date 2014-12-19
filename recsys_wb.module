@@ -488,8 +488,8 @@ function recsys_wb_tail() {
  * 
  */
 function recsys_wb_explanation () {
-  $cf = l("Collaborative filtering",'statistics/evaluation');
-  //$stats = l("Run Statistics",'statistics/runstatistics');
+  $cf = l("Collaborative filtering",'learn/cf');
+  //$cb = l("Content based filtering",'statistics/runstatistics');
   
   $return_string = "There is a lot where you can learn about recommender ";
   $return_string .= "systems.
