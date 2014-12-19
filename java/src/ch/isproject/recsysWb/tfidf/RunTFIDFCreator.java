@@ -15,9 +15,14 @@ import org.drupal.project.async_command.Druplet;
 public class RunTFIDFCreator extends AsyncCommand {
 	
 	private static final String SQL_QUESTION_NODE_PARAMETER = "question";
+	private static final String TABLE_NAME = "{recsys_wb_tfidf_values}";
+	
 	
 	private DrupalConnection drupalConnection;
 	private List<Map<String,Object>> documents;
+	private int appId;
+	Connection databaseBatchConnection;
+
     
     public RunTFIDFCreator(CommandRecord record, Druplet druplet) {
     	super(record,druplet);
@@ -25,6 +30,9 @@ public class RunTFIDFCreator extends AsyncCommand {
     	this.record = record;
     	this.druplet = druplet;
     	this.drupalConnection = druplet.getDrupalConnection();
+    	
+    	// TODO set the appId according to the record
+    	this.appId = 1;
     }
     
     public void processRequest() {
@@ -39,13 +47,43 @@ public class RunTFIDFCreator extends AsyncCommand {
 		}
     }
     
+    private void cleanupDatabase() {
+    	try {
+	    	this.databaseBatchConnection = this.drupalConnection
+	    			.getConnection();
+	    	
+	    	boolean transactionIsSupported = this.databaseBatchConnection
+	    			.getMetaData().supportsTransactionIsolationLevel(
+	    					Connection.TRANSACTION_READ_COMMITTED);
+	    	if ( transactionIsSupported ) {
+	    		this.databaseBatchConnection.setTransactionIsolation(
+	            		Connection.TRANSACTION_READ_COMMITTED);
+	        }
+	    	
+	    	String deleteSqlCommand = this.drupalConnection.d("DELETE FROM " 
+	    			+ TABLE_NAME + " WHERE app_id = ?");
+	    	
+	    	BatchUploader cleanupBatchJob = new BatchUploader(null, 
+	    			"Delete-Batch", this.databaseBatchConnection, 
+	    			deleteSqlCommand, this.drupalConnection.getMaxBatchSize());
+	    	cleanupBatchJob.start();
+	    	cleanupBatchJob.put(this.appId);
+	    	cleanupBatchJob.accomplish();
+	    	cleanupBatchJob.join();
+    	} 
+    	catch ( Exception e ) {
+    		logger.severe(e.getStackTrace().toString());
+    	}
+	}
+    
     @Override
     protected void beforeExecute() {
     	super.beforeExecute();
     	this.processRequest();
+    	this.cleanupDatabase();
     }
-    
-    @Override
+
+	@Override
     protected void afterExecute() {
 	    super.afterExecute();
 	    logger.info("After execute");
@@ -76,40 +114,30 @@ public class RunTFIDFCreator extends AsyncCommand {
 			logger.severe(e.getStackTrace().toString());
 		}
 
-    	int appId = 1;
-    	String tableName = "{recsys_wb_tfidf_values}";
-    	String insertSql = this.drupalConnection.d("INSERT INTO " + tableName
+    	String insertSql = this.drupalConnection.d("INSERT INTO " + TABLE_NAME
     			+ "(app_id, entity_id, tfidf_vector, timestamp) " 
     			+ "VALUES(?, ?, ?, ?)");
     	BatchUploader valueUploader;
     	
     	try {
-        	Connection connection = this.drupalConnection.getConnection();
-
-        	boolean transactionIsSupported = connection.getMetaData()
-        			.supportsTransactionIsolationLevel(
-        					Connection.TRANSACTION_READ_COMMITTED);
-        	if ( transactionIsSupported ) {
-                connection.setTransactionIsolation(
-                		Connection.TRANSACTION_READ_COMMITTED);
-            }
         	
 			valueUploader = new BatchUploader(null, "Insert-Batch", 
-					connection, insertSql,
+					this.databaseBatchConnection, insertSql,
 					this.drupalConnection.getMaxBatchSize());
 			valueUploader.start();
 			
 	    	// Write the results to the database
 	    	for (Integer documentId : vectors.keySet() ) {
-				valueUploader.put(appId, documentId, vectors.get(documentId).toString(),
-							"" + System.currentTimeMillis() );
+				valueUploader.put(this.appId, documentId, 
+						vectors.get(documentId).toString(),
+						"" + System.currentTimeMillis() );
 			}
 	    	
 	    	valueUploader.accomplish();
 	    	valueUploader.join();
 	    	
-	        connection.commit();
-	        connection.close();
+	        this.databaseBatchConnection.commit();
+	        this.databaseBatchConnection.close();
 	        
 	    	logger.info("Finished DB upload");
 	    	
