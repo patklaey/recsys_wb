@@ -69,11 +69,6 @@ function recsys_wb_schema() {
   $schema['recsys_wb_tfidf_values'] = array(
     'description' => 'Holds the TFIDF values for the given documents',
     'fields' => array(
-      'app_id' => array(
-        'description' => 'The recommender app id',
-        'type' => 'int',
-        'not null' => TRUE
-      ),
       'entity_id' => array(
         'description' => 'The ID of the drupal entity',
         'type' => 'int',

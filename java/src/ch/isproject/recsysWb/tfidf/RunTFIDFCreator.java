@@ -22,7 +22,6 @@ public class RunTFIDFCreator extends AsyncCommand {
 	
 	private DrupalConnection drupalConnection;
 	private List<Map<String,Object>> documents;
-	private int appId;
 	Connection databaseBatchConnection;
 
     
@@ -32,9 +31,7 @@ public class RunTFIDFCreator extends AsyncCommand {
     	this.record = record;
     	this.druplet = druplet;
     	this.drupalConnection = druplet.getDrupalConnection();
-    	
-    	// TODO set the appId according to the record
-    	this.appId = 1;
+
     }
     
     public void processRequest() {
@@ -64,13 +61,13 @@ public class RunTFIDFCreator extends AsyncCommand {
 	        }
 	    	
 	    	String deleteSqlCommand = this.drupalConnection.d("DELETE FROM " 
-	    			+ TFIDF_TABLE_NAME + " WHERE app_id = ?");
+	    			+ TFIDF_TABLE_NAME + " WHERE 1 = 1");
 	    	
 	    	BatchUploader cleanupBatchJob = new BatchUploader(null, 
 	    			"Delete-Batch", this.databaseBatchConnection, 
 	    			deleteSqlCommand, this.drupalConnection.getMaxBatchSize());
 	    	cleanupBatchJob.start();
-	    	cleanupBatchJob.put(this.appId);
+	    	cleanupBatchJob.put();
 	    	cleanupBatchJob.accomplish();
 	    	cleanupBatchJob.join();
     	} 
@@ -120,8 +117,8 @@ public class RunTFIDFCreator extends AsyncCommand {
 		}
 
     	String insertSql = this.drupalConnection.d("INSERT INTO " 
-    			+ TFIDF_TABLE_NAME + " (app_id, entity_id, tfidf_vector, " 
-    			+ "timestamp) VALUES(?, ?, ?, ?)");
+    			+ TFIDF_TABLE_NAME + " (entity_id, tfidf_vector, timestamp) "
+    			+ "VALUES(?, ?, ?)");
     	BatchUploader valueUploader;
     	
     	try {
@@ -133,7 +130,7 @@ public class RunTFIDFCreator extends AsyncCommand {
 			
 	    	// Write the results to the database
 	    	for (Integer documentId : vectors.keySet() ) {
-				valueUploader.put(this.appId, documentId, 
+				valueUploader.put(documentId, 
 						vectors.get(documentId).toString(),
 						"" + System.currentTimeMillis() );
 			}
