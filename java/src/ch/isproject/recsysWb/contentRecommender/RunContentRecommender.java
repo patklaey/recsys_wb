@@ -138,6 +138,9 @@ public class RunContentRecommender extends AsyncCommand {
 		
 		logger.info("Starting calculation ...");
     	
+		// Just to display to progress properly
+		double totalCalculations = documentIds.length * ( documentIds.length / 2 );
+		
 		for (int i = 0; i < documentIds.length; i++) {
 			for (int j = i+1; j < documentIds.length; j++) {
 				
@@ -150,8 +153,9 @@ public class RunContentRecommender extends AsyncCommand {
  			
 			}
 				
-			double progressInPercent = ( ((double) i) / documentIds.length * 100 );
-			logger.info("Progress: " + progressInPercent + "% ...");
+			double progressInPercent = ((double)(i * documentIds.length )) / totalCalculations * 100;
+			if ( ((int) progressInPercent ) % 20 == 0 )
+				logger.info("Progress: " + progressInPercent + "% ...");
     	}
     	
     	try {
