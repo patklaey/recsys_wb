@@ -144,9 +144,7 @@ public class RunContentRecommender extends AsyncCommand {
 				
  				valueUploader.put(this.appId, documentIds[i], documentIds[j],
  						similarity);
- 				
- 				valueUploader.put(this.appId, documentIds[j], documentIds[i],
- 						similarity); 				
+ 			
 			}
     	}
     	

@@ -706,8 +706,9 @@ function recsys_wb_content_similarity() {
     'target_entity_id',
     'similarity')
   );
-  $query->orderBy('sim.similarity');
+  $query->orderBy('sim.similarity','DESC');
   $query->condition('sim.app_id',1);
+  $query->range(0,50);
   $results = $query->execute();
   
   $header = array( t('Source'), t('Target'), t('Score'));
