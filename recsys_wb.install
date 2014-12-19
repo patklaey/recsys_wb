@@ -86,6 +86,31 @@ function recsys_wb_schema() {
       ),
     ),
   );
+  $schema['recsys_wb_content_similarity'] = array(
+    'description' => 'Holds the TFIDF values for the given documents',
+    'fields' => array(
+      'app_id' => array(
+        'description' => 'The recommender app id',
+        'type' => 'int',
+        'not null' => TRUE
+      ),
+      'source_entity_id' => array(
+        'description' => 'The ID of the source (drupal) entity',
+        'type' => 'int',
+        'not null' => TRUE
+      ),
+      'target_entity_id' => array(
+        'description' => 'The ID of the target (drupal) entity',
+        'type' => 'int',
+        'not null' => TRUE
+      ),
+      'similarity' => array(
+        'description' => 'The similarity value',
+        'type' => 'float',
+        'not null' => TRUE
+      ),
+    ),
+  );
   return $schema;
 }
 

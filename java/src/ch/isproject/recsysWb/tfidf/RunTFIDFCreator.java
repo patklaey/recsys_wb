@@ -22,7 +22,7 @@ public class RunTFIDFCreator extends AsyncCommand {
 	
 	private DrupalConnection drupalConnection;
 	private List<Map<String,Object>> documents;
-	Connection databaseBatchConnection;
+	private Connection databaseBatchConnection;
 
     
     public RunTFIDFCreator(CommandRecord record, Druplet druplet) {

@@ -700,10 +700,14 @@ function recsys_wb_so_questions() {
  * A page which displays content similarity
  */
 function recsys_wb_content_similarity() {
-  $query = db_select('recommender_similarity', 'sim');
-  $query->fields('sim',array('source_eid','target_eid','score'));
-  $query->orderBy('sim.score');
-  $query->condition('sim.app_id',26);
+  $query = db_select('recsys_wb_content_similarity', 'sim');
+  $query->fields('sim',array(
+    'source_entity_id',
+    'target_entity_id',
+    'similarity')
+  );
+  $query->orderBy('sim.similarity');
+  $query->condition('sim.app_id',1);
   $results = $query->execute();
   
   $header = array( t('Source'), t('Target'), t('Score'));
@@ -712,9 +716,9 @@ function recsys_wb_content_similarity() {
   foreach ($results AS $result)
     {
       $rows[] = array(
-        l($result->source_eid,'node/' . $result->source_eid),
-        l($result->target_eid,'node/' . $result->target_eid),
-        $result->score,
+        l($result->source_entity_id,'node/' . $result->source_entity_id),
+        l($result->target_entity_id,'node/' . $result->target_entity_id),
+        $result->similarity,
       );
     }
 
