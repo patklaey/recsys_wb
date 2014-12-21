@@ -140,6 +140,7 @@ public class RunContentRecommender extends AsyncCommand {
     	
 		// Just to display to progress properly
 		double totalCalculations = documentIds.length * ( documentIds.length / 2 );
+		List<Integer> printedProgress = new ArrayList<Integer>();
 		
 		for (int i = 0; i < documentIds.length; i++) {
 			for (int j = i+1; j < documentIds.length; j++) {
@@ -152,10 +153,13 @@ public class RunContentRecommender extends AsyncCommand {
  						similarity);
  			
 			}
-				
+			
 			double progressInPercent = ((double)(i * documentIds.length )) / totalCalculations * 100;
-			if ( ((int) progressInPercent ) % 20 == 0 )
-				logger.info("Progress: " + progressInPercent + "% ...");
+			if ( ((int) progressInPercent ) % 5 == 0 && ! printedProgress.contains((int)progressInPercent) ) {
+				logger.info("Progress: " + (int) progressInPercent + "% ...");
+				printedProgress.add((int) progressInPercent);
+			}
+				
     	}
     	
     	try {
