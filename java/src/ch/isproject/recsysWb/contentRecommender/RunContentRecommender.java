@@ -154,7 +154,7 @@ public class RunContentRecommender extends AsyncCommand {
  			
 			}
 			
-			double progressInPercent = ((double)(i * documentIds.length )) / totalCalculations * 100;
+			double progressInPercent = ((double)(i * documentIds.length / 2)) / totalCalculations * 100;
 			if ( ((int) progressInPercent ) % 5 == 0 && ! printedProgress.contains((int)progressInPercent) ) {
 				logger.info("Progress: " + (int) progressInPercent + "% ...");
 				printedProgress.add((int) progressInPercent);
