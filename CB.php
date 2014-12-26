@@ -87,6 +87,80 @@ sentences: ";
   $explanation .= "To comapre this two sentences, first all TF-IDF values are 
 calculated: ";
   $explanation .= recsys_wb_content_similarity_example_table();
+  $explanation .= "Then the vectors of words their corresponding TF-IDF values 
+are formed. In order to be able to compare those vectors, all words which do not
+ occur in the first sentence (document) but in the other, are added to the first
+ sentence (document) with an TF-IDF value of 0 (as " . mathInline('TF(w,d) = 0')
+. "). If we want to compare Sentence 1 and Sentence 2 those vectors look like";
+  $vector1 = 'vector_{S1} = \begin{pmatrix}
+  \text{this} & 0.239 \newline
+  \text{be} & 0 \newline
+  \text{some} & 0.239 \newline
+  \text{text} & 0.176 \newline
+  \text{about} & 0.239 \newline
+  \text{a} & 0.088 \newline
+  \text{content} & 0.088 \newline
+  \text{based} & 0.088 \newline
+  \text{recommender} & 0.088 \newline
+  \text{system} & 0.088 \newline
+  \text{cool} & 0
+\end{pmatrix}';
+  $vector2 = 'vector_{S2} = \begin{pmatrix}
+  \text{this} & 0 \newline
+  \text{be} & 0 \newline
+  \text{some} & 0 \newline
+  \text{text} & 0.176 \newline
+  \text{about} & 0 \newline
+  \text{a} & 0.176 \newline
+  \text{content} & 0.176 \newline
+  \text{based} & 0.176 \newline
+  \text{recommender} & 0.176 \newline
+  \text{system} & 0.176 \newline
+  \text{cool} & 0.176
+\end{pmatrix}';
+
+  $explanation .= mathBlock($vector1) . mathBlock($vector2);
+  $explanation .= "So one can simply use classical similarity mehtods (for  
+example cosine similaity) to comapre those two sentences. Doing these 
+calculations will return the following similarities:";
+  $style = 'text-align:center;vertical-align:middle';
+  $similarity_table_header = array(
+    array( 'data' => (''), 'style' => $style ),
+    array( 'data' => ('Sentence 1'), 'style' => $style ),
+    array( 'data' => ('Sentence 2'), 'style' => $style ),
+    array( 'data' => ('Sentence 3'), 'style' => $style )
+  );
+  $similarity_table_rows = array(
+    array( 
+      array( 'data' => "Sentence 1", 'style' => $style ),
+      array( 'data' => 1, 'style' => $style ),
+      array( 'data' => 0.474, 'style' => $style ),
+      array( 'data' => 0, 'style' => $style ),
+    ),
+    array( 
+      array( 'data' => "Sentence 2", 'style' => $style ),
+      array( 'data' => 0.474, 'style' => $style ),
+      array( 'data' => 1, 'style' => $style ),
+      array( 'data' => 0.069, 'style' => $style ),
+    ),
+    array( 
+      array( 'data' => "Sentence 3", 'style' => $style ),
+      array( 'data' => 0, 'style' => $style ),
+      array( 'data' => 0.069, 'style' => $style ),
+      array( 'data' => 1, 'style' => $style ),
+    ),
+  );
+  $explanation .= theme( 
+    'table',
+    array( 
+      'header' => $similarity_table_header, 
+      'rows' => $similarity_table_rows, 
+      'caption' => "Similarity of the sentences" 
+    )
+  );
+  $explanation .= "As one can see, sentence 1 and sentence 2 have something in 
+ common, sentence 1 and sentence 3 have nothing in common at all and sentence 2 
+and sentence 3 have very, very little in common.";
   return $title . $explanation . "</div>";
 }
 
@@ -95,9 +169,10 @@ calculated: ";
  * Function to get some example text for TF-IDF explanation
  */
 function recsys_wb_document_example() {
-  $example = "<code>This is some text about a text recommender system</code>";
-  $example .= "<code>A content based recommender system is cool</code>";
-  $example .= "<code>Penguins are birds but can't fly</code>";
+  $example = "<code>This is some text about a content based text recommender ";
+  $example .= "system</code>";
+  $example .= "<code>A content based text recommender system is cool</code>";
+  $example .= "<code>Penguins are cool birds but can't fly</code>";
   return $example;
 }
 
@@ -115,58 +190,93 @@ function recsys_wb_content_similarity_example_table() {
   $rows = array(
     array( 
       array( 'data' => 'this', 'style' => $style ),
-      array( 'data' => 0.151, 'style' => $style ),
+      array( 'data' => 0.239, 'style' => $style ),
+      array( 'data' => '-', 'style' => $style ),
       array( 'data' => '-', 'style' => $style ),
     ),
     array(
-      array( 'data' => 'is', 'style' => $style ),
+      array( 'data' => 'be', 'style' => $style ),
       array( 'data' => 0, 'style' => $style ),
       array( 'data' => 0, 'style' => $style ),
+      array( 'data' => 0, 'style' => $style ),      
     ),
     array(
       array( 'data' => 'some', 'style' => $style ),
-      array( 'data' => 0.151, 'style' => $style ),
+      array( 'data' => 0.239, 'style' => $style ),
+      array( 'data' => '-', 'style' => $style ),
       array( 'data' => '-', 'style' => $style ),
     ),
     array(
       array( 'data' => 'text', 'style' => $style ),
-      array( 'data' => 0.301, 'style' => $style ),
+      array( 'data' => 0.176, 'style' => $style ),
+      array( 'data' => 0.176, 'style' => $style ),
       array( 'data' => '-', 'style' => $style ),
     ),
     array(
       array( 'data' => 'about', 'style' => $style ),
-      array( 'data' => 0.151, 'style' => $style ),
+      array( 'data' => 0.239, 'style' => $style ),
+      array( 'data' => '-', 'style' => $style ),
       array( 'data' => '-', 'style' => $style ),
     ),
     array(
       array( 'data' => 'a', 'style' => $style ),
-      array( 'data' => 0, 'style' => $style ),
-      array( 'data' => 0, 'style' => $style ),
-    ),
-    array(
-      array( 'data' => 'recommender', 'style' => $style ),
-      array( 'data' => 0, 'style' => $style ),
-      array( 'data' => 0, 'style' => $style ),
-    ),
-    array(
-      array( 'data' => 'system', 'style' => $style ),
-      array( 'data' => 0, 'style' => $style ),
-      array( 'data' => 0, 'style' => $style ),
+      array( 'data' => 0.088, 'style' => $style ),
+      array( 'data' => 0.176, 'style' => $style ),
+      array( 'data' => '-', 'style' => $style ),
     ),
     array(
       array( 'data' => 'content', 'style' => $style ),
+      array( 'data' => 0.088, 'style' => $style ),
+      array( 'data' => 0.176, 'style' => $style ),
       array( 'data' => '-', 'style' => $style ),
-      array( 'data' => 0.301, 'style' => $style ),
     ),
     array(
       array( 'data' => 'based', 'style' => $style ),
+      array( 'data' => 0.088, 'style' => $style ),
+      array( 'data' => 0.176, 'style' => $style ),
       array( 'data' => '-', 'style' => $style ),
-      array( 'data' => 0.301, 'style' => $style ),
+    ),
+    array(
+      array( 'data' => 'recommender', 'style' => $style ),
+      array( 'data' => 0.088, 'style' => $style ),
+      array( 'data' => 0.176, 'style' => $style ),
+      array( 'data' => '-', 'style' => $style ),
+    ),
+    array(
+      array( 'data' => 'system', 'style' => $style ),
+      array( 'data' => 0.088, 'style' => $style ),
+      array( 'data' => 0.176, 'style' => $style ),
+      array( 'data' => '-', 'style' => $style ),
     ),
     array(
       array( 'data' => 'cool', 'style' => $style ),
       array( 'data' => '-', 'style' => $style ),
-      array( 'data' => 0.301, 'style' => $style ),
+      array( 'data' => 0.176, 'style' => $style ),
+      array( 'data' => 0.176, 'style' => $style ),
+    ),
+    array(
+      array( 'data' => 'penguin', 'style' => $style ),
+      array( 'data' => '-', 'style' => $style ),
+      array( 'data' => '-', 'style' => $style ),
+      array( 'data' => 0.477, 'style' => $style ),
+    ),
+    array(
+      array( 'data' => 'bird', 'style' => $style ),
+      array( 'data' => '-', 'style' => $style ),
+      array( 'data' => '-', 'style' => $style ),
+      array( 'data' => 0.477, 'style' => $style ),
+    ),
+    array(
+      array( 'data' => 'can\'t', 'style' => $style ),
+      array( 'data' => '-', 'style' => $style ),
+      array( 'data' => '-', 'style' => $style ),
+      array( 'data' => 0.477, 'style' => $style ),
+    ),
+    array(
+      array( 'data' => 'fly', 'style' => $style ),
+      array( 'data' => '-', 'style' => $style ),
+      array( 'data' => '-', 'style' => $style ),
+      array( 'data' => 0.477, 'style' => $style ),
     ),
   );
 
@@ -175,7 +285,7 @@ function recsys_wb_content_similarity_example_table() {
     array( 
       'header' => $header, 
       'rows' => $rows, 
-      'caption' => "TF-IDF values for both sentences" 
+      'caption' => "TF-IDF values for the sentences" 
     )
   );
 }
