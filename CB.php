@@ -120,8 +120,8 @@ are formed. In order to be able to compare those vectors, all words which do not
 \end{pmatrix}';
 
   $explanation .= mathBlock($vector1) . mathBlock($vector2);
-  $explanation .= "So one can simply use classical similarity mehtods (for  
-example cosine similaity) to comapre those two sentences. Doing these 
+  $explanation .= "So one can simply use classical similarity methods (for  
+example cosine similarity) to compare those two sentences. Doing these 
 calculations will return the following similarities:";
   $style = 'text-align:center;vertical-align:middle';
   $similarity_table_header = array(
