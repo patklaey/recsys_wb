@@ -145,6 +145,13 @@ function recsys_wb_menu() {
     'page callback' => 'recsys_wb_explanation_cb',
     'access arguments' => array('access content'),
   );
+  $items['learn/evaluation'] = array(
+    'title' => 'Evaluating recommender systems', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_explanation_evaluation',
+    'access arguments' => array('access content'),
+  ); 
   $items['statistics/runstatistics'] = array(
     'title' => 'Runtime statistics', 
     'menu_name' => 'main-menu',
@@ -657,6 +664,13 @@ function recsys_wb_explanation_cb() {
   return $explanation;
 }
 
+/**
+ * Explain the evaluation methods
+ */
+function recsys_wb_explanation_evaluation() {
+  return "Hello world";
+}
+ 
 /**
  * 
  */
