@@ -96,6 +96,13 @@ following simple example (1 item, 5 users):";
   $mea_example = '{|(4-3)| + |(2-4)| + |(3-3)| + |(5-4)| + |(2-3)| \over 5} =';
   $mea_example .= '0.8';
   $explanation .= mathBlock($mea_example);
+  $explanation .= "The MEA for itself does not help a lot. In our previous 
+example we had an MEA of 0.8. Is it good? Is it bad? Well this depends on the 
+rating scale. On a scale from 0 to 100, 0.8 is a very very good result (as the 
+algrithm prediction misses the actual rating in average by only 0.8%). However 
+on a scale from 0 to 1, 0.8 would be very very bad (as the algrithm prediction 
+misses the actual rating in average by 80%). So an MEA of 1.4 on a rating scale 
+from 0 to 10 is better than an MAE of 0.9 on a rating scale from 0 to 5.";
   return $title . $explanation . "</div>";
 }
  
