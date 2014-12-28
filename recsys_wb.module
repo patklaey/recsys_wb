@@ -28,6 +28,7 @@ require_once 'php-tail/PHPTail.php';
 require_once 'evaluation.php';
 require_once 'CF.php';
 require_once 'CB.php';
+require_once 'evaluation_explain.php';
 
 /**
  * Implements hook_menu()
@@ -505,17 +506,24 @@ function recsys_wb_tail() {
 function recsys_wb_explanation () {
   $cf = l("Collaborative filtering",'learn/cf');
   $cb = l("Content based filtering",'learn/cb');
+  $evaluation = l("Evaluation metrics",'learn/evaluation');
   
   $return_string = "There is a lot where you can learn about recommender ";
   $return_string .= "systems.
 <ul>
-  <li>$cf<br/>Learn about collaborative filtering. What is the idea behind, what
+  <li>$cf<br/>
+    Learn about collaborative filtering. What is the idea behind, what
     are the different similarity methods and see some examples how to calculate
     them. 
   </li>
-  <li>$cb<br/>Learn about content filtering. What is the idea behind, what
+  <li>$cb<br/>
+    Learn about content filtering. What is the idea behind, what
     are the calculations to represent a document in a form which can be 
     mathematically compared to other documents etc. 
+  </li>
+  <li>$evaluation<br/>
+    Learn about evaluation. What is the idea behind, what are the different 
+    metrics etc.
   </li>
 </ul>
 ";
@@ -668,7 +676,9 @@ function recsys_wb_explanation_cb() {
  * Explain the evaluation methods
  */
 function recsys_wb_explanation_evaluation() {
-  return "Hello world";
+  $explanation = recsys_wb_explain_evaluation();
+  $explanation .= recsys_wb_explain_mae();
+  return $explanation;
 }
  
 /**
@@ -848,6 +858,7 @@ function recsys_wb_about() {
   <li>Stackoverflow dataset: $stackoverflow</li>
 </ul>";
   
+  $return .= "<a href='#' name='References'>";
   $return .= "<h2>References</h2>";
   $bx_paper = l(
     "Improving Recommendation Lists Through Topic Diversification.",
@@ -857,13 +868,17 @@ function recsys_wb_about() {
     )
   );
   $return .= "
-<ul>
+<ol>
   <li>$bx_paper<br/>
     Cai-Nicolas Ziegler, Sean M. McNee, Joseph A. Konstan, Georg Lausen; 
     Proceedings of the 14th International World Wide Web Conference (WWW '05), 
     May 10-14, 2005, Chiba, Japan. To appear.
   </li>
-</ul>";
+  <li>Dietmar Jannach, Markus Zanker, Alexander Felfernig, and Gerhard Friedrich
+  . Recommender Systems: An Introduction. Cambridge University Press, 1 edition,
+    September 2010.
+  </li>
+</ol>";
   
   return $return;
 }
