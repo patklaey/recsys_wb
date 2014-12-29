@@ -679,6 +679,7 @@ function recsys_wb_explanation_evaluation() {
   $explanation = recsys_wb_explain_evaluation();
   $explanation .= recsys_wb_explain_mae();
   $explanation .= recsys_wb_explain_rmse();
+  $explanation .= recsys_wb_explain_mrr();
   return $explanation;
 }
  
