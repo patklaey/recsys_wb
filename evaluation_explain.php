@@ -197,9 +197,10 @@ the algorithm.";
 function recsys_wb_explain_mrr() {
   $title = "<strong><h3>Mean Reciprocal Rank</h3></strong>";
   $explanation = "<div class='tex2jax'>";
-  $explanation .= "The Mean Reciprocal Rank metric determines how correct the 
-algorithms predictions are in respect of the rank the items appear in. The 
-formula is really simple:" . mathBlock('MRR(r) = {1 \over i}');
+  $mrr_citation_link = l('3', 'about', array( 'fragment' => 'References') );
+  $explanation .= "The Mean Reciprocal Rank metric determines how good the 
+recommender algorithm is in putting good stuff first<sup>$mrr_citation_link
+</sup>. The formula is really simple:" . mathBlock('MRR(r) = {1 \over i}');
   $explanation .= "Where " . mathInline('i') . " is the rank of the first item 
 considered as good in the list of predictions produced by the recommender 
 algorithm " .  mathInline('r') . ".<br/>Consider the following example:";
@@ -211,6 +212,21 @@ The user rated this item only with 3. So this is not a good item. The second
 item, the recommender algorithm also thought it is very good, actually is good. 
 The user rated this item 4.5. So as the second item is the first 'good' item the
  MRR of this recommender algorithm is " . mathInline('1 \over 2') . ".";
+  return $title . $explanation . "</div>";
+}
+
+/**
+ * Explain the NDGC
+ */
+function recsys_wb_explain_ndgc() {
+  $title = "<strong><h3>Normalized Discounted Cumulative Gain</h3></strong>";
+  $explanation = "<div class='tex2jax'>";
+  $ndcg_citation_link = l('3', 'about', array( 'fragment' => 'References') );
+  $explanation .= "The Normalized Discounted Normalized Discounted Cumulative 
+Gain metric determines how correct the algorithms predictions are in respect of 
+the rank the items appear in. It compares the ranked list of the recommender 
+algorithm with an perfectly sorted list of these items<sup>$ndcg_citation_link
+</sup>.";
   return $title . $explanation . "</div>";
 }
 ?>

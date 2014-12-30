@@ -680,6 +680,7 @@ function recsys_wb_explanation_evaluation() {
   $explanation .= recsys_wb_explain_mae();
   $explanation .= recsys_wb_explain_rmse();
   $explanation .= recsys_wb_explain_mrr();
+  $explanation .= recsys_wb_explain_ndgc();
   return $explanation;
 }
  
@@ -879,6 +880,9 @@ function recsys_wb_about() {
   <li>Dietmar Jannach, Markus Zanker, Alexander Felfernig, and Gerhard Friedrich
   . Recommender Systems: An Introduction. Cambridge University Press, 1 edition,
     September 2010.
+  </li>
+  <li>J Konstan and M Ekstrand. Introduction to recommender systems.
+    https://www.coursera.org/course/recsys, 2013 (accessed March 30, 2014).
   </li>
 </ol>";
   

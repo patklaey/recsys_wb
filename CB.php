@@ -33,7 +33,7 @@ and encodes a document as a vector in an n-dimensional Euclidean space. The
 space dimension is equal to the number of words in the document. As an example 
 the TF-IDF value for a word " . mathInline("w") . " in document " 
 . mathInline("d") . " is calculated as follows:";
-  $explanation .= mathBlock($tf) . mathBlock($idf) . mathBlock($tfidf);
+  $explanation .= mathBlock($tfidf) . mathBlock($tf) . mathBlock($idf);
   $explanation .= "Where " . mathInline('freq(w,d)') . " denotes how many times 
 the word " . mathInline("w") . " occurs in document " . mathInline("d") . ", "
 . mathInline("otherWords(w,d)") . " specifies the set of all words of document "
