@@ -676,12 +676,28 @@ function recsys_wb_explanation_cb() {
  * Explain the evaluation methods
  */
 function recsys_wb_explanation_evaluation() {
+  $metric_name = null;
+  
+  // Check if the GET[algorithm] method is set
+  if ( isset($_GET['metric']) )
+    $metric_name = $_GET['metric'];
+    
   $explanation = recsys_wb_explain_evaluation();
-  $explanation .= recsys_wb_explain_mae();
-  $explanation .= recsys_wb_explain_rmse();
+  
+  if ( $metric_name == 'mae' || $metric_name == null )
+    $explanation .= recsys_wb_explain_mae();
+  
+  if ( $metric_name == 'rmse' || $metric_name == null )
+    $explanation .= recsys_wb_explain_rmse();
+    
+  if ( $metric_name == 'mrr' || $metric_name == null )
   $explanation .= recsys_wb_explain_mrr();
-  $explanation .= recsys_wb_explain_ndgc();
+  
+  if ( $metric_name == 'ndcg' || $metric_name == null )
+    $explanation .= recsys_wb_explain_ndgc();
+
   return $explanation;
+  
 }
  
 /**

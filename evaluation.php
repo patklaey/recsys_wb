@@ -129,8 +129,69 @@ function showEvaluation() {
       }
     }
 
-      
-
+    // Add a row with link to explain the given metric
+    $rows[] = array(
+      'title' => array(
+        'data' => 'Tell me more',
+        'style' => $style
+      ),
+      'mae' => array(
+        'data' => l(
+          'about this metric', 
+          'learn/evaluation',
+          array(
+            'query' => array( 'metric' => 'mae' ), 
+            'attributes' => array('target' => '_blank') 
+          )
+        ),
+        'style' => $style
+      ),
+      'rmse' => array(
+        'data' => l(
+          'about this metric', 
+          'learn/evaluation',
+          array(
+            'query' => array( 'metric' => 'rmse' ), 
+            'attributes' => array('target' => '_blank') 
+          )
+        ),
+        'style' => $style
+      ),
+      'mrr' => array(
+        'data' => l(
+          'about this metric', 
+          'learn/evaluation',
+          array(
+            'query' => array( 'metric' => 'mrr' ), 
+            'attributes' => array('target' => '_blank') 
+          )
+        ),
+        'style' => $style
+      ),
+      'ndgc' => array(
+        'data' => l(
+          'about this metric', 
+          'learn/evaluation',
+          array(
+            'query' => array( 'metric' => 'ndcg' ), 
+            'attributes' => array('target' => '_blank') 
+          )
+        ),
+        'style' => $style
+      ),
+      'predictions' => array(
+        'data' => '-',
+        'style' => $style
+      ),
+      'time' => array(
+        'data' => '-',
+        'style' => $style
+      ),
+      'explain' => array(
+        'data' => '-',
+        'style' => $style,
+      ),
+    );
 
     // Render the table
     if ( sizeof($rows) > 0 ) {
