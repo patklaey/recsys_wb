@@ -204,7 +204,8 @@ recommender algorithm is in putting good stuff first<sup>$mrr_citation_link
 </sup>. The formula is really simple:" . mathBlock('MRR(r) = {1 \over i}');
   $explanation .= "Where " . mathInline('i') . " is the rank of the first item 
 considered as good in the list of predictions produced by the recommender 
-algorithm " .  mathInline('r') . ".<br/>Consider the following example:";
+algorithm " .  mathInline('r') . ".<br/>Consider the following example (5 items,
+ 1 user):";
   $explanation .= recsys_wb_evaluation_example_rank_table();
   $explanation .= "Let's say, that a 'good' item is everything what is rated 4 
 or more. So in this example the MRR would be 0.5: The first item, the 
@@ -227,10 +228,9 @@ function recsys_wb_explain_ndgc() {
 Gain metric determines how correct the algorithms predictions are in respect of 
 the rank the items appear in. It compares the ranked list of the recommender 
 algorithm with an perfectly sorted list of the items<sup>$ndcg_citation_link
-</sup>. The result of this comparision will be between 0 and 1 where a perfectly 
- sorted list will get 1 and an inversed sorted list will get 0. So the closer to
- 1 the result is, the better the algorithm sorts the items. The formula is as 
-follows:";
+</sup>. The result of this comparision will be between smaller or equal to 1 
+where a perfectly sorted list will get 1. So the closer to 1 the result is, the 
+better the algorithm sorts the items. The formula is as follows:";
   $ndcg = 'NDCG(r) = {DCG(r) \over DCG(L_{perfect})}';
   $dcg = 'DCG(r) = \sum_{i=0}^I \sum_{u=0}^U { rating(u,i) \times discount(i)}';
   $discount = 'discount(i) = {1 \over max(1,\log_2{i})}';
@@ -243,7 +243,20 @@ follows:";
 . " on item with index " . mathInline('i') . ".<br/>So as one can see, the first
  ratings are far more important than the last ones (caused by the logarithmic 
 discount). This is because the first items are much more likely to be selected 
-by a user so they should have more impact on the result.";
+by a user so they should have more impact on the result.<br/>Let's have a look 
+at the following example (5 items, 1 user): ";
+  $explanation .= recsys_wb_evaluation_example_rank_table();
+  $explanation .= "In this example the rank of items produced by the algorithm 
+is obviously Item 1, Item 2, Item 3, Item 4, Item 5. The " 
+. mathInline('L_{perfect}') . " however is Item 2, Item 3, Item 4, Item 1, Item 
+5. This leads to";
+  $dcg_r = 'DCG(r) = 3 \times 1 + 4.5 \times 1 + 4.5 \times 0.68 + 4 \times 
+0.5 + 3 \times 0.43 = 13.85';
+  $dcg_l_perfect = 'DCG(L_{perfect}) = 4.5 \times 1 + 4.5 \times 1 + 4 \times 
+0.68 + 3 \times 0.5 + 3 \times 0.43 = 14.51';
+  $ndcg_r = 'NDCG(r) = {13.85 \over 14.51} = 0.95';
+  $explanation .= mathBlock($dcg_r) . mathBlock($dcg_l_perfect) 
+. mathBlock($ndcg_r);
   return $title . $explanation . "</div>";
 }
 ?>
