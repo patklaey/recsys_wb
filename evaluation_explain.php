@@ -99,8 +99,7 @@ function recsys_wb_evaluation_example_rank_table() {
  * Explain why and what evaluation is
  */
 function recsys_wb_explain_evaluation() {
-  $title = "<strong><h3>Explaining Recommender Systems</h3></strong>";
-  $rs_introduction_link = l('2', 'about', array( 'fragment' => 'References') );
+  $rs_introduction_link = l('[2]', 'about', array( 'fragment' => 'References') );
   $explanation = "Evaluating recommender algorithms is not an easy task as 
 there are simply too many objectiv functions. However since recommender systems 
 are widely used and there are a lot of them available, there needs to be 
@@ -118,7 +117,7 @@ There are two basic types of evaluation metrics:
     ignored, only the rank is important).
   </li>
 </ul>";
-  return $title . $explanation;
+  return $explanation;
 }
 
 /**
@@ -135,10 +134,11 @@ average prediction is wrong. The formula is straightforward: ";
   $explanation .= "Where " . mathInline('I') . " is the set of items in the test 
 set, " . mathInline('U') . " is the set of users in the test set, "
 . mathInline('pred(r,u,i)') . " is the prediction of the recommender algorithm "
-. mathInline('r') . " for the user " . mathInline('u') . " on the item "
-. mathInline('i') . " and " . mathInline('rating(u,i)') . " is the rating of 
-user " . mathInline('u') . " on item " . mathInline('i') . ".<br/>Consider the 
-following simple example (1 item, 5 users):";
+. mathInline('r') . " for the user " . mathInline('u') . " on item with 
+index " . mathInline('i') . " and " . mathInline('rating(u,i)') . " is the 
+actual rating of user " . mathInline('u') . " on item with index" 
+. mathInline('i') . ".<br/>Consider the following simple example (1 item, 5 
+users):";
   $explanation .= recsys_wb_evaluation_example_accuracy_table();
   $explanation .= "So the MEA would simply be: ";
   $mea_example = '{|(4-3)| + |(2-4)| + |(3-3)| + |(5-4)| + |(2-3)| \over 5} =';
@@ -159,19 +159,20 @@ generally one can say, the smaller the MAE the better the algorithm";
  * Explain the Root Mean Squared Error
  */
 function recsys_wb_explain_rmse() {
-  $title = "<strong><h3>Root Mean Squared Error</h3></strong>";
+ $title = "<strong><h3>Root Mean Squared Error</h3></strong>";
   $explanation = "<div class='tex2jax'>";
-  $explanation .= "The Mean Absolut Error metric determines, by how much the 
-average prediction is wrong. The formula is quite similar to the Mean Absolute 
+  $explanation .= "The Mean Absolut Error metric determines, by how much the
+average prediction is wrong. The formula is quite similar to the Mean Absolute
 Error, but it penalizes big errors over small ones:";
-  $rmse = 'RMSE(r) = \sqrt{\sum_{i=0}^I {  (pred(r,u,i) - 
-rating(u,i))^2 } \over I + U}';
+  $rmse = 'RMSE(r) = \sqrt{\sum_{i=0}^I {\sum_{u=0}^U { (pred(r,u,i) -
+rating(u,i))^2 }} \over I + U}';
   $explanation .= mathBlock($rmse);
-  $explanation .= "Where " . mathInline('I') . " is the set of items in the test 
-set, ". mathInline('pred(r,u,i)') . " is the prediction of the recommender 
-algorithm " . mathInline('r') . " for the user " . mathInline('u') . " on  
-item with index " . mathInline('i') . " and " . mathInline('rating(u,i)') . " is
- the actual rating of user " . mathInline('u') . " on item with index" 
+  $explanation .= "Where " . mathInline('I') . " is the set of items in the test
+set, " . mathInline('U') . " is the set of users in the test set, "
+. mathInline('pred(r,u,i)') . " is the prediction of the recommender algorithm "
+. mathInline('r') . " for the user " . mathInline('u') . " on the item with 
+index " . mathInline('i') . " and " . mathInline('rating(u,i)') . " is the 
+actual rating of user " . mathInline('u') . " on item with index " 
 . mathInline('i') . ".<br/>Consider the following simple example (1 item, 5 
 users):";
   $explanation .= recsys_wb_evaluation_example_accuracy_table();
@@ -197,7 +198,7 @@ the algorithm.";
 function recsys_wb_explain_mrr() {
   $title = "<strong><h3>Mean Reciprocal Rank</h3></strong>";
   $explanation = "<div class='tex2jax'>";
-  $mrr_citation_link = l('3', 'about', array( 'fragment' => 'References') );
+  $mrr_citation_link = l('[3]', 'about', array( 'fragment' => 'References') );
   $explanation .= "The Mean Reciprocal Rank metric determines how good the 
 recommender algorithm is in putting good stuff first<sup>$mrr_citation_link
 </sup>. The formula is really simple:" . mathBlock('MRR(r) = {1 \over i}');
@@ -221,7 +222,7 @@ The user rated this item 4.5. So as the second item is the first 'good' item the
 function recsys_wb_explain_ndgc() {
   $title = "<strong><h3>Normalized Discounted Cumulative Gain</h3></strong>";
   $explanation = "<div class='tex2jax'>";
-  $ndcg_citation_link = l('3', 'about', array( 'fragment' => 'References') );
+  $ndcg_citation_link = l('[3]', 'about', array( 'fragment' => 'References') );
   $explanation .= "The Normalized Discounted Normalized Discounted Cumulative 
 Gain metric determines how correct the algorithms predictions are in respect of 
 the rank the items appear in. It compares the ranked list of the recommender 
@@ -231,13 +232,14 @@ algorithm with an perfectly sorted list of the items<sup>$ndcg_citation_link
  1 the result is, the better the algorithm sorts the items. The formula is as 
 follows:";
   $ndcg = 'NDCG(r) = {DCG(r) \over DCG(L_{perfect})}';
-  $dcg = 'DCG(r) = \sum_{i=0}^I { rating(u,i) \times discount(i)}';
+  $dcg = 'DCG(r) = \sum_{i=0}^I \sum_{u=0}^U { rating(u,i) \times discount(i)}';
   $discount = 'discount(i) = {1 \over max(1,\log_2{i})}';
   $explanation .= mathBlock($ndcg) . mathBlock($dcg) . mathBlock($discount);
   $explanation .= "Where " . mathInline('r') . " is the recommender algorithm, "
 . mathInline('L_{perfect}') . " is a perfectly sorted item list by users ratings
-, " . mathInline('I') . " is the set of items in the test set and "
-. mathInline('rating(u,i)') . " is the actual rating of user " . mathInline('u')
+, " . mathInline('I') . " is the set of items in the test set, " 
+. mathInline('U') . " is the set of users in the test set and "
+. mathInline('rating(u,i)') . " is the rating of user " . mathInline('u')
 . " on item with index " . mathInline('i') . ".<br/>So as one can see, the first
  ratings are far more important than the last ones (caused by the logarithmic 
 discount). This is because the first items are much more likely to be selected 
