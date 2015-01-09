@@ -16,7 +16,7 @@ import ch.isproject.recsysWb.RecsysWbUtil;
 
 public class RunTFIDFCreator extends AsyncCommand {
 	
-	private static final String SQL_QUESTION_NODE_PARAMETER = "question";
+	private static String SQL_QUESTION_NODE_PARAMETER;
 	public static final String TFIDF_TABLE_NAME = "{recsys_wb_tfidf_values}";
 	
 	
@@ -31,13 +31,20 @@ public class RunTFIDFCreator extends AsyncCommand {
     	this.record = record;
     	this.druplet = druplet;
     	this.drupalConnection = druplet.getDrupalConnection();
-
+    	
+    	// TODO get this from record
+    	SQL_QUESTION_NODE_PARAMETER = "demo";
     }
     
     public void processRequest() {
     	logger.info("Starting caluclation");
-    	String sqlQueryString = "SELECT body_value,entity_id FROM ";
-    	sqlQueryString += "field_data_body WHERE bundle=?";
+    	String sqlQueryString = "SELECT field_data_body.body_value," 
+    			+ "field_data_body.entity_id FROM field_data_body INNER JOIN " 
+    			+ "field_data_field_question_dataset ON " 
+    			+ "field_data_field_question_dataset.entity_id = " 
+    			+ "field_data_body.entity_id WHERE " 
+    			+ "field_data_field_question_dataset." 
+    			+ "field_question_dataset_value=?";
     	try {
     		this.documents = this.drupalConnection.query(sqlQueryString,
     				SQL_QUESTION_NODE_PARAMETER);

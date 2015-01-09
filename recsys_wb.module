@@ -748,10 +748,12 @@ function recsys_wb_statistics() {
  */
 function recsys_wb_so_questions() {
   // Get all movies form the database
-  $query = db_select('node', 'node');
-  $query->fields('node',array('title','nid'));
+  $query = db_select('field_data_field_question_dataset', 'dataset');
+  $query->join('node', 'node', 'dataset.entity_id = node.nid');
+  $query->fields('dataset',array('entity_id'));
+  $query->fields('node',array('title'));
   $query->orderBy('node.title');
-  $query->condition('node.type','question');
+  $query->condition('dataset.field_question_dataset_value','demo');
 
   $results = $query->execute();
   
@@ -761,7 +763,7 @@ function recsys_wb_so_questions() {
   foreach ($results AS $result)
   {
     $rows[] = array(
-      l($result->title,'node/' . $result->nid)
+      l($result->title,'node/' . $result->entity_id)
     );
   }
   
