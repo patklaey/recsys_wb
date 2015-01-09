@@ -37,6 +37,7 @@ public class RunContentRecommender extends AsyncCommand {
     	// TODO create similarity according to appID from record
     	this.similarityAlgorithm = new CosineSimilarity();
     	this.appId = 1;
+    	this.record.setId1((long) this.appId);
     }
     
     public Map<Integer, Map<Integer, Double>> getTFIDFValuesFromDatabase() {
@@ -159,9 +160,11 @@ public class RunContentRecommender extends AsyncCommand {
 				logger.info("Progress: " + (int) progressInPercent + "% ...");
 				printedProgress.add((int) progressInPercent);
 			}
-				
     	}
-    	
+		
+		this.record.setNumber2((float)documentIds.length);
+    	this.record.setNumber3((float)totalCalculations);
+		
     	try {
     		valueUploader.accomplish();
     		valueUploader.join();
