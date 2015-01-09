@@ -143,6 +143,8 @@ public class RunContentRecommender extends AsyncCommand {
 		double totalCalculations = documentIds.length * ( documentIds.length / 2 );
 		List<Integer> printedProgress = new ArrayList<Integer>();
 		
+		long startTime = System.currentTimeMillis();
+		
 		for (int i = 0; i < documentIds.length; i++) {
 			for (int j = i+1; j < documentIds.length; j++) {
 				
@@ -162,9 +164,6 @@ public class RunContentRecommender extends AsyncCommand {
 			}
     	}
 		
-		this.record.setNumber2((float)documentIds.length);
-    	this.record.setNumber3((float)totalCalculations);
-		
     	try {
     		valueUploader.accomplish();
     		valueUploader.join();
@@ -176,6 +175,15 @@ public class RunContentRecommender extends AsyncCommand {
     		logger.severe(message);
     	}
     	
+    	long endTime = System.currentTimeMillis();
+    	int seconds = (int) ((endTime - startTime) / 1000);
+    	int minutes = seconds / 60;
+    	int hours = minutes / 60;
+    	
+		this.record.setNumber2((float)documentIds.length);
+    	this.record.setNumber3((float)totalCalculations);
+    	this.record.setMessage("(Time spent: " + hours + "h" + minutes + "m" 
+    			+ seconds + "s)");
     }
     
     private double calculateSimilarity(Map<Integer, Double> documentVector1,
