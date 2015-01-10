@@ -36,7 +36,7 @@ public class RunContentRecommender extends AsyncCommand {
     	
     	// TODO create similarity according to appID from record
     	this.similarityAlgorithm = new CosineSimilarity();
-    	this.appId = 1;
+    	this.appId = -1;
     	this.record.setId1((long) this.appId);
     }
     

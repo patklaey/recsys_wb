@@ -42,6 +42,16 @@ function recsys_wb_display_stats() {
       )
     );
     
+    if ( $_SESSION['stat_history_recommender_app'] == -1 ) {
+      $explain = l( 
+        'about this algorithm', 
+        'learn/cb',
+        array(
+          'attributes' => array('target' => '_blank') 
+        )
+      );
+    }
+    
     // Check if there are already some ratings
     if( $results->rowCount() == 0 ) {
       $return_string .= "<strong>No statistics available yet</strong></br>";
@@ -136,7 +146,6 @@ function recsys_wb_display_stats() {
           )
         );
         
-
         if ( $result == null ) {
           $result = array(
             'date' => "NA*",
@@ -151,6 +160,17 @@ function recsys_wb_display_stats() {
         }
         else {
           $result['explain'] = $explain;
+        }
+        
+        if ( $value == -1 ) {
+          $result['explain'] = l( 
+            'about this algorithm', 
+            'learn/cb',
+            array(
+              'attributes' => array('target' => '_blank') 
+            )
+          );
+          $result['description'] = "Content based recommendations (cosine)";
         }
         
         $rows[] = array(

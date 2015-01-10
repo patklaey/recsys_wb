@@ -92,6 +92,9 @@ function getRecommenderAppsForForm() {
   {
     $algorithms[$result->id] = $result->title;
   }
+  
+  // Add the content recommender which will get ID -1
+  $algorithms[-1] = "Content Recommender (cosine)"; 
   return $algorithms;
 }
 
