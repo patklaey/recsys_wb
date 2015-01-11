@@ -214,13 +214,28 @@ function recsys_wb_evaluate_algorithms_form_submit( $form, &$form_state) {
 function recsys_wb_run_content_recommender_form_submit( $form, &$form_state ) {
   $output_folder = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
     . drupal_get_path("module", "recsys_wb") .  DIRECTORY_SEPARATOR . "output/";
+    
   async_command_create_command(
     'contentRecommender', 
     'RunContentRecommender', 
-    'A test for running content recommender', 
-    array('string1' => $output_folder )
+    'Running content based similarity methods', 
+    array('string1' => $output_folder, 'id1' => -1 )
   );
-  drupal_set_message("Recommender schduled");
+  
+  // Get the path to the script
+  $script_path = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
+    . drupal_get_path("module","recsys_wb") . DIRECTORY_SEPARATOR . "scripts" 
+    . DIRECTORY_SEPARATOR . "run-cb.sh";
+    
+  // Get the logfile
+  $logfile = generateUniqueLogfile();
+
+  // And execute the system command which will run the recommendation algorithm
+  exec("nohup setsid $script_path > $logfile 2>&1 &");
+  
+  // Display the link to follow the progress
+  $message = "The content recommender algorithm is running now.";
+  displayLinkToLogfileTail($logfile, $message );
 }
 
 /**
@@ -229,13 +244,28 @@ function recsys_wb_run_content_recommender_form_submit( $form, &$form_state ) {
 function recsys_wb_create_tfidf_vectors_form_submit( $form, &$form_state ) {
   $output_folder = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
     . drupal_get_path("module", "recsys_wb") .  DIRECTORY_SEPARATOR . "output/";
+  
   async_command_create_command(
     'TFIDFCreatorApp', 
     'RunTFIDFCreator', 
     'Calculates TFIDF vectors for all stackoverflow questions', 
     array('string1' => $output_folder )
   );
-  drupal_set_message("TFIDF vector creation schduled");
+  
+    // Get the path to the script
+  $script_path = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
+    . drupal_get_path("module","recsys_wb") . DIRECTORY_SEPARATOR . "scripts" 
+    . DIRECTORY_SEPARATOR . "run-tfidf.sh";
+    
+  // Get the logfile
+  $logfile = generateUniqueLogfile();
+
+  // And execute the system command which will run the recommendation algorithm
+  exec("nohup setsid $script_path > $logfile 2>&1 &");
+  
+  // Display the link to follow the progress
+  $message = "The TFIDF algorithm is running now.";
+  displayLinkToLogfileTail($logfile, $message );
 }
 
 ?>

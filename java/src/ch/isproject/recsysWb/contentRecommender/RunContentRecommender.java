@@ -23,7 +23,7 @@ public class RunContentRecommender extends AsyncCommand {
 	private Map<Integer, Map<Integer, Double>> tfidfVectors;
     private SimilarityAlgorithm similarityAlgorithm;
     private Connection databaseBatchConnection;
-	private int appId;
+	private long appId;
 
 	
     public RunContentRecommender(CommandRecord record, Druplet druplet) {
@@ -36,8 +36,7 @@ public class RunContentRecommender extends AsyncCommand {
     	
     	// TODO create similarity according to appID from record
     	this.similarityAlgorithm = new CosineSimilarity();
-    	this.appId = -1;
-    	this.record.setId1((long) this.appId);
+    	this.appId = this.record.getId1();
     }
     
     public Map<Integer, Map<Integer, Double>> getTFIDFValuesFromDatabase() {
@@ -120,7 +119,6 @@ public class RunContentRecommender extends AsyncCommand {
     @Override
     protected void afterExecute() {
 	    super.afterExecute();
-	    logger.info("After execute");
     }
     
     @Override

@@ -94,7 +94,6 @@ public class RunTFIDFCreator extends AsyncCommand {
 	@Override
     protected void afterExecute() {
 	    super.afterExecute();
-	    logger.info("After execute");
     }
     
     @Override

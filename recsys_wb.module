@@ -816,7 +816,7 @@ function recsys_wb_content_similarity() {
     'similarity')
   );
   $query->orderBy('sim.similarity','DESC');
-  $query->condition('sim.app_id',1);
+  $query->condition('sim.app_id',-1);
   $query->range(0,50);
   $results = $query->execute();
   
