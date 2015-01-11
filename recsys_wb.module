@@ -338,11 +338,8 @@ function recsys_wb_block_info() {
   $blocks['movie_rating'] = array(
     'info' => t('Recsys workbench movie rating'),
   );
-  $blocks['run_content_recommender'] = array(
-    'info' => t('Recsys workbench run content recommender'),
-  );
-  $blocks['create_tfidf_vectors'] = array(
-    'info' => t('Recsys workbench create TFIDF vectors'),
+  $blocks['content_recommender'] = array(
+    'info' => t('Recsys workbench content recommender'),
   );
   return $blocks;
 }
@@ -396,18 +393,62 @@ function recsys_wb_block_view($delta = '')
         $block['content'] = "You have already rated this movie!";
       }
       
-    case 'run_content_recommender':
-      $block['subject'] = t('Run content recommender');
-      $block['content'] = drupal_get_form(
-        'recsys_wb_run_content_recommender_form'
+    case 'content_recommender':
+      $block['subject'] = t('Similar Questions');
+      $content = "";
+      $nid = "";
+      if ($node = menu_get_object()) {
+        // Get the nid
+        $nid = $node->nid;
+      }
+      $query = db_select('recsys_wb_content_similarity','questions');
+      $query->fields(
+        'questions',
+        array(
+          'source_entity_id',
+          'target_entity_id',
+          'similarity'
+        )
       );
-      break;
-
-    case 'create_tfidf_vectors':
-      $block['subject'] = t('Create TFIDF vectors');
-      $block['content'] = drupal_get_form(
-        'recsys_wb_create_tfidf_vectors_form'
+      $query->orderBy('questions.similarity','DESC');
+      $query->condition('questions.app_id',-1);
+      $query->condition('questions.similarity',0.1,'>');
+      $query->condition(
+        db_or()
+        ->condition('questions.source_entity_id',$nid)
+        ->condition('questions.target_entity_id',$nid)
       );
+      $query->range(0,5);
+      $results = $query->execute();
+      
+      if ( $results->rowCount() > 0 ){
+        $similar_questions = array();
+    
+        foreach ($results AS $result)
+        {
+          if ( $result->source_entity_id == $nid ) {
+            $similar_questions[] = array(
+              $result->target_entity_id,
+              $result->similarity
+            );
+          } else {
+            $similar_questions[] = array(
+              $result->source_entity_id,
+              $result->similarity
+            );
+          }
+        }
+        
+        
+        foreach( $similar_questions AS $question ) {
+          $content .= getQuestionLinkFromNid($question[0]) . " (similarity " 
+            . $question[1] . ")<br/>";
+        }  
+      } else {
+        $content = "No similar questions found";
+      }
+      
+      $block['content'] = $content;
       break;
       
     default:

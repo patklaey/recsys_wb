@@ -99,6 +99,19 @@ function getRecommenderAppsForForm() {
 }
 
 /**
+ * Get a link to the question based on its node id
+ */
+function getQuestionLinkFromNid( $node_id ) {
+  $result = db_query("SELECT title from node WHERE nid = :nid", 
+    array(":nid" => $node_id)
+  );
+  
+  $link = l( $result->fetchField(), 'node/' . $node_id );
+  
+  return $link;
+}
+
+/**
  * Generate a universal unique identifier
  */
 function gen_uuid() {
