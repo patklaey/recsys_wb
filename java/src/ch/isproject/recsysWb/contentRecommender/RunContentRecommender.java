@@ -144,21 +144,24 @@ public class RunContentRecommender extends AsyncCommand {
 		long startTime = System.currentTimeMillis();
 		
 		for (int i = 0; i < documentIds.length; i++) {
+			
 			for (int j = i+1; j < documentIds.length; j++) {
-				
 				double similarity = this.calculateSimilarity( 
 						this.tfidfVectors.get( documentIds[i] ), 
 						this.tfidfVectors.get( documentIds[j] ) );
 				
  				valueUploader.put(this.appId, documentIds[i], documentIds[j],
  						similarity);
- 			
 			}
 			
-			double progressInPercent = ((double)(i * documentIds.length / 2)) / totalCalculations * 100;
-			if ( ((int) progressInPercent ) % 5 == 0 && ! printedProgress.contains((int)progressInPercent) ) {
-				logger.info("Progress: " + (int) progressInPercent + "% ...");
-				printedProgress.add((int) progressInPercent);
+			double progressInPercent = ((double)(i * documentIds.length / 2))
+					/ totalCalculations * 100;
+			
+			int checkPrint = (int) (progressInPercent * ((progressInPercent / -100) + 2 ));
+						
+			if (checkPrint % 5 == 0 && !printedProgress.contains(checkPrint)){
+				logger.info("Progress: " + (int) checkPrint + "% ...");
+				printedProgress.add(checkPrint);
 			}
     	}
 		
