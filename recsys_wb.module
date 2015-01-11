@@ -66,6 +66,13 @@ function recsys_wb_menu() {
     'access arguments' => array('access content'),
     'weight' => 3,
   );
+  $items['content/goodquestions'] = array(
+    'title' => 'Interesting Questions', 
+    'type' => MENU_CALLBACK,
+    'page callback' => 'recsys_wb_so_good_questions',
+    'access arguments' => array('access content'),
+    'weight' => 3,
+  );
   $items['content/books'] = array(
     'title' => 'Books', 
     'menu_name' => 'main-menu',
@@ -819,7 +826,7 @@ function recsys_wb_statistics() {
 
 
 /**
- * 
+ * All questions in the demo dataset
  */
 function recsys_wb_so_questions() {
   // Get all movies form the database
@@ -842,6 +849,40 @@ function recsys_wb_so_questions() {
     );
   }
   
+  $output = l(
+    "These questions might be interesting too ... " , 
+    'content/goodquestions'
+  );
+  $output .= "<br/><br/>";
+  $output .= theme('table', array('header' => $header, 'rows' => $rows) );
+  return $output;
+}
+
+/**
+ * A list of questions which have similar questions (all questions are from the
+ * demo dataset)
+ */
+function recsys_wb_so_good_questions() {
+  $query = db_select('recsys_wb_content_similarity', 'sim');
+  $query->fields('sim',array(
+    'source_entity_id',
+    'similarity')
+  );
+  $query->orderBy('sim.similarity','DESC');
+  $query->condition('sim.app_id',-1);
+  $query->range(0,25);
+  $results = $query->execute();
+  
+  $header = array( t('Question'));
+  $rows = array();
+  
+  foreach ($results AS $result)
+    {
+      $rows[] = array(
+        getQuestionLinkFromNid($result->source_entity_id),
+      );
+    }
+
   $output =  theme('table', array('header' => $header, 'rows' => $rows) );
   return $output;
 }
