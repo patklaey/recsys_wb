@@ -90,18 +90,6 @@ function recsys_wb_menu() {
     'access arguments' => array('access content'),
     'weight' => 4,
   );
-  $items['runrecommender'] = array(
-    'title' => 'Run recommender',
-    'type' => MENU_CALLBACK,
-    'page callback' => 'recsys_wb_run_recommender',
-    'access arguments' => array('access content'),  
-  );
-  $items['tail'] = array(
-    'title' => 'Tail',
-    'type' => MENU_CALLBACK,
-    'page callback' => 'recsys_wb_tail',
-    'access arguments' => array('access content'),
-  );
   $items['statistics/evaluation'] = array(
     'title' => 'Show evaluations', 
     'menu_name' => 'main-menu',
@@ -110,18 +98,13 @@ function recsys_wb_menu() {
     'access arguments' => array('access content'),
     'weight' => 1,
   );
-  $items['runevaluations'] = array(
-    'title' => 'Run Evaluations',
-    'type' => MENU_CALLBACK,
-    'page callback' => 'recsys_wb_run_evaluations',
-    'access arguments' => array('access content'),
-  );
-    $items['evaluatealgorithms'] = array(
-    'title' => 'Evaluate Algorithms', 
+  $items['statistics/runstatistics'] = array(
+    'title' => 'Runtime statistics', 
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
-    'page callback' => 'recsys_wb_evaluate_algorithms',
-    'access arguments' => array('administrator'),
+    'page callback' => 'recsys_wb_display_stats',
+    'access arguments' => array('access content'),
+    'weight' => 2,
   );
   $items['learn'] = array(
     'title' => 'Learn', 
@@ -130,7 +113,6 @@ function recsys_wb_menu() {
     'page callback' => 'recsys_wb_explanation',
     'access arguments' => array('access content'),
     'weight' => 5,
-    
   );
   $items['learn/cf'] = array(
     'title' => 'Collaborative filtering', 
@@ -152,27 +134,61 @@ function recsys_wb_menu() {
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_explanation_evaluation',
     'access arguments' => array('access content'),
-  ); 
-  $items['statistics/runstatistics'] = array(
-    'title' => 'Runtime statistics', 
+  );
+  $items['aboutthis'] = array(
+    'title' => 'About', 
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
-    'page callback' => 'recsys_wb_display_stats',
-    'access arguments' => array('access content'),
-    'weight' => 2,
-  );
-  $items['about'] = array(
-    'title' => 'About this Workbench', 
-    //'menu_name' => 'main-menu',
-    'type' => MENU_CALLBACK,
     'page callback' => 'recsys_wb_about',
     'access arguments' => array('access content'),
+    'weight' => 6,
   );
-  $items['contentsimilarity'] = array(
-    'title' => 'Content similarity', 
+  $items['administrate'] = array(
+    'title' => 'Admin', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_admin_page',
+    'access arguments' => array('administration'),
+    'weight' => 7,
+  );
+  $items['administrate/evaluatealgorithms'] = array(
+    'title' => 'Evaluate Algorithms', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_evaluate_algorithms',
+    'access arguments' => array('administration'),
+  );
+  $items['administrate/runrecommender'] = array(
+    'title' => 'Run Recommender',
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_run_recommender',
+    'access arguments' => array('administration'),  
+  );
+  $items['administrate/contentsimilarity'] = array(
+    'title' => 'Content Similarity', 
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_content_similarity',
+    'access arguments' => array('administration'),
+  );
+  $items['administrate/runcontentrecommender'] = array(
+    'title' => 'Run Content Recommender', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_run_content_recommender',
+    'access arguments' => array('administration'),
+  );  
+  $items['tail'] = array(
+    'title' => 'Tail',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'recsys_wb_tail',
+    'access arguments' => array('access content'),
+  );
+  $items['runevaluations'] = array(
+    'title' => 'Run Evaluations',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'recsys_wb_run_evaluations',
     'access arguments' => array('access content'),
   );
   return $items;
@@ -466,8 +482,24 @@ function recsys_wb_run_recommender() {
   return drupal_get_form('recsys_wb_run_recommender_form');
 }
 
+/**
+ * Custom page to run content recommender
+ */
+function recsys_wb_run_content_recommender() {
+  $content = "Create TFIDF vectors: ";
+  $content .= drupal_render(
+    drupal_get_form('recsys_wb_create_tfidf_vectors_form')
+  );
+  $content .= "<br/>Run content similarity algorithm: ";
+  $content .= drupal_render(
+    drupal_get_form('recsys_wb_run_content_recommender_form')
+  );
+  
+  return $content;
+}
+
 /** 
- * Currently just a test
+ * Follow the log file of the different algorithm processes
  */
 function recsys_wb_tail() {
   /**
@@ -800,6 +832,15 @@ function recsys_wb_content_similarity() {
 
   $output =  theme('table', array('header' => $header, 'rows' => $rows) );
   return $output;
+}
+
+
+
+/**
+ * The admin page
+ */
+function recsys_wb_admin_page() {
+  return "Hello";
 }
 
 /**
