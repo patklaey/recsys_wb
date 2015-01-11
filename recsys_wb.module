@@ -517,7 +517,9 @@ function recsys_wb_tail() {
   if ( ! file_exists ( $file ) )
     return "Invalid file: " . $file;
   $tail = new PHPTail($file);
-  $tail = $tail->setOrigin(0);
+  // Set the origin to 311 bytes to not show the user which configuration file
+  // we are using
+  $tail = $tail->setOrigin(311);
 
   /**
    * We're getting an AJAX call
