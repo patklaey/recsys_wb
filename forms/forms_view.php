@@ -108,6 +108,9 @@ function recsys_wb_statistics_with_history_form() {
   // Get all different recommender algorithms currently registered
   $algorithms = getRecommenderAppsForForm();
   
+  // Add the content recommender which will get ID -1
+  $algorithms[-1] = "Content Recommender (cosine)"; 
+  
   // Create a simple form which only lets the user select the recommender 
   // algorithm
   $form['stats_recommender_app'] = array(
@@ -131,6 +134,8 @@ function recsys_wb_statistics_with_history_form() {
 function recsys_wb_compare_statistics_form() {  
   // Get all different recommender algorithms currently registered
   $algorithms = getRecommenderAppsForForm();
+  // Add the content recommender which will get ID -1
+  $algorithms[-1] = "Content Recommender (cosine)"; 
   
   // Create a simple form which only lets the user select the recommender 
   // algorithm
