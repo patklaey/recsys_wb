@@ -1,0 +1,3 @@
+[submodule "recsys_wb_data"]
+	path = recsys_wb_data
+	url = https://github.com/patklaey/recsys_wb_data.git
