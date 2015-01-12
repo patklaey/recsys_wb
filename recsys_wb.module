@@ -173,7 +173,7 @@ function recsys_wb_menu() {
     'access arguments' => array('administration'),
   );
   $items['administrate/runrecommender'] = array(
-    'title' => 'Run Recommender',
+    'title' => 'Run CF Recommender',
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_run_recommender',
@@ -187,7 +187,7 @@ function recsys_wb_menu() {
     'access arguments' => array('administration'),
   );
   $items['administrate/runcontentrecommender'] = array(
-    'title' => 'Run Content Recommender', 
+    'title' => 'Run CB Recommender', 
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_run_content_recommender',
@@ -1021,7 +1021,13 @@ contain the following files:
  * The admin page
  */
 function recsys_wb_admin_page() {
-  return "Hello";
+  return "
+<ul>
+  <li>" . l("Show content similarity", "administrate/contentsimilarity") ."</li>
+  <li>" . l("Evaluate algorithms", "administrate/evaluatealgorithms") . "</li>
+  <li>" . l("Run CB recommender", "administrate/runcontentrecommender") . "</li>
+  <li>" . l("Run CF recommender", "administrate/runrecommender") . "</li>
+</ul>";
 }
 
 /**
