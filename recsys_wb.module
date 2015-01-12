@@ -39,7 +39,7 @@ function recsys_wb_menu() {
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_myratings',
-    'access arguments' => array('access content'),
+    'access callback' => 'user_is_logged_in',
     'weight' => 2,
   );
   $items['myrecommendations'] = array(
@@ -47,7 +47,7 @@ function recsys_wb_menu() {
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_myrecommendations',
-    'access arguments' => array('access content'),
+    'access callback' => 'user_is_logged_in',
     'weight' => 3,
   );
   $items['content'] = array(
@@ -192,7 +192,21 @@ function recsys_wb_menu() {
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_run_content_recommender',
     'access arguments' => array('administration'),
-  );  
+  );
+  $items['logout'] = array(
+    'title' => 'Logout',
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_logout',
+    'access callback' => 'user_is_logged_in',
+    'weight' => 11,
+  );
+  $items['readmore'] = array(
+    'title' => 'Read More',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'recsys_wb_read_more',
+    'access callback' => 'user_is_logged_in',
+  );
   $items['tail'] = array(
     'title' => 'Tail',
     'type' => MENU_CALLBACK,
@@ -213,7 +227,7 @@ function recsys_wb_menu() {
  */
 function recsys_wb_myratings() {
   // Prepare the return string
-  $return_string = "<strong>Books</strong>";
+  $return_string = "<strong>Books</strong><br/>";
   
   // Get all the users rating from the database
   $query = db_select(BOOK_DB_TRAIN, 'ratings');
@@ -264,7 +278,7 @@ function recsys_wb_myratings() {
   }
 
   // Add the Movie section
-  $return_string .= "<br/><br/><strong>Movies</strong>";
+  $return_string .= "<br/><br/><strong>Movies</strong><br/>";
   
   // Get all the users rating from the database
   $query = db_select(MOVIE_DB_TRAIN, 'ratings');
@@ -1031,6 +1045,17 @@ function recsys_wb_admin_page() {
 }
 
 /**
+ * Read more about everything
+ */
+function recsys_wb_read_more() {
+  if ( user_is_logged_in() ) {
+    return "hello there";
+  } else {
+    return "Please login to see this page";
+  }
+}
+
+/**
  * The about section
  */
 function recsys_wb_about() {
@@ -1133,4 +1158,13 @@ function recsys_wb_about() {
 </ol>";
   
   return $return;
+}
+
+/**
+ * The logout funtion
+ */
+function recsys_wb_logout() {
+  module_load_include('pages.inc', 'user');
+  user_logout();
+  return "See you soon!";
 }
