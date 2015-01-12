@@ -142,6 +142,13 @@ function recsys_wb_menu() {
     'page callback' => 'recsys_wb_explanation_evaluation',
     'access arguments' => array('access content'),
   );
+  $items['learn/datasets'] = array(
+    'title' => 'Datasets', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_datasets',
+    'access arguments' => array('access content'),
+  );
   $items['aboutthis'] = array(
     'title' => 'About', 
     'menu_name' => 'main-menu',
@@ -610,6 +617,9 @@ function recsys_wb_explanation () {
 </ul>
 ";
   
+  // Also provide a link to the datasets
+  $return_string .= l("Here", "learn/datasets") . " you can find out more about 
+the datasets<br/>";
   return $return_string;
 }
 
@@ -918,7 +928,94 @@ function recsys_wb_content_similarity() {
   return $output;
 }
 
-
+/**
+ * Provide and explain the datasets
+ */
+function recsys_wb_datasets() {
+  
+  // Explain the datasets
+  $movies_dataset_citation = "<sup>" . l(
+    "[1]", 
+    "aboutthis", 
+    array( 'fragment' => 'datasets')
+  ) . "</sup>";
+  $books_dataset_citation = "<sup>" . l(
+    "[2]", 
+    "aboutthis", 
+    array( 'fragment' => 'datasets')
+  ) . "</sup>";
+  $questions_dataset_citation = "<sup>" . l(
+    "[3]", 
+    "aboutthis", 
+    array( 'fragment' => 'datasets')
+  ) . "</sup>";  
+  
+  
+  $return = "Below you will find a list of all available datasets. They all 
+contain the following files:
+<ul>
+  <li>Movie Ratings Dataset$movies_dataset_citation<br/>
+    A small, medium and large dataset (SQL-Table) which all have train and test
+    set. The rows contain the following values:
+    <ul>
+      <li>User ID</li>
+      <li>Movie ID (this ID corresponds to the Movie ID of the MovieLens 
+        database)</li>
+      <li>Rating (1 to 5; stepsize 0.5)</li>
+      <li>Unix timestamp of the rating</li>
+    </ul>
+  </li>
+  <li>Book Ratings Dataset$books_dataset_citation<br/>
+    A small, medium and large dataset (SQL-Table) which all have train and test
+    set. The rows contain the following values:
+    <ul>
+      <li>User ID</li>
+      <li>Book ID</li>
+      <li>Book ISBN</li>
+      <li>Rating (1 to 10; stepsize 1)</li>
+    </ul>
+  </li>
+  <li>Question Dataset$questions_dataset_citation<br/>
+    A small, medium and large dataset (CSV). The rows contain the 
+    following values:
+    <ul>
+      <li>Question ID</li>
+      <li>Title</li>
+      <li>Body</li>
+      <li>Score</li>
+      <li>Creation date</li>
+      <li>View count</li>
+      <li>Answer count</li>
+      <li>Accepted answer</li>
+      <li>Tags</li>
+      <li>Datset number</li>
+    </ul>
+    This dataset does not have train and test set as there is no ground truth
+    on which one could evaluate the recommender algorithms.
+  </li>
+  </li>
+</ul>";
+  
+  // Get the path to the download base directory
+  $download_base_dir = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
+    . drupal_get_path("module","recsys_wb") . DIRECTORY_SEPARATOR . "datasets" 
+    . DIRECTORY_SEPARATOR;
+  
+  // Get all files in the datasets folder (we have at least the demo datasets
+  // from the installation)
+  $datasets = scandir($download_base_dir);
+  
+  $return .= "<br/>The following datasets are available: <ul>";
+  for ($i=2; $i < sizeof($datasets); $i++) {
+    if ( preg_match("/.*\.zip$/", $datasets[$i]) === 1 ) {
+      $return .= "<li><a href='" . $download_base_dir . $datasets[$i] . "'>";
+      $return .= $datasets[$i] . "</a></li>";
+    }
+  }
+  $return .= "</ul>";
+  
+  return $return;
+}
 
 /**
  * The admin page
@@ -997,12 +1094,12 @@ function recsys_wb_about() {
     )
   );
   
-  $return .= "
-<ul>
+  $return .= "<a href='#' name='datasets'>
+<ol>
   <li>Movie database: $grouplens from the $movielens project</li>
   <li>Book dataset: $book_bx (c.f. References)</li>
   <li>Stackoverflow dataset: $stackoverflow</li>
-</ul>";
+</ol>";
   
   $return .= "<a href='#' name='References'>";
   $return .= "<h2>References</h2>";

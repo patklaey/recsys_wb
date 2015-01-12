@@ -99,7 +99,7 @@ function recsys_wb_evaluation_example_rank_table() {
  * Explain why and what evaluation is
  */
 function recsys_wb_explain_evaluation() {
-  $rs_introduction_link = l('[2]', 'about', array( 'fragment' => 'References') );
+  $rs_introduction_link = l('[2]', 'aboutthis', array( 'fragment' => 'References') );
   $explanation = "Evaluating recommender algorithms is not an easy task as 
 there are simply too many objectiv functions. However since recommender systems 
 are widely used and there are a lot of them available, there needs to be 
@@ -198,7 +198,7 @@ the algorithm.";
 function recsys_wb_explain_mrr() {
   $title = "<strong><h3>Mean Reciprocal Rank</h3></strong>";
   $explanation = "<div class='tex2jax'>";
-  $mrr_citation_link = l('[3]', 'about', array( 'fragment' => 'References') );
+  $mrr_citation_link = l('[3]', 'aboutthis', array( 'fragment' => 'References') );
   $explanation .= "The Mean Reciprocal Rank metric determines how good the 
 recommender algorithm is in putting good stuff first<sup>$mrr_citation_link
 </sup>. The formula is really simple:" . mathBlock('MRR(r) = {1 \over i}');
@@ -223,7 +223,7 @@ The user rated this item 4.5. So as the second item is the first 'good' item the
 function recsys_wb_explain_ndgc() {
   $title = "<strong><h3>Normalized Discounted Cumulative Gain</h3></strong>";
   $explanation = "<div class='tex2jax'>";
-  $ndcg_citation_link = l('[3]', 'about', array( 'fragment' => 'References') );
+  $ndcg_citation_link = l('[3]', 'aboutthis', array( 'fragment' => 'References') );
   $explanation .= "The Normalized Discounted Normalized Discounted Cumulative 
 Gain metric determines how correct the algorithms predictions are in respect of 
 the rank the items appear in. It compares the ranked list of the recommender 
