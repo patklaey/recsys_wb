@@ -1049,7 +1049,31 @@ function recsys_wb_admin_page() {
  */
 function recsys_wb_read_more() {
   if ( user_is_logged_in() ) {
-    return "hello there";
+    $papers_path = DRUPAL_ROOT . DIRECTORY_SEPARATOR 
+    . drupal_get_path("module","recsys_wb") . DIRECTORY_SEPARATOR . "papers";
+    $content = "<h2>Recommender System in General</h2>";
+    $content .= "<ul>";
+    $content .= "<li><a href='$papers_path/recommender_systems.pdf'>Recommender Systems</a></li>";
+    $content .= "<li><a href='$papers_path/recommender_system_survey.pdf'>Recommender System Survey</a></li>";
+    $content .= "<li><a href='$papers_path/recommender_system_from_algorithms_to_user_experience.pdf'>Recommender systems: from algorithms to user experience</a></li>";
+    $content .= "</ul>";
+    $content .= "<h2>Collaborative Filtering</h2>";
+    $content .= "<ul>";
+    $content .= "<li><a href='$papers_path/Item-Based_Collaborative_Filtering_Recommendation_Algorithms.pdf'>Item-Based Collaborative Filtering Recommendation Algorithms</a></li>";
+    $content .= "<li><a href='$papers_path/Using_Graph_Partitioning_Techniques_for_Neighbour.pdf'>Using Graph Partitioning Techniques for Neighbour Selection in User-Based Collaborative Filtering</a></li>";
+    $content .= "</ul>";
+    $content .= "<h2>Content Based Filtering</h2>";
+    $content .= "<ul>";
+    $content .= "<li><a href='$papers_path/A_topic-based_recommender_system_for_electronic_marketplace_platforms.pdf'>A topic-based recommender system for electronic marketplace platforms</a></li>";
+    $content .= "<li><a href='$papers_path/Combining_Content_with_User_Preferences_for_TED_Lecture_Recommendation.pdf'>Combining Content with User Preferences for TED Lecture Recommendation</a></li>";
+    $content .= "<li><a href='$papers_path/Personalized_News_Recommendation_with_Context_Trees.pdf'>Personalized News Recommendation with Context Trees</a></li>";
+    $content .= "</ul>";
+    $content .= "<h2>Evaluating Recommender Systems</h2>";
+    $content .= "<ul>";
+    $content .= "<li><a href='$papers_path/Item-Based_Collaborative_Filtering_Recommendation_Algorithms.pdf'>Item-Based Collaborative Filtering Recommendation Algorithms</a></li>";
+    $content .= "<li><a href='$papers_path/Evaluating_Collaborative_Filtering_Recommender_Systems.pdf'>Evaluating Collaborative Filtering Recommender Systems</a></li>";
+    $content .= "</ul>";
+    return $content;
   } else {
     return "Please login to see this page";
   }
