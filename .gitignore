@@ -8,3 +8,6 @@ java/.classpath
 # Java output
 java/bin
 output
+
+# All the papers in the papers folder (we cannot distribute protected papers)
+papers/*.pdf
