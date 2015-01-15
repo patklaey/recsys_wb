@@ -1121,6 +1121,12 @@ function recsys_wb_about() {
  for Comparing Collaborative- and Content-Based Algorithms for Recommendations\"
  supervised by $andreas_meier and $luis_teran form the $is_group at the $unifr";
   
+  $me = l("Pat Kläy","mailto:pat.klaey@unifr.ch");
+  $return .= "<h2>About me</h2>My name is $me, I obtained my Bachelor degree at 
+the $unifr and also started my Master here. Obviously I joined the $is_group 
+research group for my Master Thesis and this workbench is the outcome.";
+  
+  
   $return .= "<h2>Datasets</h2>";
   
   $grouplens = l(
