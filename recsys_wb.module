@@ -274,7 +274,7 @@ function recsys_wb_myratings() {
     $return_string .= theme('table', 
                             array('header' => $header, 'rows' => $rows) );
     // Add a link to run recommendation algorithms
-    $return_string .= l('Calculate recommendations','runrecommender');
+    $return_string .= l('Calculate recommendations','administrate/runrecommender');
   }
 
   // Add the Movie section
@@ -319,7 +319,7 @@ function recsys_wb_myratings() {
     $return_string .= theme('table', 
                             array('header' => $header, 'rows' => $rows) );
     // Add a link to run recommendation algorithms
-    $return_string .= l('Calculate recommendations','runrecommender');
+    $return_string .= l('Calculate recommendations','administrate/runrecommender');
   }
   
   // Return the HTML string
@@ -398,7 +398,8 @@ function recsys_wb_block_view($delta = '')
         $block['content'] = drupal_get_form('recsys_wb_book_rating_form');
       }
       else {
-        $block['content'] = "You have already rated this book!";
+        $row = $results->fetchAssoc();
+        $block['content'] = "Your rating: " . $row["rating"];
       }
 
       break;
@@ -418,8 +419,10 @@ function recsys_wb_block_view($delta = '')
         $block['content'] = drupal_get_form('recsys_wb_movie_rating_form');
       }
       else {
-        $block['content'] = "You have already rated this movie!";
+        $row = $results->fetchAssoc();
+        $block['content'] = "Your rating: " . $row["rating"];
       }
+      break;
       
     case 'content_recommender':
       $block['subject'] = t('Similar Questions');
@@ -817,9 +820,9 @@ function recsys_wb_content() {
   $return_string = "There are 3 different content types which you can browse: ";
   $return_string .= "
 <ul>
-  <li>$books<br/>Some description</li>
-  <li>$movies<br/>Some description</li>
-  <li>$questions<br/>Some description</li>
+  <li>$books<br/>A list of selected books from the Amazone Online Store</li>
+  <li>$movies<br/>A list of selected movies from the MovienLens project</li>
+  <li>$questions<br/>A list of selected questions from the stackoverflow website</li>
 </ul>
 ";
   
