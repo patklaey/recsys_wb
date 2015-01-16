@@ -1,6 +1,87 @@
 <?php
 
 /**
+ * The form for project selection
+ */
+function recsys_wb_select_project_form() {
+  $nid = 0;
+  $title = "No title";
+  if ($node = menu_get_object()) {
+    $nid = $node->nid;
+    $title = $node->title;
+  }
+  $form['select_project_members'] = array(
+    '#title' => "Group members (comma separated):",
+    '#description' => "Format: Name Lastname (E-Mail adderess)",
+    '#type' => 'textfield',
+    '#required' => TRUE,
+    '#size' => 25,
+  );
+  $form['select_project_group'] = array(
+    '#title' => "Group ID:",
+    '#description' => "Your group number",
+    '#type' => 'textfield',
+    '#required' => TRUE,
+    '#element_validate' => array('_validate_numeric'),
+    '#size' => 5,
+  );
+  $form['select_project_project_id'] = array(
+    '#title' =>  t('ID'),
+    '#value' => $nid,
+    '#type' => 'hidden',
+  );
+  $form['select_project_project_title'] = array(
+    '#title' =>  t('Title'),
+    '#value' => $title,
+    '#type' => 'hidden',
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+  return $form;
+}
+
+/**
+ * A simple function to validate a input as numberic
+ */
+function _validate_numeric($element, &$form_state){
+  if ( !is_numeric($element['#value']) ) {
+    form_error($element, t('The "Group ID" option must be numeric') );
+  }
+}
+ 
+/**
+ * The form to set the project opening date
+ */
+function recsys_wb_project_opening_form() {
+  $times = array();
+  for ($i=0; $i < 24; $i++) { 
+    if ( $i < 10 ) {
+      $times["0$i:00"] = "0$i:00";
+    } else {
+      $times["$i:00"] = "$i:00";
+    }
+  }
+  
+  $form['project_opening_date'] = array(
+    '#type' => 'date',
+    '#title' => t('Project opening date:'),
+  );
+  $form['project_opening_time'] = array(
+    '#type' => 'select',
+    '#title' => t('Project opening time:'),
+    '#options' => $times
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+  return $form;
+}
+
+
+/**
  * The rate book form
  */
 function recsys_wb_book_rating_form()

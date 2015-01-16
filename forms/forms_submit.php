@@ -1,6 +1,92 @@
 <?php
 
 /**
+ * Action to take when recsys_wb_select_project_form is submitted
+ */
+function recsys_wb_select_project_form_submit($form, &$form_state){
+  $transaction = db_transaction();
+  $entity_id = $form_state['values']['select_project_project_id'];
+  $group_id = $form_state['values']['select_project_group'];
+  $members = $form_state['values']['select_project_members'];
+  $project_title = $form_state['values']['select_project_project_title'];
+  
+ // try{
+    $num_updated = db_update('field_data_field_project_group_id') 
+      ->fields(array(
+        'field_project_group_id_value' => $group_id,
+      ))
+      ->condition(
+        'field_data_field_project_group_id.field_project_group_id_value', 
+        -1
+      )
+      ->condition('field_data_field_project_group_id.entity_id',$entity_id)
+      ->execute();
+        
+    if ( $num_updated == 0 ) {
+      drupal_set_message(
+        "The project '$project_title' is already taken.",
+        "error"
+      );
+      $transaction->rollback();
+      return;
+    }
+    
+    $num_updated = db_update('field_data_field_project_members') 
+      ->fields(array(
+        'field_project_members_value' => $members,
+      ))
+      ->condition(
+        'field_data_field_project_members.field_project_members_value', 
+        "NULL"
+      )
+      ->condition('field_data_field_project_members.entity_id',$entity_id)
+      ->execute();
+      
+    if ( $num_updated == 0 ) {
+      drupal_set_message(
+        "The project '$project_title' is already taken.",
+        "error"
+      );
+      $transaction->rollback();
+      return;
+    }
+       
+    unset($transaction);
+  
+    drupal_set_message("The project $project_title is assigned to your group 
+now"); 
+    
+ // } catch(Exception $e) {
+  ////  $transaction->rollback();
+  //  drupal_set_message("There was a problem: " . $e, 'error');
+  //  watchdog_exception('SQL-Exception', $e);
+ // }
+}
+/**
+ * Action the take when recsys_wb_project_opening_form is submitted
+ */
+function recsys_wb_project_opening_form_submit($form, &$form_state) {
+  $date = $form_state['values']['project_opening_date']['year'];
+  
+  if ( $form_state['values']['project_opening_date']['month'] < 10 ) {
+    $date .= "-0" . $form_state['values']['project_opening_date']['month'];
+  } else {
+    $date .= "-" . $form_state['values']['project_opening_date']['month'];
+  }
+  
+  if ( $form_state['values']['project_opening_date']['day'] < 10 ) {
+    $date .= "-0" . $form_state['values']['project_opening_date']['day'];
+  } else {
+    $date .= "-" . $form_state['values']['project_opening_date']['day'];
+  }
+
+  $date .= " " . $form_state['values']['project_opening_time'];
+
+  variable_set('project_opening',$date);
+  drupal_set_message("Project opening date set to: " . $date);
+}
+
+/**
  * Action to take when recsys_wb_movie_rating_form is submitted
  */
 function recsys_wb_movie_rating_form_submit($form, &$form_state) {
@@ -178,7 +264,6 @@ function recsys_wb_evaluation_form_submit($form, &$form_state) {
 function recsys_wb_evaluate_all_form_submit($form, &$form_state) {
   // Simply set a SESSION var
   $_SESSION['recsys_wb_evaluate_all_form_submitted'] = TRUE;
-  print_r($_SESSION);
 }
 
 /**

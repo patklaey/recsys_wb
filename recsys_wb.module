@@ -193,6 +193,13 @@ function recsys_wb_menu() {
     'page callback' => 'recsys_wb_run_content_recommender',
     'access arguments' => array('administration'),
   );
+  $items['administrate/projectsetup'] = array(
+    'title' => 'Project Setup', 
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'recsys_wb_project_setup',
+    'access arguments' => array('administration'),
+  );
   $items['logout'] = array(
     'title' => 'Logout',
     'menu_name' => 'main-menu',
@@ -206,6 +213,12 @@ function recsys_wb_menu() {
     'type' => MENU_CALLBACK,
     'page callback' => 'recsys_wb_read_more',
     'access arguments' => array('access content'),
+  );
+  $items['projects'] = array(
+    'title' => 'Projects',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'recsys_wb_projects',
+    'access callback' => 'user_is_logged_in',
   );
   $items['tail'] = array(
     'title' => 'Tail',
@@ -222,6 +235,86 @@ function recsys_wb_menu() {
   return $items;
 }
 
+/**
+ * The administrator page for the project setup
+ */
+function recsys_wb_project_setup() {
+  $opening = variable_get('project_opening','undefined');
+  
+  $content = "Set the project opening date (currently: $opening): ";
+  $content .= drupal_render( drupal_get_form('recsys_wb_project_opening_form'));
+  $content .= "<br/><br/>To create projects, please go to 'Add Content' and 
+create the projects there using the project content type. Don't forget to set 
+the correct publish date. Currently the projects look like:<br/><br/>";
+
+  $query = db_select('node','node');
+  $query->join(
+    'field_data_field_project_group_id',
+    'group_id',
+    'node.nid = group_id.entity_id'
+  );
+  $query->join(
+    'field_data_field_project_members',
+    'members',
+    'node.nid = members.entity_id'
+  );
+  $query->fields('node',array('title','nid','status'));
+  $query->fields('group_id',array('field_project_group_id_value'));
+  $query->fields('members',array('field_project_members_value'));
+  $query->condition('node.type','project');
+  $results = $query->execute();
+  
+  $headers = array(t('Project'),t('Group'),t('Members'),t('Published'));
+  $rows = array();
+  
+  foreach ($results as $result) {
+    $result->status == 0 ? "No" : "Yes";
+    $rows[] = array(
+      l($result->title, "node/" . $result->nid),
+      $result->field_project_group_id_value,
+      $result->field_project_members_value,
+      $result->status == 0 ? "No" : "Yes",
+    );
+  }
+  
+  $content .= theme('table',array('header' => $headers, 'rows' => $rows));
+  
+  return $content;
+}
+ 
+/**
+ * A page which displays all projects
+ */
+function recsys_wb_projects() {
+  $project_opening_date = variable_get('project_opening','undefined');
+  $content = "Projects will be displayed on $project_opening_date<br/><br/>";
+  
+  $headers = array(t('Project'),t('available'));
+  $rows = array();
+  
+  $results = db_query("Select title,nid from {node} where type='project' and 
+status = 1");
+  
+  foreach ($results as $result) {
+    $group = db_query("Select field_project_group_id_value from 
+field_data_field_project_group_id where entity_id = :nid", 
+        array(':nid' => $result->nid)
+    );
+    
+    $owner = $group->fetchAssoc();
+    if ( $owner['field_project_group_id_value'] == -1 ) {
+      $rows[] = array( l($result->title, "node/" . $result->nid), "Yes" );
+    } else {
+       $rows[] = array( $result->title, "No" );
+    }
+  }
+  
+  $content .= theme('table', array( 'header' => $headers, 'rows' => $rows) );
+  
+  return $content;
+}
+ 
+ 
 /**
  * Custom page which displays all the ratings of the currently logged in user
  */
@@ -371,6 +464,9 @@ function recsys_wb_block_info() {
   $blocks['content_recommender'] = array(
     'info' => t('Recsys workbench content recommender'),
   );
+  $blocks['claim_project'] = array(
+    'info' => t('Recsys workbench project selection'),
+  );
   return $blocks;
 }
 
@@ -494,8 +590,34 @@ function recsys_wb_block_view($delta = '')
       $block['content'] = $content;
       break;
       
+    case 'claim_project':
+      $block['title'] = "Select this project";
+      
+      // Check if the project is already taken
+      $result = db_query("Select field_project_group_id_value from 
+field_data_field_project_group_id where entity_id = :nid", 
+        array(':nid' => $node->nid)
+      );
+      
+      $content = "";
+      $group = $result->fetchAssoc();
+      if ( $group['field_project_group_id_value'] == -1 ) {
+        $content = drupal_render(
+          drupal_get_form(
+            'recsys_wb_select_project_form'
+          )
+        );
+      } else {
+        $content = "Group " . $group['field_project_group_id_value'];
+        $content .= " owns this project";
+      }
+      
+      $block['content'] = $content;
+
+      break;
+      
     default:
-        break;
+      break;
   }
     
   return $block;
