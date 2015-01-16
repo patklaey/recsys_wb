@@ -177,7 +177,7 @@ function recsys_wb_menu() {
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_run_recommender',
-    'access arguments' => array('administration'),  
+    'access callback' => 'user_is_logged_in',
   );
   $items['administrate/contentsimilarity'] = array(
     'title' => 'Content Similarity', 
