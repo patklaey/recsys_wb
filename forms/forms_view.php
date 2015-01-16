@@ -148,13 +148,36 @@ function recsys_wb_get_recommendations_form() {
   // Get all different recommender algorithms currently registered
   $algorithms = getRecommenderAppsForForm();
   
+  drupal_add_js(
+    drupal_get_path('module', 'recsys_wb') . '/scripts/explain_link.js'
+  );
+  
+  $base_link = l(
+    'Explain me this recommender',
+    "learn/cf", 
+    array(
+      'query' => array(
+        'algorithm' => 'algorithm_id'
+      ),
+      'attributes' => array('target' => '_blank')
+    )
+  );  
+  
   // Create a form which displays a all possible recommender algorithms
   $form['recommender_app'] = array(
+    '#id' => "get_recommenation_app_selection",
     '#type' => 'select',
     '#title' => t('Recommender algorithm:'),
     '#options' => $algorithms,
     '#description' => t('Select the recommender algorithm'),
+    '#attributes' => array(
+      'onchange' => "display_explain_link('" . $base_link 
+        . "',this.selectedIndex)"
+    ),
     '#required' => TRUE,
+  );
+  $form['recommender_app_explain_link'] = array(
+    '#markup' => "<p id='recommender_app_explain_link'></p>"
   );
   $form['recommender_type'] = array(
     '#type' => 'radios',
