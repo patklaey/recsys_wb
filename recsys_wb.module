@@ -256,7 +256,8 @@ function recsys_wb_myratings() {
   if( $results->rowCount() == 0 ) {
     $return_string .= "<strong>You haven't rated any books yet</strong></br>";
     // Add the link to the rating page
-    $return_string .= "<p>You can rate books " . l('here','books') . "</p>";
+    $return_string .= "<p>You can rate books " . l('here','content/books');
+    $return_string .= "</p>";
   }
   else {
     
@@ -301,7 +302,8 @@ function recsys_wb_myratings() {
   if( $results->rowCount() == 0 ) {
     $return_string .= "<strong>You haven't rated any movies yet</strong></br>";
     // Add the link to the rating page
-    $return_string .= "<p>You can rate movies " . l('here','movies') . "</p>";
+    $return_string .= "<p>You can rate movies " . l('here','content/movies');
+    $return_string .= "</p>";
   }
   else {
     
@@ -390,15 +392,20 @@ function recsys_wb_block_view($delta = '')
       // this book from this user
       $book_id = field_get_items("node", $node, "field_book_id");
       $book_id = $book_id[0]["value"];
-      $results = db_query("Select * from {" . BOOK_DB_TRAIN . "} where UserID ="
-        .":user AND BookID = :book", 
+      $train_results = db_query("Select Rating from {" . BOOK_DB_TRAIN . "} "
+        ."where UserID = :user AND BookID = :book", 
+        array(':user' => user_id, ':book' => $book_id) );
+      $test_results = db_query("Select Rating from {" . BOOK_DB_TEST . "} where"
+        ." UserID = :user AND BookID = :book", 
         array(':user' => user_id, ':book' => $book_id) );
       
-      if ( $results->rowCount() == 0 ) {
+      if ( $test_results->rowCount() == 0 && $train_results->rowCount() == 0 ) {
         $block['content'] = drupal_get_form('recsys_wb_book_rating_form');
       }
       else {
-        $row = $results->fetchAssoc();
+        $row = $train_results->fetchAssoc();
+        if ( $row == null )
+          $row = $test_results->fetchAssoc();
         $block['content'] = "Your rating: " . $row["rating"];
       }
 
@@ -411,15 +418,20 @@ function recsys_wb_block_view($delta = '')
       // this book from this user
       $movie_id = field_get_items("node", $node, "field_movie_id");
       $movie_id = $movie_id[0]["value"];
-      $results = db_query("Select * from {" . MOVIE_DB_TRAIN . "} where UserID="
-        .":user AND MovieID = :movie", 
+      $train_results = db_query("Select Rating from {" . MOVIE_DB_TRAIN . "} "
+        ."where UserID= :user AND MovieID = :movie",
+        array(':user' => user_id, ':movie' => $movie_id) );
+      $test_results = db_query("Select Rating from {" . MOVIE_DB_TEST . "} "
+        ."where UserID= :user AND MovieID = :movie",
         array(':user' => user_id, ':movie' => $movie_id) );
       
-      if ( $results->rowCount() == 0 ) {
+      if ( $test_results->rowCount() == 0 && $train_results->rowCount() == 0 ) {
         $block['content'] = drupal_get_form('recsys_wb_movie_rating_form');
       }
       else {
-        $row = $results->fetchAssoc();
+        $row = $train_results->fetchAssoc();
+        if ( $row == null )
+          $row = $test_results->fetchAssoc();
         $block['content'] = "Your rating: " . $row["rating"];
       }
       break;
