@@ -99,7 +99,16 @@ function recsys_wb_evaluation_example_rank_table() {
  * Explain why and what evaluation is
  */
 function recsys_wb_explain_evaluation() {
-  $rs_introduction_link = l('[2]', 'aboutthis', array( 'fragment' => 'References') );
+  $rs_introduction_link = l(
+    '[2]', 
+    'aboutthis', 
+    array( 'fragment' => 'References') 
+  );
+  $read_more = l(
+    "Read more",
+    "readmore",
+    array( 'attributes' => array('target' => '_blank') )
+  );
   $explanation = "Evaluating recommender algorithms is not an easy task as 
 there are simply too many objectiv functions. However since recommender systems 
 are widely used and there are a lot of them available, there needs to be 
@@ -116,7 +125,8 @@ There are two basic types of evaluation metrics:
     predictions are in respect to the rank of the items (the prediction score is
     ignored, only the rank is important).
   </li>
-</ul>";
+</ul>
+$read_more about evaluating recommender systems.";
   return $explanation;
 }
 

@@ -5,6 +5,13 @@
  */
 function recsys_wb_explain_cb() {
   $title = "<strong><h3>Content Based Filtering</h3></strong>";
+  $read_more = l(
+    "Read more",
+    "readmore",
+    array(
+      'attributes' => array('target' => '_blank') 
+    )
+  );
   $explanation = "In content based filtering the idea is to match (and recommend
 ) similar items based on their content. This content information can either be 
 extracted automatically or added manually. If we know that the user Bob likes 
@@ -14,7 +21,8 @@ about politics in the middle east, we can recommend further articles about the
 politics in the middle east to Alice. The good thing is, that there is no (at 
 least not always) user profile necessary to recommend things. The bad thing 
 however is, that most items must be enriched (often manually) with this content 
-information (as for example \"this movie is a fantasy movie\").";
+information (as for example \"this movie is a fantasy movie\"). $read_more about
+ content based filtering.";
   return $title . $explanation;
 }
 
