@@ -205,7 +205,7 @@ function recsys_wb_menu() {
     'title' => 'Read More',
     'type' => MENU_CALLBACK,
     'page callback' => 'recsys_wb_read_more',
-    'access callback' => 'user_is_logged_in',
+    'access arguments' => array('access content'),
   );
   $items['tail'] = array(
     'title' => 'Tail',
@@ -1056,30 +1056,111 @@ function recsys_wb_read_more() {
     . drupal_get_path("module","recsys_wb") . DIRECTORY_SEPARATOR . "papers";
     $content = "<h2>Recommender System in General</h2>";
     $content .= "<ul>";
-    $content .= "<li><a href='$papers_path/recommender_systems.pdf'>Recommender Systems</a></li>";
-    $content .= "<li><a href='$papers_path/recommender_system_survey.pdf'>Recommender System Survey</a></li>";
-    $content .= "<li><a href='$papers_path/recommender_system_from_algorithms_to_user_experience.pdf'>Recommender systems: from algorithms to user experience</a></li>";
+    $content .= "<li><a href='$papers_path/recommender_systems.pdf' target='_blank'>Recommender Systems</a></li>";
+    $content .= "<li><a href='$papers_path/recommender_system_survey.pdf' target='_blank'>Recommender System Survey</a></li>";
+    $content .= "<li><a href='$papers_path/recommender_system_from_algorithms_to_user_experience.pdf' target='_blank'>Recommender systems: from algorithms to user experience</a></li>";
     $content .= "</ul>";
     $content .= "<h2>Collaborative Filtering</h2>";
     $content .= "<ul>";
-    $content .= "<li><a href='$papers_path/Item-Based_Collaborative_Filtering_Recommendation_Algorithms.pdf'>Item-Based Collaborative Filtering Recommendation Algorithms</a></li>";
-    $content .= "<li><a href='$papers_path/Using_Graph_Partitioning_Techniques_for_Neighbour.pdf'>Using Graph Partitioning Techniques for Neighbour Selection in User-Based Collaborative Filtering</a></li>";
+    $content .= "<li><a href='$papers_path/Item-Based_Collaborative_Filtering_Recommendation_Algorithms.pdf' target='_blank'>Item-Based Collaborative Filtering Recommendation Algorithms</a></li>";
+    $content .= "<li><a href='$papers_path/Using_Graph_Partitioning_Techniques_for_Neighbour.pdf' target='_blank'>Using Graph Partitioning Techniques for Neighbour Selection in User-Based Collaborative Filtering</a></li>";
     $content .= "</ul>";
     $content .= "<h2>Content Based Filtering</h2>";
     $content .= "<ul>";
-    $content .= "<li><a href='$papers_path/A_topic-based_recommender_system_for_electronic_marketplace_platforms.pdf'>A topic-based recommender system for electronic marketplace platforms</a></li>";
-    $content .= "<li><a href='$papers_path/Combining_Content_with_User_Preferences_for_TED_Lecture_Recommendation.pdf'>Combining Content with User Preferences for TED Lecture Recommendation</a></li>";
-    $content .= "<li><a href='$papers_path/Personalized_News_Recommendation_with_Context_Trees.pdf'>Personalized News Recommendation with Context Trees</a></li>";
+    $content .= "<li><a href='$papers_path/A_topic-based_recommender_system_for_electronic_marketplace_platforms.pdf' target='_blank'>A topic-based recommender system for electronic marketplace platforms</a></li>";
+    $content .= "<li><a href='$papers_path/Combining_Content_with_User_Preferences_for_TED_Lecture_Recommendation.pdf target='_blank''>Combining Content with User Preferences for TED Lecture Recommendation</a></li>";
+    $content .= "<li><a href='$papers_path/Personalized_News_Recommendation_with_Context_Trees.pdf' target='_blank'>Personalized News Recommendation with Context Trees</a></li>";
     $content .= "</ul>";
     $content .= "<h2>Evaluating Recommender Systems</h2>";
     $content .= "<ul>";
-    $content .= "<li><a href='$papers_path/Item-Based_Collaborative_Filtering_Recommendation_Algorithms.pdf'>Item-Based Collaborative Filtering Recommendation Algorithms</a></li>";
-    $content .= "<li><a href='$papers_path/Evaluating_Collaborative_Filtering_Recommender_Systems.pdf'>Evaluating Collaborative Filtering Recommender Systems</a></li>";
+    $content .= "<li><a href='$papers_path/Item-Based_Collaborative_Filtering_Recommendation_Algorithms.pdf' target='_blank'>Item-Based Collaborative Filtering Recommendation Algorithms</a></li>";
+    $content .= "<li><a href='$papers_path/Evaluating_Collaborative_Filtering_Recommender_Systems.pdf' target='_blank'>Evaluating Collaborative Filtering Recommender Systems</a></li>";
     $content .= "</ul>";
-    return $content;
   } else {
-    return "Please login to see this page";
+    $content = "<h2>Recommender System in General</h2>";
+    $content .= "<ul>";
+    $content .= "<li>" . l(
+      "Recommender Systems", 
+      "http://www.sciencedirect.com/science/article/pii/S0370157312000828",
+      array(
+        'attributes' => array('target' => '_blank') 
+      )
+    ) . "</li>";
+    $content .= "<li>" . l("
+      Recommender System Survey", 
+      "http://www.sciencedirect.com/science/article/pii/S0950705113001044",
+      array(
+        'attributes' => array('target' => '_blank') 
+      )
+    ) . "</li>";
+    $content .= "<li>" . l(
+      "Recommender systems: from algorithms to user experience", 
+      "http://link.springer.com/article/10.1007/s11257-011-9112-x",
+      array(
+        'attributes' => array('target' => '_blank') 
+      )
+    ) . "</li>";
+    $content .= "</ul>";
+    $content .= "<h2>Collaborative Filtering</h2>";
+    $content .= "<ul>";
+    $content .= "<li>" . l(
+      "Item-Based Collaborative Filtering Recommendation Algorithms", 
+      "http://dl.acm.org/citation.cfm?id=372071",
+      array(
+        'attributes' => array('target' => '_blank') 
+      )
+    ) . "</li>";
+    $content .= "<li>" . l(
+      "Using Graph Partitioning Techniques for Neighbour Selection in User-Based Collaborative Filtering", 
+      "http://dl.acm.org/citation.cfm?id=2365997",
+      array(
+        'attributes' => array('target' => '_blank') 
+      )
+    ) . "</li>";
+    $content .= "</ul>";
+    $content .= "<h2>Content Based Filtering</h2>";
+    $content .= "<ul>";
+    $content .= "<li>" . l
+      ("A topic-based recommender system for electronic marketplace platforms", 
+      "http://www.sciencedirect.com/science/article/pii/S0957417413000274",
+      array(
+        'attributes' => array('target' => '_blank') 
+      )
+    ) . "</li>";
+    $content .= "<li>" . l(
+      "Combining Content with User Preferences for TED Lecture Recommendation", 
+      "http://dl.acm.org/citation.cfm?id=2507166",
+      array(
+        'attributes' => array('target' => '_blank') 
+      )
+    ) . "</li>";
+    $content .= "<li>" . l(
+      "Personalized News Recommendation with Context Trees", 
+      "http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=6576551",
+      array(
+        'attributes' => array('target' => '_blank') 
+      )
+    ) . "</li>";
+    $content .= "</ul>";
+    $content .= "<h2>Evaluating Recommender Systems</h2>";
+    $content .= "<ul>";
+    $content .= "<li>" . l(
+      "Item-Based Collaborative Filtering Recommendation Algorithms", 
+      "http://dl.acm.org/citation.cfm?id=372071",
+      array(
+        'attributes' => array('target' => '_blank') 
+      )
+    ) . "</li>";
+    $content .= "<li>" . l(
+      "Evaluating Collaborative Filtering Recommender Systems", 
+      "http://dl.acm.org/citation.cfm?id=963772",
+      array(
+        'attributes' => array('target' => '_blank') 
+      )
+    ) . "</li>";
+    $content .= "</ul>";
   }
+  return $content;
 }
 
 /**
