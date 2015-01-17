@@ -21,6 +21,74 @@ function getMovieNameById( $id ){
 }
 
 /**
+ * Action to take when recsys_wb_movie_rating_form is submitted
+ */
+function recsys_wb_rate_movie($movie_id, $rating) {
+  // The database (add 25% of the users ratings to the test set)
+  $database = MOVIE_DB_TRAIN;
+  if ( rand(0,100) > 75 )
+    $database = MOVIE_DB_TEST;
+
+  // Insert the values into the database
+  $result = db_insert( $database )->fields( array(
+    'MovieID' => $movie_id,
+    'UserID' => user_id,
+    'Rating' => $rating,
+    'Timestamp' => time(),
+  ))->execute();
+  
+  drupal_set_message("Movie succesfully rated!");
+}
+
+function recsys_wb_rate_book($book_id, $rating, $isbn) {
+  // The database (add 25% of the users ratings to the test set)
+  $database = BOOK_DB_TRAIN;
+  if ( rand(0,100) > 75 )
+    $database = BOOK_DB_TEST;
+
+  // Insert the values into the database
+  $result = db_insert( $database )->fields( array(
+    'BookID' => $book_id,
+    'UserID' => user_id,
+    'Rating' => $rating,
+    'ISBN' => $isbn,
+  ))->execute();
+  
+  drupal_set_message("Book succesfully rated!");
+}
+
+/**
+ * 
+ */
+function recsys_wb_display_rating($rating) {
+  $checked = array( 
+    '0.5' => "", 
+    '1' => "", 
+    '1.5' => "", 
+    '2' => "",
+    '2.5' => "",
+    '3' => "",
+    '3.5' => "",
+    '4' => "",
+    '4.5' => "",
+    '5' => "",
+  );
+  $checked[$rating] = "checked";
+  return 'You have already rated this item: <p class="rating">
+    <input type="radio" ' . $checked['5'] . ' disabled id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+    <input type="radio" ' . $checked['4.5'] . ' disabled id="star4half" name="rating" value="4.5" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
+    <input type="radio" ' . $checked['4'] . ' disabled id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+    <input type="radio" ' . $checked['3.5'] . ' disabled id="star3half" name="rating" value="3.5" /><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
+    <input type="radio" ' . $checked['3'] . ' disabled id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
+    <input type="radio" ' . $checked['2.5'] . ' disabled id="star2half" name="rating" value="2.5" /><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
+    <input type="radio" ' . $checked['2'] . ' disabled id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+    <input type="radio" ' . $checked['1.5'] . ' disabled id="star1half" name="rating" value="1.5" /><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
+    <input type="radio" ' . $checked['1'] . ' disabled id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+    <input type="radio" ' . $checked['0.5'] . ' disabled id="starhalf" name="rating" value="0.5" /><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
+</p>';
+}
+ 
+/**
  * Get the book name from its ID
  */
 function getBookNameById( $id ){

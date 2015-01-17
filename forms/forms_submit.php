@@ -1,5 +1,10 @@
 <?php
 
+function recsys_wb_movie_rating_stars_form_submit($form, &$form_state) {
+  drupal_set_message("Submitted");
+  $_SESSION['test'] = $form_state['values'];
+}
+
 /**
  * Action to take when recsys_wb_select_project_form is submitted
  */
@@ -85,37 +90,6 @@ function recsys_wb_project_opening_form_submit($form, &$form_state) {
   variable_set('project_opening',$date);
   drupal_set_message("Project opening date set to: " . $date);
 }
-
-/**
- * Action to take when recsys_wb_movie_rating_form is submitted
- */
-function recsys_wb_movie_rating_form_submit($form, &$form_state) {
-  // Get the rating from the form
-  $rating = $form_state['values']['rating'];
-  
-  // Get the node
-  $node = menu_get_object();
-  
-  // Get the movies id
-  $movie_id = field_get_items("node", $node, "field_movie_id");
-  $movie_id = $movie_id[0]["value"];
-  
-  // The database (add 25% of the users ratings to the test set)
-  $database = MOVIE_DB_TRAIN;
-  if ( rand(0,100) > 75 )
-    $database = MOVIE_DB_TEST;
-
-  // Insert the values into the database
-  $result = db_insert( $database )->fields( array(
-    'MovieID' => $movie_id,
-    'UserID' => user_id,
-    'Rating' => $rating,
-    'Timestamp' => time(),
-  ))->execute();
-  
-  drupal_set_message("Movie succesfully rated!");
-}
-
 
 /**
  * Action to take when recsys_wb_book_rating_form is submitted
