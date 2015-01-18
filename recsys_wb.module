@@ -921,6 +921,9 @@ function recsys_wb_explanation_cf() {
   $explain_cosine = preg_match("/_cosine/", $algorithm_name);
   $explain_euclidean = preg_match("/_euclidean/", $algorithm_name);
   $explain_pearson = preg_match("/_pearson/", $algorithm_name);
+  $explain_cityblock = preg_match("/_cityblock/", $algorithm_name);
+  $explain_loglikelihood = preg_match("/_loglikelihood/", $algorithm_name);
+    
   
   $explain .= "<a href='#' name='algorithm'></a>";
   if( $explain_user2user || $algorithm_name == null ){
@@ -957,6 +960,16 @@ function recsys_wb_explanation_cf() {
     $explain .= recsys_wb_explain_euclidean($marking);
   }
   
+  if ( $explain_cityblock || $algorithm_name == null ){
+    $explain .= "<a href='#' name='cityblock'></a>"; 
+    $explain .= recsys_wb_explain_cityblock($marking);
+  }
+  
+  if ( $explain_loglikelihood || $algorithm_name == null ){
+    $explain .= "<a href='#' name='loglikelihood'></a>"; 
+    $explain .= recsys_wb_explain_loglikelihood($marking);
+  }
+  
   return $explain;
 }
 
@@ -977,6 +990,8 @@ function recsys_wb_explanation_cf_table_of_contents() {
     <li><a href='#cosine'>Cosine similarity</a></li>
     <li><a href='#pearson'>Pearson similarity</a></li>
     <li><a href='#euclidean'>Euclidean similarity</a></li>
+    <li><a href='#cityblock'>Cityblock similarity</a></li>
+    <li><a href='#loglikelihood'>Loglikelihood similarity</a></li>
   </ul>
 </ul>
 ";
