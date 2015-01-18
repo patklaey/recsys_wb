@@ -241,7 +241,8 @@ function recsys_wb_menu() {
 function recsys_wb_project_setup() {
   $opening = variable_get('project_opening','undefined');
   
-  $content = "Set the project opening date (currently: $opening): ";
+  $content = "Set the project opening date (currently: $opening) which will be 
+displayed on the projects page: ";
   $content .= drupal_render( drupal_get_form('recsys_wb_project_opening_form'));
   $content .= "<br/><br/>To create projects, please go to 'Add Content' and 
 create the projects there using the project content type. Don't forget to set 
