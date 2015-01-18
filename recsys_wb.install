@@ -158,8 +158,8 @@ function recsys_wb_enable() {
                 'preference' => 'score'
             ),
         ),
-      // Euclidean similarity
-      'book_rec_u2u_euclidean' => array(
+        // Euclidean similarity
+        'book_rec_u2u_euclidean' => array(
             'title' => t("U2U book recommender (euclidean)"),
             'params' => array(
                 'algorithm' => 'user2user',
@@ -239,8 +239,113 @@ function recsys_wb_enable() {
                 'similarity' => 'pearson',
                 'preference' => 'score'
             ),
-        ),  
+        ),
+        // cityblock similarity
+        'book_rec_u2u_cityblock' => array(
+              'title' => t("U2U book recommender (cityblock)"),
+              'params' => array(
+                  'algorithm' => 'user2user',
+                  'table' => "{Book_Rating_demo_train}",
+                  'fields' => array('UserID','BookID','Rating'),
+                  'similarity' => 'cityblock',
+                  'preference' => 'score'
+              ),
+          ),
+        'book_rec_i2i_cityblock' => array(
+              'title' => t("I2I book recommender (cityblock)"),
+              'params' => array(
+                  'algorithm' => 'item2item',
+                  'table' => "{Book_Rating_demo_train}",
+                  'fields' => array('UserID','BookID','Rating'),
+                  'similarity' => 'cityblock',
+                  'preference' => 'score'
+              ),
+          ),
+          'movie_rec_u2u_cityblock' => array(
+              'title' => t("U2U movie recommender (cityblock)"),
+              'params' => array(
+                  'algorithm' => 'user2user',
+                  'table' => "{Movie_Rating_demo_train}",
+                  'fields' => array('UserID','MovieID','Rating'),
+                  'similarity' => 'cityblock',
+                  'preference' => 'score'
+              ),
+          ),
+          'movie_rec_i2i_cityblock' => array(
+              'title' => t("I2I movie recommender (cityblock)"),
+              'params' => array(
+                  'algorithm' => 'item2item',
+                  'table' => "{Movie_Rating_demo_train}",
+                  'fields' => array('UserID','MovieID','Rating'),
+                  'similarity' => 'cityblock',
+                  'preference' => 'score'
+              ),
+          ),
+        // loglikelihood similarity
+        'book_rec_u2u_loglikelihood' => array(
+              'title' => t("U2U book recommender (loglikelihood)"),
+              'params' => array(
+                  'algorithm' => 'user2user',
+                  'table' => "{Book_Rating_demo_train}",
+                  'fields' => array('UserID','BookID','Rating'),
+                  'similarity' => 'loglikelihood',
+                  'preference' => 'score'
+              ),
+          ),
+          'book_rec_i2i_loglikelihood' => array(
+              'title' => t("I2I book recommender (loglikelihood)"),
+              'params' => array(
+                  'algorithm' => 'item2item',
+                  'table' => "{Book_Rating_demo_train}",
+                  'fields' => array('UserID','BookID','Rating'),
+                  'similarity' => 'cityblock',
+                  'preference' => 'score'
+              ),
+          ),
+          'movie_rec_u2u_loglikelihood' => array(
+              'title' => t("U2U movie recommender (loglikelihood)"),
+              'params' => array(
+                  'algorithm' => 'user2user',
+                  'table' => "{Movie_Rating_demo_train}",
+                  'fields' => array('UserID','MovieID','Rating'),
+                  'similarity' => 'loglikelihood',
+                  'preference' => 'score'
+              ),
+          ),
+          'movie_rec_i2i_loglikelihood' => array(
+              'title' => t("I2I movie recommender (loglikelihood)"),
+              'params' => array(
+                  'algorithm' => 'item2item',
+                  'table' => "{Movie_Rating_demo_train}",
+                  'fields' => array('UserID','MovieID','Rating'),
+                  'similarity' => 'loglikelihood',
+                  'preference' => 'score'
+              ),
+          ),
+        
+/*        // The SVD algorithm  
+        'movie_rec_svd' => array(
+            'title' => t("SVD movie recommender"),
+            'params' => array(
+                'algorithm' => 'svd',
+                'table' => "{Movie_Rating_demo_train}",
+                'fields' => array('UserID','MovieID','Rating'),
+                'similarity' => 'cosine',
+                'preference' => 'score'
+            ),
+        ),
+        'book_rec_svd' => array(
+            'title' => t("SVD book recommender"),
+            'params' => array(
+                'algorithm' => 'svd',
+                'table' => "{Book_Rating_demo_train}",
+                'fields' => array('UserID','BookID','Rating'),
+                'similarity' => 'cosine',
+                'preference' => 'score'
+            ),
+        ),*/
     );
+    
     recommender_app_register($apps);
 }
 
@@ -258,6 +363,16 @@ function recsys_wb_disable(){
     'book_rec_i2i_pearson',
     'movie_rec_u2u_pearson',
     'movie_rec_i2i_pearson',
+    'book_rec_u2u_cityblock',
+    'book_rec_i2i_cityblock',
+    'movie_rec_u2u_cityblock',
+    'movie_rec_i2i_cityblock',
+    'book_rec_u2u_loglikelihood',
+    'book_rec_i2i_loglikelihood',
+    'movie_rec_u2u_loglikelihood',
+    'movie_rec_i2i_loglikelihood',
+//    'movie_rec_svd',
+//    'book_rec_svd'
   );
   recommender_app_unregister($apps);
 }

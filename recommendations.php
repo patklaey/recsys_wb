@@ -203,7 +203,8 @@ function showRecommendations() {
     {
       unset( $_SESSION['recommendations_form_submitted'] );
       return "You have no recommendations yet. Make sure you rate some movies "
-             . " and/or books and come back later!";
+             . " and/or books and come back later!" . drupal_render( 
+             drupal_get_form('recsys_wb_reset_form') );
     }
 
     if ( $compare ) {

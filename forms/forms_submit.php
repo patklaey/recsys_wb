@@ -162,6 +162,7 @@ function recsys_wb_run_recommender_form_submit($form, &$form_state) {
   // Get the recommender app name form the id
   $recommender_app_id = $form_state['values']['run_recommender_app'];
   $recommender_app_name = getRecommenderAppName( $recommender_app_id );
+  $recommender_app_title = getRecommenderAppTitle($recommender_app_id);
   
   // Simply schedule the recommendation algorithm for execution
   recommender_create_command($recommender_app_name);
@@ -181,7 +182,7 @@ function recsys_wb_run_recommender_form_submit($form, &$form_state) {
   exec("nohup setsid $script_path > $logfile 2>&1 &");
   
   // Display the link to follow the progress
-  $message = "The recommender algorithm " . $recommender_app_name
+  $message = "The recommender algorithm " . $recommender_app_title
     . " is running now.";
   displayLinkToLogfileTail($logfile, $message );
 }

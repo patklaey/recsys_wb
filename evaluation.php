@@ -43,7 +43,7 @@ function showEvaluation() {
         'style' => $style 
       ),
       array( 
-        'data' => t('Normalized DGC'), 
+        'data' => t('Normalized DCG'), 
         'field' => 'ndgc', 
         'style' => $style 
       ),
