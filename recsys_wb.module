@@ -342,12 +342,31 @@ function recsys_wb_myratings() {
   $query->condition('dataset.field_dataset_value','99');
   $results = $query->execute();
   
+  // Get all the users rating from the database
+  $query_test = db_select(BOOK_DB_TEST, 'ratings');
+  $query_test->join(
+    'field_data_field_book_id',
+    'book_id',
+    'ratings.bookid = book_id.field_book_id_value'
+  );
+  $query_test->join( 
+    'field_data_field_dataset',
+    'dataset',
+    'dataset.entity_id = book_id.entity_id'
+  );
+  $query_test->join('node','node','node.nid = book_id.entity_id');
+  $query_test->fields('node',array('title','nid'));
+  $query_test->fields('ratings',array('bookid','userid','rating'));
+  $query_test->condition('ratings.userid',user_id);
+  $query_test->condition('dataset.field_dataset_value','99');
+  $results_test = $query->execute();
+  
   // Prepeare the tables headers and rows
   $header = array( t('User ID'), t('Book'), t('Rating') );
   $rows = array();
   
   // Check if there are already some ratings
-  if( $results->rowCount() == 0 ) {
+  if( $results->rowCount() == 0 && $results_test->rowCount() == 0 ) {
     $return_string .= "<strong>You haven't rated any books yet</strong></br>";
     // Add the link to the rating page
     $return_string .= "<p>You can rate books " . l('here','content/books');
@@ -365,11 +384,23 @@ function recsys_wb_myratings() {
       );
     }
     
+    foreach ($results_test AS $result)
+    {
+      $rows[] = array(
+        $result->userid,
+        l($result->title, 'node/' . $result->nid),
+        $result->rating,
+      );
+    }
+    
     // Add the table to the result string
     $return_string .= theme('table', 
                             array('header' => $header, 'rows' => $rows) );
     // Add a link to run recommendation algorithms
-    $return_string .= l('Calculate recommendations','administrate/runrecommender');
+    $return_string .= l(
+      'Calculate recommendations',
+      'administrate/runrecommender'
+    );
   }
 
   // Add the Movie section
@@ -388,12 +419,25 @@ function recsys_wb_myratings() {
   $query->condition('ratings.userid',user_id);
   $results = $query->execute();
   
+  // Get all the users rating from the database
+  $query_test = db_select(MOVIE_DB_TRAIN, 'ratings');
+  $query_test->join(
+    'field_data_field_movie_id',
+    'movie_id',
+    'ratings.movieid = movie_id.field_movie_id_value'
+  );
+  $query_test->join('node','node','node.nid = movie_id.entity_id');
+  $query_test->fields('node',array('title','nid'));
+  $query_test->fields('ratings',array('movieid','userid','rating'));
+  $query_test->condition('ratings.userid',user_id);
+  $results_test = $query->execute();
+  
   // Prepare the tables headers and rows
   $header = array( t('User ID'), t('Movie'), t('Rating') );
   $rows = array();
   
   // Check if there are already some ratings
-  if( $results->rowCount() == 0 ) {
+  if( $results->rowCount() == 0 && $results_test->rowCount() == 0 ) {
     $return_string .= "<strong>You haven't rated any movies yet</strong></br>";
     // Add the link to the rating page
     $return_string .= "<p>You can rate movies " . l('here','content/movies');
@@ -403,6 +447,15 @@ function recsys_wb_myratings() {
     
     // Loop through the results of the DB query and fill in the tables rows
     foreach ($results AS $result)
+    {
+      $rows[] = array(
+        $result->userid,
+        l( $result->title, 'node/' . $result->nid),
+        $result->rating,
+      );
+    }
+    
+    foreach ($results_test AS $result)
     {
       $rows[] = array(
         $result->userid,
@@ -965,10 +1018,10 @@ function recsys_wb_explanation_cf() {
     $explain .= recsys_wb_explain_cityblock($marking);
   }
   
-  if ( $explain_loglikelihood || $algorithm_name == null ){
+/*  if ( $explain_loglikelihood || $algorithm_name == null ){
     $explain .= "<a href='#' name='loglikelihood'></a>"; 
     $explain .= recsys_wb_explain_loglikelihood($marking);
-  }
+  }*/
   
   return $explain;
 }
@@ -991,7 +1044,7 @@ function recsys_wb_explanation_cf_table_of_contents() {
     <li><a href='#pearson'>Pearson similarity</a></li>
     <li><a href='#euclidean'>Euclidean similarity</a></li>
     <li><a href='#cityblock'>Cityblock similarity</a></li>
-    <li><a href='#loglikelihood'>Loglikelihood similarity</a></li>
+<!--    <li><a href='#loglikelihood'>Loglikelihood similarity</a></li>-->
   </ul>
 </ul>
 ";
