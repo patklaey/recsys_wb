@@ -162,7 +162,7 @@ function recsys_wb_menu() {
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_admin_page',
-    'access arguments' => array('administration'),
+    'access arguments' => array('access administration pages'),
     'weight' => 7,
   );
   $items['administrate/evaluatealgorithms'] = array(
@@ -170,7 +170,7 @@ function recsys_wb_menu() {
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_evaluate_algorithms',
-    'access arguments' => array('administration'),
+    'access arguments' => array('access administration pages'),
   );
   $items['administrate/runrecommender'] = array(
     'title' => 'Run CF Recommender',
@@ -184,21 +184,21 @@ function recsys_wb_menu() {
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_content_similarity',
-    'access arguments' => array('administration'),
+    'access arguments' => array('access administration pages'),
   );
   $items['administrate/runcontentrecommender'] = array(
     'title' => 'Run CB Recommender', 
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_run_content_recommender',
-    'access arguments' => array('administration'),
+    'access arguments' => array('access administration pages'),
   );
   $items['administrate/projectsetup'] = array(
     'title' => 'Project Setup', 
     'menu_name' => 'main-menu',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'recsys_wb_project_setup',
-    'access arguments' => array('administration'),
+    'access arguments' => array('access administration pages'),
   );
   $items['logout'] = array(
     'title' => 'Logout',
