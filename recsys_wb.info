@@ -7,6 +7,5 @@ dependencies[] = recommender (7.x-4.0-alpha14)
 dependencies[] = mathjax
 dependencies[] = login_as_other
 dependencies[] = scheduler
-dependencies[] = features
 
 package = Recommendation
