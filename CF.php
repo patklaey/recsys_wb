@@ -219,8 +219,8 @@ set of ratings of the users or items with the formula:";
   $explanation .= "Where " . mathInline('\overline{X}') . " and " . 
 mathInline('\overline{Y}') . "is the average rating of " . mathInline('X') . 
 " and " . mathInline('Y') . " respectively. The result will be between -1 and 1 
-where 1 means strong positive correlation (similarity), 0 means no correlation (
-no similarity) and -1 means strong negative correlation (dissimilarity).<br/>
+where 1 means strong positive correlation (similarity), 0 means no correlation 
+(no similarity) and -1 means strong negative correlation (dissimilarity).<br/>
 Let's have a look at a concrete example. Take the table below: ";
 
   // If user2user is marked (or nothing)
@@ -363,4 +363,105 @@ ratings of the items (just invert the matrix)";
   return $title . $explanation . "</div>";
 }
 
+/**
+ * Shortly explain the spearman similarity
+ */
+function recsys_wb_explain_spearman( $marking = 0 ) {
+  $title = "<strong><h3>Spearman similarity</h3></strong>";
+  $explanation = "<div class='tex2jax'>";
+  $explanation .= "The spearman similarity is very similar to the pearson 
+similarity. It also mesarues the correlation between two variable sets, but does
+ not assume that their relationship must be linear. The formula is the follwing:
+";
+  $spearman = 'Spearman(X,Y) = 1 - {6\sum_{i=1}^n(x_i - y_i)^2 \over n(n^2-1)}';
+  $explanation .= mathBlock($spearman);
+  $explanation .= "Where " . mathInline('x_i') . " is the rank of the " 
+. mathInline('i^{th}') . " item of the set " . mathInline('X') . " (the same
+ applies for " . mathInline('y_i') . "). The result will be - as for the pearson
+ correlation - between 1 and -1 where 1 means strong positive correaltion and -1
+ means strong negative correlation.<br/>Let's have a look at a concrete example. Take 
+the table below: ";
+
+  // Check if marking us user2user or nothing, then explanation should be U2U
+  if ( $marking == MARK_USER2USER || $marking == 0 )
+  {
+    $explanation .= recsys_wb_get_example_table( MARK_USER2USER );
+    $explanation .= "The similarity between User 1 and Bob is:";
+    $explanation .= "Let's first create a table with the ranks of the given 
+items.<br/>";
+    $example_headers = array("Item","Rank");
+    $user_rows = array(
+      array("Item 1",mathInline('{1+2 \over 2} = 1.5')),
+      array("Item 2",4),
+      array("Item 4",3),
+      array("Item 5",mathInline('{1+2 \over 2} = 1.5'))
+    );
+    $bob_rows = array(
+      array("Item 1",1),
+      array("Item 2",4),
+      array("Item 4",3),
+      array("Item 5",2)
+    );
+    
+    $explanation .= "User 1's ranks: " . theme(
+      'table', 
+      array('header' => $example_headers, 'rows' => $user_rows)
+    );
+    
+    $explanation .= "<br/>Bob's ranks: " . theme(
+      'table', 
+      array('header' => $example_headers, 'rows' => $bob_rows)
+    );
+    
+    $example = 'Spearman(User1,Bob) = 1 - {6 \times (0.5^2 + 0^2 + 0^2 + ';
+    $example .= '-0.5^2) \over 4(4^2-1)}';
+    $example .= "= 0.95";
+    $explanation .= mathBlock($example);
+    $explanation .= "As we can see a value of 0.95 means that there is a strong 
+positive correlation (and therefore high similarity) between User 1 and Bob.
+<br/>To apply the spearman similarity to items the process is exactly the same. 
+You just measure the distance between the ratings of the items instead of the 
+ratings of the users (just invert the matrix)";
+  }
+  else {
+    $explanation .= recsys_wb_get_example_table( MARK_ITEM2ITEM );
+    $explanation .= "The similarity between Item 1 and Item 5 is:";
+    $explanation .= "Let's first create a table with the ranks of the given 
+items.<br/>";
+
+    $example_headers = array("User","Rank");
+    $item1_rows = array(
+      array("User 1",2),
+      array("User 2",4),
+      array("Bob",1),
+      array("User 3",3)
+    );
+    $item5_rows = array(
+      array("User 1",mathInline('{1+2 \over 2} = 1.5')),
+      array("User 2",4),
+      array("Bob",mathInline('{1+2 \over 2} = 1.5')),
+      array("User 3",3)
+    );
+    
+    $explanation .= "Item 1's ranks: " . theme(
+      'table', 
+      array('header' => $example_headers, 'rows' => $item1_rows)
+    );
+    
+    $explanation .= "<br/>Item 5's ranks: " . theme(
+      'table', 
+      array('header' => $example_headers, 'rows' => $item5_rows)
+    );
+    
+    $example = 'Spearman(Item 1,Item 5) = 1 - {6 \times (0.5^2 + 0^2 + -0.5^2 ';
+    $example .= '+ 0^2) \over 4(4^2-1)} = 0.95';
+    $explanation .= mathBlock($example);
+    $explanation .= "As we can see a value of 0.95 means that there is a strong 
+positive correlation (and therefore high similarity) between Item 1 and Item 5.
+<br/>To apply the spearman similarity to users the process is exactly the same. 
+You just measure the distance between the ratings of the users instead of the 
+ratings of the items (just invert the matrix)";
+  }
+  return $title . $explanation . "</div>";
+}
 ?>
