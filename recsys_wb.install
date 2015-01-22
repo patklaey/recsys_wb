@@ -281,7 +281,7 @@ function recsys_wb_enable() {
                   'preference' => 'score'
               ),
           ),
-        // loglikelihood similarity
+/*        // spearman similarity
         'book_rec_u2u_loglikelihood' => array(
               'title' => t("U2U book recommender (loglikelihood)"),
               'params' => array(
@@ -323,7 +323,7 @@ function recsys_wb_enable() {
               ),
           ),
         
-/*        // The SVD algorithm  
+        // The SVD algorithm  
         'movie_rec_svd' => array(
             'title' => t("SVD movie recommender"),
             'params' => array(
@@ -367,10 +367,10 @@ function recsys_wb_disable(){
     'book_rec_i2i_cityblock',
     'movie_rec_u2u_cityblock',
     'movie_rec_i2i_cityblock',
-    'book_rec_u2u_loglikelihood',
-    'book_rec_i2i_loglikelihood',
-    'movie_rec_u2u_loglikelihood',
-    'movie_rec_i2i_loglikelihood',
+//    'book_rec_u2u_loglikelihood',
+//    'book_rec_i2i_loglikelihood',
+//    'movie_rec_u2u_loglikelihood',
+//    'movie_rec_i2i_loglikelihood',
 //    'movie_rec_svd',
 //    'book_rec_svd'
   );
