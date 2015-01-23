@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Recsys Workbench Objects feature.
+ */
+
+include_once 'recsys_workbench_objects.features.inc';
