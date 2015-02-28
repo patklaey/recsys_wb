@@ -138,17 +138,17 @@ function recsys_wb_explain_mae() {
   $explanation = "<div class='tex2jax'>";
   $explanation .= "The Mean Absolut Error metric determines, by how much the 
 average prediction is wrong. The formula is straightforward: ";
-  $mea = 'MEA(r) = {\sum_{i=0}^I {\sum_{u=0}^U { | pred(r,u,i) - rating(u,i) | 
-}} \over I + U}';
+  $mea = 'MEA(r) = {\sum_{t=0}^{|T|} { | pred(r,t) - rating(t) |} \over |T|}';
   $explanation .= mathBlock($mea);
-  $explanation .= "Where " . mathInline('I') . " is the set of items in the test 
-set, " . mathInline('U') . " is the set of users in the test set, "
-. mathInline('pred(r,u,i)') . " is the prediction of the recommender algorithm "
-. mathInline('r') . " for the user " . mathInline('u') . " on item with 
-index " . mathInline('i') . " and " . mathInline('rating(u,i)') . " is the 
-actual rating of user " . mathInline('u') . " on item with index" 
-. mathInline('i') . ".<br/>Consider the following simple example (1 item, 5 
-users):";
+  $explanation .= "Where " . mathInline('T') . " represents the whole test set "
+. mathInline('pred(r,t)') . " is the prediction of the recommender algorithm "
+. mathInline('r') . " for the test-item " . mathInline('t') . " and " 
+. mathInline('rating(t)') . " is the 
+actual rating of test-item " . mathInline('t') . ". A test-item " 
+. mathInline('t') . " is unique as it represents the user-item combination, 
+therefore " . mathInline('rating(t) = rating(u,i)') . " which is the rating of 
+user " . mathInline('u') . " on item " . mathInline('i') . ".<br/>Consider the 
+following simple example (1 item, 5 users):";
   $explanation .= recsys_wb_evaluation_example_accuracy_table();
   $explanation .= "So the MEA would simply be: ";
   $mea_example = '{|(4-3)| + |(2-4)| + |(3-3)| + |(5-4)| + |(2-3)| \over 5} =';
@@ -174,17 +174,18 @@ function recsys_wb_explain_rmse() {
   $explanation .= "The Mean Absolut Error metric determines, by how much the
 average prediction is wrong. The formula is quite similar to the Mean Absolute
 Error, but it penalizes big errors over small ones:";
-  $rmse = 'RMSE(r) = \sqrt{\sum_{i=0}^I {\sum_{u=0}^U { (pred(r,u,i) -
-rating(u,i))^2 }} \over I + U}';
+  $rmse = 'RMSE(r) = \sqrt{\sum_{t=0}^{|T|} { (pred(r,t) - rating(t))^2 } 
+\over |T|}';
   $explanation .= mathBlock($rmse);
-  $explanation .= "Where " . mathInline('I') . " is the set of items in the test
-set, " . mathInline('U') . " is the set of users in the test set, "
-. mathInline('pred(r,u,i)') . " is the prediction of the recommender algorithm "
-. mathInline('r') . " for the user " . mathInline('u') . " on the item with 
-index " . mathInline('i') . " and " . mathInline('rating(u,i)') . " is the 
-actual rating of user " . mathInline('u') . " on item with index " 
-. mathInline('i') . ".<br/>Consider the following simple example (1 item, 5 
-users):";
+  $explanation .= "Where " . mathInline('T') . " represents the whole test set "
+. mathInline('pred(r,t)') . " is the prediction of the recommender algorithm "
+. mathInline('r') . " for the test-item " . mathInline('t') . " and " 
+. mathInline('rating(t)') . " is the 
+actual rating of test-item " . mathInline('t') . ". A test-item " 
+. mathInline('t') . " is unique as it represents the user-item combination, 
+therefore " . mathInline('rating(t) = rating(u,i)') . " which is the rating of 
+user " . mathInline('u') . " on item " . mathInline('i') . ".<br/>Consider the 
+following simple example (1 item, 5 users):";
   $explanation .= recsys_wb_evaluation_example_accuracy_table();
   $explanation .= "So the RSME would be: ";
   $rsme_example = '\sqrt{(4-3)^2 + (2-4)^2 + (3-3)^2 + (5-4)^2 + (2-3)^2 \over';
@@ -242,15 +243,19 @@ algorithm with an perfectly sorted list of the items<sup>$ndcg_citation_link
 where a perfectly sorted list will get 1. So the closer to 1 the result is, the 
 better the algorithm sorts the items. The formula is as follows:";
   $ndcg = 'NDCG(r) = {DCG(r) \over DCG(L_{perfect})}';
-  $dcg = 'DCG(r) = \sum_{i=0}^I \sum_{u=0}^U { rating(u,i) \times discount(i)}';
-  $discount = 'discount(i) = {1 \over max(1,\log_2{i})}';
+  $dcg = 'DCG(r) = \sum_{t=0}^{|T|} { rating(t) \times discount(t)}';
+  $discount = 'discount(t) = {1 \over max(1,\log_2{(rank(t))})}';
   $explanation .= mathBlock($ndcg) . mathBlock($dcg) . mathBlock($discount);
   $explanation .= "Where " . mathInline('r') . " is the recommender algorithm, "
 . mathInline('L_{perfect}') . " is a perfectly sorted item list by users ratings
-, " . mathInline('I') . " is the set of items in the test set, " 
-. mathInline('U') . " is the set of users in the test set and "
-. mathInline('rating(u,i)') . " is the rating of user " . mathInline('u')
-. " on item with index " . mathInline('i') . ".<br/>So as one can see, the first
+, " . mathInline('T') . " represents the whole test set "
+. mathInline('pred(r,t)') . " is the prediction of the recommender algorithm "
+. mathInline('r') . " for the test-item " . mathInline('t') . " and " 
+. mathInline('rating(t)') . " is the 
+actual rating of test-item " . mathInline('t') . ". A test-item " 
+. mathInline('t') . " is unique as it represents the user-item combination, 
+therefore " . mathInline('rating(t) = rating(u,i)') . " which is the rating of 
+user " . mathInline('u') . " on item " . mathInline('i') . ".<br/>So as one can see, the first
  ratings are far more important than the last ones (caused by the logarithmic 
 discount). This is because the first items are much more likely to be selected 
 by a user so they should have more impact on the result.<br/>Let's have a look 
