@@ -31,7 +31,7 @@ information (as for example \"this movie is a fantasy movie\"). $read_more about
  */
 function recsys_wb_explain_tfidf() {
   $tfidf = 'TF\text{-}IDF(w,d) = TF(w,d) \times IDF(w)';
-  $tf = 'TF(w,d) = {freq(w,d) \over max(freq(i,d), i \in otherWords(w,d))}';
+  $tf = 'TF(w,d) = {freq(w,d) \over max(freq(i,d), i \in d)}';
   $idf = 'IDF(w) = \log{N \over n(w)}';
   
   $title = "<strong><h3>TF-IDF</h3></strong>";
@@ -44,8 +44,8 @@ the TF-IDF value for a word " . mathInline("w") . " in document "
   $explanation .= mathBlock($tfidf) . mathBlock($tf) . mathBlock($idf);
   $explanation .= "Where " . mathInline('freq(w,d)') . " denotes how many times 
 the word " . mathInline("w") . " occurs in document " . mathInline("d") . ", "
-. mathInline("otherWords(w,d)") . " specifies the set of all words of document "
-. mathInline("d") . " except word " . mathInline("w") . ", " . mathInline("N")
+. mathInline("max(freq(i,d), i \in d)") . " specifies the maximum occurrence 
+of a word in " . mathInline("d") . ", " . mathInline("N")
 . " is the total number of documents and " . mathInline("n(w)") . " is the 
 number of documents in which the word " . mathInline("w") . " occurs at least 
 once.<br/>";
